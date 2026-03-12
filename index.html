@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS 오늘의 단어장</title>
+<style>
+  :root {
+    --bg: #f8fbf3;
+    --header-bg: #d3e9dd;
+    --header-text: #2d3a2e;
+    --header-sub: #4a6a55;
+    --card-bg: #ffffff;
+    --card-border: #d3e9dd;
+    --card-hover: #f0f7e8;
+    --green-dark: #2d6a4f;
+    --green-mid: #52b788;
+    --green-light: #b7e4c7;
+    --tag-bg: #eef7e0;
+    --tag-border: #b7ddb0;
+    --progress-bg: #e8f5e9;
+    --progress-fill: #52b788;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a2e1a; min-height: 100vh; }
+
+  /* HEADER */
+  .app-header {
+    background: var(--header-bg);
+    padding: 16px 20px 10px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(45,106,79,0.12);
+  }
+  .app-header h1 { font-size: 18px; font-weight: 700; color: var(--header-text); }
+  .app-header .subtitle { font-size: 12px; color: var(--header-sub); margin-top: 2px; }
+  .date-nav { display: flex; align-items: center; gap: 8px; margin-top: 10px; overflow-x: auto; scrollbar-width: none; }
+  .date-nav::-webkit-scrollbar { display: none; }
+  .date-btn { flex-shrink: 0; background: rgba(255,255,255,0.7); border: 1.5px solid #b0d4c0; border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--header-text); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .date-btn:hover { background: rgba(255,255,255,0.9); }
+  .date-btn.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); box-shadow: 0 2px 6px rgba(45,106,79,0.3); }
+  .date-btn.today-mark { border-color: var(--green-mid); }
+  .date-btn.day-done { background: var(--green-dark); color: #fff; border-color: var(--green-dark); opacity: 0.75; }
+  .date-btn.day-done:not(.active) { background: #52b788; border-color: #52b788; }
+
+  /* PROGRESS */
+  .progress-wrap { padding: 8px 20px 0; background: var(--header-bg); }
+  .progress-bar-outer { height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; background: var(--progress-fill); border-radius: 3px; transition: width 0.4s ease; }
+  .progress-label { font-size: 11px; color: var(--header-sub); text-align: right; padding-bottom: 8px; margin-top: 3px; }
+
+  /* MAIN */
+  .main { padding: 16px; max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
+
+  /* DAY INFO */
+  .day-info-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .day-info-left h2 { font-size: 20px; font-weight: 800; color: var(--header-text); }
+  .day-info-left .day-label { font-size: 12px; color: var(--header-sub); margin-top: 3px; }
+  .mock-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: var(--tag-bg); color: var(--green-dark); }
+  .mock-badge.listening { background: #e8f4f8; color: #1a5276; }
+  .mock-badge.reading { background: #fef9e7; color: #7d6608; }
+
+  /* SUMMARY */
+  .summary-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
+  .summary-tile { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 12px; padding: 10px 6px; text-align: center; }
+  .summary-tile .tile-num { font-size: 20px; font-weight: 800; color: var(--green-dark); }
+  .summary-tile .tile-label { font-size: 10px; color: var(--header-sub); margin-top: 2px; }
+
+  /* ── SECTION CARD ── */
+  .section-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+
+  .section-header {
+    display: flex; align-items: center;
+    padding: 13px 16px; cursor: pointer; user-select: none;
+    background: var(--card-bg); transition: background 0.2s; gap: 10px;
+  }
+  .section-header:hover { background: var(--card-hover); }
+
+  /* 왼쪽: 아이콘 + 텍스트 */
+  .section-header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .section-icon { font-size: 18px; flex-shrink: 0; }
+  .section-title-text { font-size: 14px; font-weight: 700; color: var(--header-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .section-count { font-size: 12px; color: var(--header-sub); white-space: nowrap; }
+
+  /* 오른쪽: 섹션 체크버튼 + 펼침 화살표 */
+  .section-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  /* 섹션 체크버튼 (원보카 스타일) */
+  .section-check-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid var(--green-light);
+    background: transparent; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0; color: transparent;
+  }
+  .section-check-btn:hover { border-color: var(--green-mid); }
+  .section-check-btn.done { background: var(--green-mid); border-color: var(--green-mid); color: #fff; }
+
+  .section-chevron { font-size: 12px; color: var(--green-mid); transition: transform 0.3s; }
+  .section-chevron.open { transform: rotate(180deg); }
+
+  /* WORD BODY */
+  .section-body { display: none; padding: 0 16px 14px; }
+  .section-body.open { display: block; }
+  .word-list { list-style: none; }
+  .word-item { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid #f0f4f0; }
+  .word-item:last-child { border-bottom: none; }
+  .word-item.checked { opacity: 0.45; text-decoration: line-through; }
+  .word-num { font-size: 11px; color: #aaa; min-width: 22px; text-align: right; }
+  .word-text { flex: 1; }
+  .word-en { font-size: 14px; font-weight: 600; color: #1a2e1a; }
+  .word-ko { font-size: 12px; color: #5a7a5a; margin-top: 1px; }
+  /* 단어 옆 소리 버튼만 (체크버튼 없음) */
+  .sound-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--green-mid); padding: 2px 4px; transition: transform 0.1s; }
+  .sound-btn:active { transform: scale(0.85); }
+
+  /* LEARN BUTTON */
+  .learn-btn-wrap { padding: 14px 0; }
+  .learn-btn { width: 100%; padding: 13px; background: var(--green-dark); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .learn-btn:hover { background: #1f4a37; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(45,106,79,0.3); }
+
+  /* BOTTOM NAV */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0eee0; display: flex; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.06); }
+  .bottom-nav-btn { flex: 1; padding: 10px 4px 8px; background: none; border: none; cursor: pointer; font-size: 10px; color: #8aaa8a; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color 0.2s; }
+  .bottom-nav-btn .nav-icon { font-size: 20px; }
+  .bottom-nav-btn.active { color: var(--green-dark); }
+
+  /* PAGE */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── QUIZ OVERLAY ── */
+  .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
+  .quiz-overlay.open { display: flex; }
+  .quiz-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .quiz-modal-header { background: var(--header-bg); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .quiz-modal-header h3 { font-size: 16px; font-weight: 700; color: var(--header-text); }
+  .quiz-close-btn { background: rgba(255,255,255,0.5); border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 18px; cursor: pointer; color: var(--header-text); display: flex; align-items: center; justify-content: center; }
+  .quiz-content { padding: 20px; overflow-y: auto; flex: 1; }
+
+  /* MODE SELECT */
+  .section-radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .section-radio { display: none; }
+  .section-radio-label { display: block; padding: 8px 10px; border: 1.5px solid var(--card-border); border-radius: 10px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--header-sub); transition: all 0.2s; background: var(--card-bg); }
+  .section-radio:checked + .section-radio-label { border-color: var(--green-dark); color: var(--green-dark); background: var(--tag-bg); }
+  .mode-select-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .mode-card { border: 2px solid var(--card-border); border-radius: 14px; padding: 16px; cursor: pointer; transition: all 0.2s; background: var(--card-bg); display: flex; align-items: center; gap: 14px; }
+  .mode-card:hover { border-color: var(--green-mid); background: var(--card-hover); }
+  .mode-card .mode-icon { font-size: 32px; }
+  .mode-card .mode-info .mode-name { font-size: 15px; font-weight: 700; color: var(--header-text); }
+  .mode-card .mode-info .mode-desc { font-size: 12px; color: var(--header-sub); margin-top: 3px; }
+
+  /* QUIZ PROGRESS */
+  .quiz-progress { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .quiz-progress-bar-outer { flex: 1; height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; }
+  .quiz-progress-bar-inner { height: 100%; background: var(--progress-fill); border-radius: 3px; transition: width 0.3s; }
+  .quiz-progress-text { font-size: 12px; color: var(--header-sub); white-space: nowrap; }
+
+  /* FLASHCARD */
+  .flashcard-wrap { perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard { position: relative; width: 100%; padding-top: 60%; transform-style: preserve-3d; transition: transform 0.5s; }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border: 2px solid var(--card-border); }
+  .flashcard-front { background: var(--tag-bg); }
+  .flashcard-back { background: var(--header-bg); transform: rotateY(180deg); }
+  .flashcard-word { font-size: 28px; font-weight: 800; color: var(--green-dark); text-align: center; }
+  .flashcard-hint { font-size: 12px; color: var(--header-sub); margin-top: 8px; }
+  .flashcard-meaning { font-size: 20px; font-weight: 700; color: var(--header-text); text-align: center; }
+
+  /* MC */
+  .mc-question { font-size: 18px; font-weight: 700; color: var(--header-text); margin-bottom: 16px; text-align: center; }
+  .mc-question-word { font-size: 28px; font-weight: 800; color: var(--green-dark); }
+  .mc-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mc-option { padding: 14px 10px; border: 2px solid var(--card-border); border-radius: 12px; background: var(--card-bg); cursor: pointer; font-size: 13px; font-weight: 600; text-align: center; color: var(--header-text); transition: all 0.2s; }
+  .mc-option:hover { border-color: var(--green-mid); background: var(--card-hover); }
+  .mc-option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+  .mc-option.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+  /* DICTATION */
+  .dictation-area { text-align: center; margin-bottom: 20px; }
+  .dictation-hint { font-size: 13px; color: var(--header-sub); margin-bottom: 12px; }
+  .dictation-meaning { font-size: 20px; font-weight: 700; color: var(--green-dark); margin-bottom: 16px; }
+  .dictation-input { width: 100%; padding: 12px 16px; border: 2px solid var(--card-border); border-radius: 10px; font-size: 16px; color: var(--header-text); background: var(--card-bg); outline: none; transition: border-color 0.2s; text-align: center; }
+  .dictation-input:focus { border-color: var(--green-mid); }
+  .dictation-input.correct { border-color: #28a745; background: #d4edda; }
+  .dictation-input.wrong { border-color: #dc3545; background: #f8d7da; }
+
+  /* QUIZ NAV */
+  .quiz-nav { display: flex; gap: 10px; margin-top: 16px; }
+  .quiz-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .quiz-btn.primary { background: var(--green-dark); color: #fff; }
+  .quiz-btn.primary:hover { background: #1f4a37; }
+  .quiz-btn.secondary { background: var(--tag-bg); color: var(--green-dark); border: 1.5px solid var(--tag-border); }
+  .quiz-btn.sound-big { background: var(--header-bg); color: var(--green-dark); border: 1.5px solid var(--card-border); flex: 0; padding: 12px 16px; font-size: 18px; }
+
+  
+  /* ── 오답노트 팝업 ── */
+  .wrong-note-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 500;
+    align-items: flex-end; justify-content: center;
+    padding: 0;
+  }
+  .wrong-note-overlay.open { display: flex; }
+  .wrong-note-sheet {
+    background: var(--card-bg); border-radius: 24px 24px 0 0;
+    width: 100%; max-width: 480px;
+    padding: 28px 24px 36px;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity:0; }
+    to   { transform: translateY(0);    opacity:1; }
+  }
+  .wrong-note-badge {
+    display: inline-block;
+    background: #f4a261; color: #fff;
+    font-size: 11px; font-weight: 800;
+    padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 10px; letter-spacing: 0.5px;
+  }
+  .wrong-note-word {
+    font-size: 32px; font-weight: 900;
+    color: #88b225; text-align: center;
+    margin: 6px 0 4px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  }
+  .wrong-note-meaning {
+    font-size: 17px; font-weight: 700;
+    color: var(--header-text); text-align: center;
+    margin-bottom: 6px;
+  }
+  .wrong-note-your {
+    font-size: 13px; color: #f4a261; font-weight: 600;
+    text-align: center; margin-bottom: 18px;
+  }
+  .wrong-note-accents {
+    display: flex; gap: 8px; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .wrong-note-accent-btn {
+    padding: 6px 14px; border-radius: 20px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.1); font-size: 12px; font-weight: 700;
+    color: #b0d4bc; cursor: pointer; transition: all 0.2s;
+  }
+  .wrong-note-accent-btn:hover,
+  .wrong-note-accent-btn.active {
+    background: #2d6a4f; color: #fff; border-color: #2d6a4f;
+  }
+  .wrong-note-input-wrap {
+    display: flex; gap: 8px; margin-bottom: 12px;
+  }
+  .wrong-note-input {
+    flex: 1; padding: 13px 16px;
+    border: 2px solid #d3e9dd; border-radius: 12px;
+    font-size: 16px; text-align: center;
+    outline: none; transition: border-color 0.2s;
+    background: #f8fbf3;
+  }
+  .wrong-note-input:focus { border-color: #52b788; }
+  .wrong-note-input.correct { border-color: #28a745; background: #d4edda; }
+  .wrong-note-input.wrong   { border-color: #dc3545; background: #f8d7da; }
+  .wrong-note-submit {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: #2d6a4f; color: #fff;
+    border: none; font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .wrong-note-submit:hover { background: #1f4a37; }
+  .wrong-note-skip {
+    width: 100%; padding: 13px;
+    background: #f0f4f0; color: #5a7a5a;
+    border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .wrong-note-skip:hover { background: #e0eee0; }
+  .wrong-note-feedback {
+    text-align: center; font-size: 13px; font-weight: 700;
+    min-height: 20px; margin-bottom: 10px;
+  }
+
+/* RESULT */
+  .result-screen { text-align: center; }
+  .result-emoji { font-size: 48px; margin-bottom: 8px; }
+  .result-title { font-size: 22px; font-weight: 800; color: var(--header-text); margin-bottom: 4px; }
+  .result-subtitle { font-size: 13px; color: var(--header-sub); margin-bottom: 20px; }
+  .result-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .result-stat { background: var(--tag-bg); border-radius: 12px; padding: 12px 8px; }
+  .result-stat .stat-num { font-size: 22px; font-weight: 800; color: var(--green-dark); }
+  .result-stat .stat-label { font-size: 11px; color: var(--header-sub); margin-top: 2px; }
+  .result-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .result-tab { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid var(--card-border); background: var(--card-bg); font-size: 12px; font-weight: 600; cursor: pointer; color: var(--header-sub); transition: all 0.2s; }
+  .result-tab.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
+  .result-word-list { text-align: left; margin-bottom: 16px; }
+  .result-word-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; margin-bottom: 4px; background: var(--card-bg); border: 1px solid var(--card-border); }
+  .result-word-item .rw-en { font-size: 13px; font-weight: 600; color: var(--header-text); flex: 1; }
+  .result-word-item .rw-ko { font-size: 11px; color: var(--header-sub); }
+  .retry-choice-wrap { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .retry-choice-btn { padding: 14px; border-radius: 12px; border: 2px solid var(--card-border); background: var(--card-bg); font-size: 13px; font-weight: 700; cursor: pointer; color: var(--header-text); transition: all 0.2s; text-align: center; }
+  .retry-choice-btn:hover { border-color: var(--green-mid); background: var(--card-hover); }
+  .retry-choice-btn.primary-choice { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
+  .show-retry-btn { width: 100%; padding: 12px; background: var(--green-dark); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
+  .home-btn { width: 100%; padding: 12px; background: var(--tag-bg); color: var(--green-dark); border: 1.5px solid var(--tag-border); border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+  /* HISTORY */
+  .history-empty { text-align: center; padding: 60px 20px; color: var(--header-sub); font-size: 14px; }
+  .history-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+  .history-header { padding: 12px 16px; background: var(--tag-bg); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .history-date { font-size: 13px; font-weight: 700; color: var(--header-text); }
+  .history-meta { font-size: 11px; color: var(--header-sub); margin-top: 2px; }
+  .history-score { font-size: 18px; font-weight: 800; color: var(--green-dark); }
+  .history-body { display: none; padding: 12px 16px; }
+  .history-body.open { display: block; }
+  .history-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+  .history-tab { flex: 1; padding: 6px; border-radius: 6px; border: 1.5px solid var(--card-border); background: var(--card-bg); font-size: 11px; font-weight: 600; cursor: pointer; color: var(--header-sub); transition: all 0.2s; text-align: center; }
+  .history-tab.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
+  .history-word-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid #f0f4f0; }
+  .history-word-item:last-child { border-bottom: none; }
+  .hw-en { font-size: 13px; font-weight: 600; flex: 1; }
+  .hw-ko { font-size: 11px; color: var(--header-sub); }
+</style>
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>📚 IELTS 단어장</h1>
+  <div class="subtitle" id="headerSubtitle">오늘의 단어를 학습하세요</div>
+  <div class="date-nav" id="dateNav"></div>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+
+<div class="main">
+  <div id="homePage" class="page active"><div id="homeContent"></div></div>
+  <div id="historyPage" class="page"><div id="historyContent"></div></div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="bottom-nav-btn active" id="navHome" onclick="showPage('home')">
+    <span class="nav-icon">📅</span><span>오늘</span>
+  </button>
+  <button class="bottom-nav-btn" id="navHistory" onclick="showPage('history')">
+    <span class="nav-icon">📊</span><span>학습기록</span>
+  </button>
+</nav>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-modal-header">
+      <h3 id="quizTitle">학습하기</h3>
+      <button class="quiz-close-btn" onclick="closeQuiz()">✕</button>
+    </div>
+    <div class="quiz-content" id="quizContent"></div>
+  </div>
+</div>
+
+<script>
+const SCHEDULE = [{"day":1,"date":"3/6","weekday":"금","year":2026,"month":3,"dayNum":6,"mock":null,"grammar":{"units":[1],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"Monday","ko":"월요일"},{"en":"Tuesday","ko":"화요일"},{"en":"Wednesday","ko":"수요일"},{"en":"Thursday","ko":"목요일"},{"en":"Friday","ko":"금요일"},{"en":"Saturday","ko":"토요일"},{"en":"Sunday","ko":"일요일"},{"en":"January","ko":"1월"},{"en":"February","ko":"2월"},{"en":"March","ko":"3월"},{"en":"April","ko":"4월"},{"en":"May","ko":"5월"},{"en":"June","ko":"6월"},{"en":"July","ko":"7월"},{"en":"August","ko":"8월"},{"en":"September","ko":"9월"},{"en":"October","ko":"10월"},{"en":"November","ko":"11월"},{"en":"December","ko":"12월"},{"en":"winter","ko":"겨울"},{"en":"spring","ko":"봄"},{"en":"autumn","ko":"가을"},{"en":"summer","ko":"여름"},{"en":"automobile","ko":"자동차"},{"en":"truck","ko":"트럭"},{"en":"tractor","ko":"트랙터"},{"en":"tram","ko":"전차, 트램"},{"en":"subway","ko":"지하철 (미국식)"},{"en":"underground","ko":"지하철 (영국식)"},{"en":"airplane","ko":"비행기"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"pioneer","ko":"개척자, 선구자"},{"en":"epidemic","ko":"유행병, 전염병"},{"en":"reckon","ko":"생각하다, 추정하다"},{"en":"uniformity","ko":"균일성, 일관성"},{"en":"surface","ko":"표면, 표면의"},{"en":"institute","ko":"기관, 연구소"},{"en":"replicate","ko":"복제하다, 반복하다"},{"en":"mobility","ko":"이동성, 유동성"},{"en":"reduction","ko":"감소, 축소"},{"en":"scaled up","ko":"규모를 확대하다"},{"en":"available","ko":"이용 가능한, 구할 수 있는"},{"en":"promote","ko":"촉진하다, 홍보하다"},{"en":"amenity","ko":"편의시설, 쾌적함"},{"en":"relentless","ko":"끊임없는, 가차 없는"},{"en":"smooth","ko":"매끄러운, 부드러운"},{"en":"alternative","ko":"대안, 대안적인"},{"en":"intervention","ko":"개입, 중재"},{"en":"accessible","ko":"접근 가능한, 이용하기 쉬운"},{"en":"terrifying","ko":"무서운, 끔찍한"},{"en":"rate","ko":"비율, 속도"},{"en":"dwindling","ko":"점점 줄어드는, 감소하는"},{"en":"anatomy","ko":"해부학, 신체 구조"},{"en":"parallel","ko":"평행한, 유사한"},{"en":"ligament","ko":"인대"},{"en":"restrict","ko":"제한하다, 규제하다"},{"en":"resistance","ko":"저항, 내성"},{"en":"variable","ko":"변수, 변화하는"},{"en":"lessen","ko":"줄이다, 감소시키다"},{"en":"prevent","ko":"예방하다, 막다"},{"en":"circulation","ko":"순환, 유통"}]},"task1":{"words":[{"en":"surge","ko":"급등하다 / 급증하다 / 급등"},{"en":"soar","ko":"치솟다 / 급상승하다"},{"en":"rocket","ko":"급등하다 / 치솟다"},{"en":"climb steeply","ko":"가파르게 오르다"},{"en":"rise sharply","ko":"급격히 상승하다"}]},"task2":{"topic":"🎓 Education","topicKo":"교육","words":[{"en":"performance","ko":"수행, 성과"},{"en":"development","ko":"발전, 개발"},{"en":"peer","ko":"동료, 또래"},{"en":"knowledge","ko":"지식"},{"en":"material","ko":"자료, 재료"},{"en":"achievement","ko":"성취, 업적"},{"en":"relationship","ko":"관계"},{"en":"experience","ko":"경험"},{"en":"ability","ko":"능력"},{"en":"adolescent","ko":"청소년"},{"en":"educator","ko":"교육자"},{"en":"subject","ko":"과목"},{"en":"activity","ko":"활동"},{"en":"instrument","ko":"도구, 악기"},{"en":"researcher","ko":"연구자"},{"en":"result","ko":"결과"},{"en":"decline","ko":"감소 / 감소하다"},{"en":"opportunity","ko":"기회"},{"en":"memorization","ko":"암기"},{"en":"fact","ko":"사실"},{"en":"figure","ko":"수치"},{"en":"therapy","ko":"치료, 요법"},{"en":"pressure","ko":"압박"},{"en":"mental well-being","ko":"정신적 건강"},{"en":"interest","ko":"관심"},{"en":"grade","ko":"성적"},{"en":"communication","ko":"의사소통"},{"en":"cooperation","ko":"협력"},{"en":"bonding","ko":"유대감"},{"en":"nervousness","ko":"긴장감"},{"en":"opinion","ko":"의견"},{"en":"circumstance","ko":"상황"},{"en":"program","ko":"프로그램"},{"en":"attention","ko":"주의"},{"en":"involvement","ko":"참여"},{"en":"commitment","ko":"헌신"},{"en":"average","ko":"평균"},{"en":"university","ko":"대학"},{"en":"benefit","ko":"이점"},{"en":"📘  문법책  →  1단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""}]}},{"day":2,"date":"3/7","weekday":"토","year":2026,"month":3,"dayNum":7,"mock":null,"grammar":{"units":[2],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"helicopter","ko":"헬리콥터"},{"en":"train","ko":"기차"},{"en":"express train","ko":"급행열차"},{"en":"bicycle","ko":"자전거"},{"en":"pedestrian","ko":"보행자"},{"en":"passenger","ko":"승객"},{"en":"commuter","ko":"통근자"},{"en":"taxi","ko":"택시"},{"en":"ferry","ko":"페리, 여객선"},{"en":"boat","ko":"보트, 배"},{"en":"shuttle","ko":"셔틀버스"},{"en":"coach","ko":"장거리 버스"},{"en":"lorry","ko":"트럭 (영국식)"},{"en":"van","ko":"밴"},{"en":"double-decker bus","ko":"2층 버스"},{"en":"kayak","ko":"카약"},{"en":"canoe","ko":"카누"},{"en":"platform","ko":"승강장, 플랫폼"},{"en":"departure","ko":"출발"},{"en":"arrival","ko":"도착"},{"en":"terminal","ko":"터미널"},{"en":"route","ko":"경로, 노선"},{"en":"fare","ko":"(교통) 요금"},{"en":"parking","ko":"주차"},{"en":"traffic","ko":"교통 (량)"},{"en":"port","ko":"항구"},{"en":"roundabout","ko":"교차로, 로터리"},{"en":"walking","ko":"걷기, 도보"},{"en":"circle","ko":"원"},{"en":"square","ko":"정사각형"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"hypertension","ko":"고혈압"},{"en":"pharmacological","ko":"약리학적인"},{"en":"manipulate","ko":"조작하다, 다루다"},{"en":"specific","ko":"특정한, 구체적인"},{"en":"identical","ko":"동일한, 똑같은"},{"en":"burst","ko":"터지다, 폭발하다 / 폭발"},{"en":"row upon row","ko":"줄줄이, 열을 지어"},{"en":"lettuce","ko":"상추, 양상추"},{"en":"striking","ko":"눈에 띄는, 인상적인"},{"en":"bear fruit","ko":"결실을 맺다, 성과를 내다"},{"en":"intense","ko":"강렬한, 극심한"},{"en":"resplendent","ko":"화려한, 찬란한"},{"en":"sprout","ko":"싹이 트다, 자라다 / 새싹"},{"en":"peer","ko":"응시하다, 자세히 보다 / 동료, 귀족"},{"en":"hollow","ko":"속이 빈, 공허한 / 구멍, 빈 공간"},{"en":"treat","ko":"대하다, 치료하다 / 대접, 즐거움"},{"en":"pesticide","ko":"살충제, 농약"},{"en":"field","ko":"들판, 분야"},{"en":"enquiry","ko":"문의, 조사"},{"en":"generator","ko":"발전기, 생성기"},{"en":"greenhouse gases","ko":"온실가스"},{"en":"capacity","ko":"용량, 능력, 수용력"},{"en":"withstand","ko":"견디다, 버티다"},{"en":"substantial","ko":"상당한, 실질적인"},{"en":"journey","ko":"여행, 여정"},{"en":"fraction","ko":"일부, 소량 / 분수"},{"en":"rely","ko":"의존하다, 믿다"},{"en":"consume","ko":"소비하다, 먹다"},{"en":"be suited to","ko":"~에 적합하다, 어울리다"},{"en":"norm","ko":"규범, 기준"}]},"task1":{"words":[{"en":"increase steadily","ko":"꾸준히 증가하다"},{"en":"grow gradually","ko":"서서히 성장하다"},{"en":"rise moderately","ko":"완만하게 상승하다"},{"en":"edge upward","ko":"조금씩 위로 오르다"},{"en":"rebound","ko":"반등하다 / 회복하다 / 반등"}]},"task2":{"topic":"🎓 Education","topicKo":"교육","words":[{"en":"homework","ko":"숙제"},{"en":"absence","ko":"결석"},{"en":"rest","ko":"휴식"},{"en":"institution","ko":"기관"},{"en":"quality","ko":"품질"},{"en":"area","ko":"영역"},{"en":"effort","ko":"노력"},{"en":"disorder","ko":"장애"},{"en":"exam","ko":"시험"},{"en":"depression","ko":"우울증"},{"en":"anxiety","ko":"불안"},{"en":"approach","ko":"접근법"},{"en":"desire","ko":"욕구"},{"en":"survey","ko":"조사 / 조사하다"},{"en":"impact","ko":"영향 / 영향을 미치다"},{"en":"practice","ko":"연습 / 연습하다"},{"en":"temper","ko":"기질 / 성질을 다스리다"},{"en":"design","ko":"설계 / 설계하다"},{"en":"influence","ko":"영향을 미치다"},{"en":"motivate","ko":"동기를 부여하다"},{"en":"socialize","ko":"사교하다, 어울리다"},{"en":"compete","ko":"경쟁하다"},{"en":"outperform","ko":"능가하다"},{"en":"demonstrate","ko":"보여주다, 증명하다"},{"en":"achieve","ko":"성취하다"},{"en":"cultivate","ko":"발전시키다, 함양하다"},{"en":"provide","ko":"제공하다"},{"en":"cooperate","ko":"협력하다"},{"en":"illustrate","ko":"설명하다"},{"en":"compare","ko":"비교하다"},{"en":"coincide","ko":"일치하다"},{"en":"attend","ko":"참석하다"},{"en":"require","ko":"요구하다"},{"en":"recharge","ko":"재충전하다"},{"en":"invest","ko":"투자하다"},{"en":"build","ko":"구축하다"},{"en":"assist","ko":"돕다"},{"en":"foster","ko":"촉진하다"}]}},{"day":3,"date":"3/8","weekday":"일","year":2026,"month":3,"dayNum":8,"mock":null,"grammar":{"units":[3],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"rectangle","ko":"직사각형"},{"en":"triangle","ko":"삼각형"},{"en":"cylinder","ko":"원기둥"},{"en":"oval","ko":"타원형"},{"en":"sphere","ko":"구(球)"},{"en":"cube","ko":"정육면체"},{"en":"pyramid","ko":"피라미드형"},{"en":"beautiful","ko":"아름다운"},{"en":"necessary","ko":"필요한"},{"en":"fantastic","ko":"환상적인"},{"en":"comfortable","ko":"편안한"},{"en":"convenient","ko":"편리한"},{"en":"wonderful","ko":"훌륭한"},{"en":"terrible","ko":"끔찍한"},{"en":"temporary","ko":"일시적인"},{"en":"permanent","ko":"영구적인"},{"en":"knowledgeable","ko":"박식한"},{"en":"exciting","ko":"흥미진진한"},{"en":"boring","ko":"지루한"},{"en":"difficult","ko":"어려운"},{"en":"easy","ko":"쉬운"},{"en":"furnished","ko":"가구가 딸린"},{"en":"unfurnished","ko":"가구가 없는"},{"en":"modern","ko":"현대적인"},{"en":"local","ko":"지역의, 현지의"},{"en":"organic","ko":"유기농의"},{"en":"fit","ko":"건강한, 체력이 좋은"},{"en":"elderly","ko":"노인의"},{"en":"disabled","ko":"장애가 있는"},{"en":"gluten-free","ko":"글루텐 프리의"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"stems","ko":"줄기 / ~에서 비롯되다"},{"en":"practice","ko":"관행, 실천 / 연습하다"},{"en":"regeneration","ko":"재생, 부활, 재건"},{"en":"stand","ko":"서다, 견디다 / 입장, 가판대"},{"en":"contribute","ko":"기여하다, 공헌하다"},{"en":"accessibility","ko":"접근성, 이용 가능성"},{"en":"worth","ko":"가치, ~할 가치가 있는"},{"en":"gasify","ko":"기체화하다, 가스로 변환하다"},{"en":"liquid fuels","ko":"액체 연료"},{"en":"dense","ko":"밀집한, 빽빽한"},{"en":"removal","ko":"제거, 이동"},{"en":"cavity","ko":"구멍, 충치, 빈 공간"},{"en":"insect","ko":"곤충, 벌레"},{"en":"predator","ko":"포식자, 약탈자"},{"en":"collaborate","ko":"협력하다, 공동 작업하다"},{"en":"environmentalist","ko":"환경주의자"},{"en":"operate","ko":"운영하다, 작동하다"},{"en":"collision","ko":"충돌, 부딪힘"},{"en":"satellite","ko":"위성, 인공위성"},{"en":"smash","ko":"부수다, 박살내다 / 충돌"},{"en":"tracking","ko":"추적, 추적하다"},{"en":"classify","ko":"분류하다, 기밀로 하다"},{"en":"debris","ko":"잔해, 파편"},{"en":"property","ko":"재산, 부동산 / 특성, 성질"},{"en":"inactivate","ko":"비활성화하다"},{"en":"vent","ko":"배출구, 환기구 / 발산하다"},{"en":"operator","ko":"운영자, 조작자"},{"en":"despite","ko":"~에도 불구하고"},{"en":"exact","ko":"정확한, 정밀한"},{"en":"prevent","ko":"예방하다, 막다"}]},"task1":{"words":[{"en":"recover","ko":"회복하다 / 되찾다"},{"en":"pick up","ko":"회복되다 / 나아지다"},{"en":"bounce back","ko":"반등하다 / 다시 회복하다"},{"en":"plummet","ko":"곤두박질치다 / 급락하다"},{"en":"plunge","ko":"급락하다 / 뛰어들다 / 급락"}]},"task2":{"topic":"🎓 Education","topicKo":"교육","words":[{"en":"📘  문법책  →  2단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"outweigh","ko":"~보다 중요하다"},{"en":"present","ko":"제시하다"},{"en":"implement","ko":"실행하다"},{"en":"involve","ko":"포함하다"},{"en":"dedicate","ko":"헌신하다"},{"en":"neglect","ko":"소홀히 하다"},{"en":"hinder","ko":"방해하다"},{"en":"persuade","ko":"설득하다"},{"en":"teach","ko":"가르치다"},{"en":"worry","ko":"걱정하다"},{"en":"improve","ko":"개선하다"},{"en":"receive","ko":"받다"},{"en":"reveal","ko":"드러내다"},{"en":"consider","ko":"고려하다"},{"en":"mature","ko":"성숙한 / 성숙하다"},{"en":"lower","ko":"낮은 / 낮추다"},{"en":"broad","ko":"넓은"},{"en":"fierce","ko":"치열한, 격렬한"},{"en":"scholarly","ko":"학문적인"},{"en":"interpersonal","ko":"대인 관계의"},{"en":"mandatory","ko":"의무적인"},{"en":"intensive","ko":"집중적인"},{"en":"enthusiastic","ko":"열정적인"},{"en":"comfortable","ko":"편안한"},{"en":"embarrassing","ko":"난처한"},{"en":"engaging","ko":"매력적인"},{"en":"successful","ko":"성공적인"},{"en":"practical","ko":"실용적인"},{"en":"significant","ko":"중요한"},{"en":"difficult","ko":"어려운"},{"en":"adequate","ko":"적절한"},{"en":"overall","ko":"전반적인"},{"en":"academic","ko":"학업의"},{"en":"standardized","ko":"표준화된"},{"en":"related","ko":"관련된"},{"en":"relentless","ko":"끊임없는"},{"en":"academically","ko":"학문적으로"},{"en":"especially","ko":"특히"}]}},{"day":4,"date":"3/9","weekday":"월","year":2026,"month":3,"dayNum":9,"mock":null,"grammar":{"units":[4],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"surname","ko":"성(姓), 가족 이름"},{"en":"first name","ko":"이름(名)"},{"en":"initial","ko":"이니셜, 이름의 첫 글자"},{"en":"date of birth","ko":"생년월일"},{"en":"postcode","ko":"우편번호"},{"en":"address","ko":"주소"},{"en":"mobile","ko":"휴대폰 번호"},{"en":"landline","ko":"유선전화 번호"},{"en":"email","ko":"이메일"},{"en":"nationality","ko":"국적"},{"en":"occupation","ko":"직업"},{"en":"passport","ko":"여권"},{"en":"visa","ko":"비자"},{"en":"accountant","ko":"회계사"},{"en":"receptionist","ko":"안내원, 접수원"},{"en":"employee","ko":"직원, 피고용인"},{"en":"volunteer","ko":"자원봉사자"},{"en":"secretary","ko":"비서"},{"en":"specialist","ko":"전문가"},{"en":"architect","ko":"건축가"},{"en":"psychologist","ko":"심리학자"},{"en":"profession","ko":"직업, 전문직"},{"en":"interviewee","ko":"면접 지원자"},{"en":"curriculum vitae","ko":"이력서 (CV)"},{"en":"decorator","ko":"인테리어 디자이너"},{"en":"lecturer","ko":"강사"},{"en":"professor","ko":"교수"},{"en":"manager","ko":"관리자"},{"en":"vacancy","ko":"공석, 빈자리"},{"en":"craftsman","ko":"장인"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"precisely","ko":"정확히, 바로"},{"en":"preserve","ko":"보존하다, 보호하다"},{"en":"abide by","ko":"~을 준수하다, 따르다"},{"en":"conflict","ko":"갈등, 충돌 / 충돌하다"},{"en":"authoritative","ko":"권위 있는, 믿을 만한"},{"en":"undo","ko":"되돌리다, 취소하다"},{"en":"primitive","ko":"원시적인, 초기의"},{"en":"fashion","ko":"방식, 패션 / 만들다"},{"en":"sledge","ko":"썰매 / 썰매로 나르다"},{"en":"tree trunk","ko":"나무 줄기, 나무 몸통"},{"en":"lug","ko":"끌다, 힘겹게 나르다"},{"en":"archaeological","ko":"고고학적인"},{"en":"hypothesis","ko":"가설, 추정"},{"en":"basket","ko":"바구니"},{"en":"haul","ko":"끌다, 운반하다 / 운반량"},{"en":"glacier","ko":"빙하"},{"en":"antiquarian","ko":"골동품 연구가, 고대 유물의"},{"en":"unearth","ko":"발굴하다, 파내다"},{"en":"grave","ko":"무덤 / 심각한"},{"en":"consensus","ko":"합의, 의견 일치"},{"en":"scholar","ko":"학자, 연구자"},{"en":"serve","ko":"제공하다, 봉사하다"},{"en":"operate","ko":"운영하다, 작동하다"},{"en":"arrange","ko":"배열하다, 준비하다"},{"en":"assemble","ko":"조립하다, 모으다"},{"en":"proof","ko":"증거, 증명"},{"en":"stood","ko":"서 있었다 (stand의 과거형)"},{"en":"radiocarbon dating","ko":"방사성 탄소 연대 측정"},{"en":"reveal","ko":"드러내다, 밝히다"},{"en":"roughly","ko":"대략, 거칠게"}]},"task1":{"words":[{"en":"drop sharply","ko":"급격히 떨어지다"},{"en":"fall dramatically","ko":"극적으로 하락하다"},{"en":"decline slightly","ko":"소폭 감소하다"},{"en":"dip","ko":"소폭 하락하다 / 잠깐 내려가다"},{"en":"decrease gradually","ko":"서서히 감소하다"}]},"task2":{"topic":"🎓 Education","topicKo":"교육","words":[{"en":"📘  문법책  →  3단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"overwhelmingly","ko":"압도적으로"},{"en":"significantly","ko":"상당히"},{"en":"emotionally","ko":"감정적으로"},{"en":"specifically","ko":"구체적으로"},{"en":"in effect","ko":"사실상"},{"en":"in the long run","ko":"장기적으로"},{"en":"it is undeniable that","ko":"부정할 수 없다"},{"en":"function properly","ko":"제대로 기능하다"},{"en":"good grades","ko":"좋은 성적"},{"en":"negative consequences","ko":"부정적인 결과들"},{"en":"obvious indicator","ko":"명확한 지표"},{"en":"curriculum","ko":"교육과정"},{"en":"compulsory education","ko":"의무 교육"},{"en":"academic performance","ko":"학업 성취도"},{"en":"equal access to education","ko":"교육 기회의 평등"},{"en":"vocational training","ko":"직업 교육"},{"en":"higher education","ko":"고등 교육"},{"en":"distance learning","ko":"원격 교육"},{"en":"student-centered learning","ko":"학생 중심 학습"},{"en":"critical thinking","ko":"비판적 사고"},{"en":"lifelong learning","ko":"평생 학습"},{"en":"educational inequality","ko":"교육 불평등"},{"en":"tuition fees","ko":"등록금"},{"en":"standardized test","ko":"표준화 시험"},{"en":"practical skills","ko":"실용 기술"},{"en":"literacy rate","ko":"문해율"},{"en":"illiterate","ko":"문맹의"},{"en":"scholarship","ko":"장학금"},{"en":"co-educational","ko":"남녀공학의"},{"en":"extracurricular activities","ko":"과외 활동"},{"en":"plagiarism","ko":"표절"},{"en":"rote learning","ko":"암기식 학습"},{"en":"student loan","ko":"학자금 대출"},{"en":"comprehensive education","ko":"종합 교육"},{"en":"gap year","ko":"갭이어"},{"en":"discipline","ko":"규율, 훈육"},{"en":"peer pressure","ko":"또래 압력"}]}},{"day":5,"date":"3/10","weekday":"화","year":2026,"month":3,"dayNum":10,"mock":null,"grammar":{"units":[5],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"freelance","ko":"프리랜서"},{"en":"dentist","ko":"치과의사"},{"en":"physician","ko":"내과의사"},{"en":"pharmacist","ko":"약사"},{"en":"surgeon","ko":"외과의사"},{"en":"nurse","ko":"간호사"},{"en":"carer","ko":"간병인"},{"en":"electrician","ko":"전기기사"},{"en":"plumber","ko":"배관공"},{"en":"carpenter","ko":"목수"},{"en":"instructor","ko":"강사, 교관"},{"en":"waiter / waitress","ko":"웨이터 / 웨이트리스"},{"en":"chef","ko":"요리사"},{"en":"social worker","ko":"사회복지사"},{"en":"engineer","ko":"엔지니어"},{"en":"accommodation","ko":"숙소, 숙박시설"},{"en":"terraced house","ko":"연립주택"},{"en":"cottage","ko":"시골집, 오두막"},{"en":"apartment","ko":"아파트 (미국식)"},{"en":"flat","ko":"아파트 (영국식)"},{"en":"hostel","ko":"호스텔"},{"en":"dormitory","ko":"기숙사"},{"en":"floor","ko":"층"},{"en":"block","ko":"동, 구역"},{"en":"building","ko":"건물"},{"en":"balcony","ko":"발코니"},{"en":"roof","ko":"지붕"},{"en":"swimming pool","ko":"수영장"},{"en":"kitchen","ko":"주방"},{"en":"bathroom","ko":"욕실"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"reposition","ko":"재배치하다, 위치를 바꾸다"},{"en":"criticism","ko":"비판, 비평"},{"en":"astronomer","ko":"천문학자"},{"en":"predict","ko":"예측하다, 예언하다"},{"en":"critics","ko":"비평가들, 비판자들"},{"en":"see","ko":"겪다, 경험하다"},{"en":"capability","ko":"능력, 역량"},{"en":"principle","ko":"원칙, 원리"},{"en":"deciding","ko":"결정하는, 결정적인"},{"en":"reliably","ko":"신뢰할 수 있게, 안정적으로"},{"en":"ourselves","ko":"우리 자신"},{"en":"ethically","ko":"윤리적으로"},{"en":"superior","ko":"우월한, 상위의 / 상사"},{"en":"oppose","ko":"반대하다, 대항하다"},{"en":"abuse","ko":"남용하다, 학대하다 / 학대, 남용"},{"en":"shortcoming","ko":"단점, 결점"},{"en":"tribal","ko":"부족의, 종족의"},{"en":"tribal creatures","ko":"집단 동물"},{"en":"conflict","ko":"갈등"},{"en":"indirectly","ko":"직간접적으로"},{"en":"behave","ko":"행동하다, 처신하다"},{"en":"badly","ko":"나쁘게, 심하게"},{"en":"ethical","ko":"윤리적인, 도덕적인"},{"en":"cooperative","ko":"협력적인, 협동의"},{"en":"spirit","ko":"정신, 영혼 / 의지, 기개"},{"en":"willingness","ko":"기꺼이 하려는 마음, 의지"},{"en":"self-interest","ko":"사리사욕, 자기 이익"},{"en":"practitioner","ko":"실무자, 전문가"},{"en":"deprive","ko":"박탈하다, 빼앗다"},{"en":"authority","ko":"권위, 권한 / 당국"}]},"task1":{"words":[{"en":"slip","ko":"서서히 떨어지다 / 미끄러지다"},{"en":"tumble","ko":"폭락하다 / 급격히 떨어지다"},{"en":"ease","ko":"완만히 하락하다 / 완화되다"},{"en":"tail off","ko":"점점 줄어들다 / 서서히 감소하다"},{"en":"bottom out","ko":"바닥을 치다 / 최저점에 달하다"}]},"task2":{"topic":"🎓 Education","topicKo":"교육","words":[{"en":"graduate","ko":"졸업하다 / 졸업생"},{"en":"📘  문법책  →  4단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"vehicle","ko":"차량"},{"en":"congestion","ko":"혼잡"},{"en":"atmosphere","ko":"대기"},{"en":"transportation","ko":"운송"},{"en":"revenue","ko":"수익"},{"en":"vegetation","ko":"식물"},{"en":"landscape","ko":"경관"},{"en":"fee","ko":"요금"},{"en":"motorist","ko":"운전자"},{"en":"planet","ko":"지구, 행성"},{"en":"protection","ko":"보호"},{"en":"rubbish","ko":"쓰레기"},{"en":"recycling","ko":"재활용"},{"en":"damage","ko":"피해"},{"en":"loss","ko":"손실"},{"en":"responsibility","ko":"책임"},{"en":"nature","ko":"자연"},{"en":"energy source","ko":"에너지원"},{"en":"destruction","ko":"파괴"},{"en":"energy production","ko":"에너지 생산"},{"en":"electricity bills","ko":"전기 요금"},{"en":"hydroelectric power","ko":"수력 전기"},{"en":"reliance","ko":"의존"},{"en":"power plant","ko":"발전소"},{"en":"growth","ko":"성장"},{"en":"cost","ko":"비용"},{"en":"fund","ko":"자금 / 자금을 지원하다"},{"en":"burden","ko":"부담 / 부담을 주다"},{"en":"increase","ko":"증가 / 증가하다"},{"en":"decrease","ko":"감소 / 감소하다"},{"en":"drive","ko":"운전하다"},{"en":"charge","ko":"요금을 부과하다"},{"en":"contribute","ko":"기여하다"},{"en":"📘  문법책  →  5단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"impose","ko":"부과하다"},{"en":"reduce","ko":"줄이다"}]}},{"day":6,"date":"3/11","weekday":"수","year":2026,"month":3,"dayNum":11,"mock":null,"grammar":{"units":[6],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"bedroom","ko":"침실"},{"en":"living room","ko":"거실"},{"en":"dining room","ko":"식당"},{"en":"gymnasium / gym","ko":"체육관"},{"en":"cafeteria","ko":"구내식당"},{"en":"storage room","ko":"창고"},{"en":"theatre","ko":"극장"},{"en":"lounge","ko":"라운지, 휴게실"},{"en":"reception","ko":"안내 데스크"},{"en":"landlord","ko":"집주인 (남)"},{"en":"landlady","ko":"집주인 (여)"},{"en":"tenant","ko":"세입자"},{"en":"lease","ko":"임대 계약"},{"en":"rental","ko":"임대; 임대료"},{"en":"utilities","ko":"공과금"},{"en":"renovation","ko":"리노베이션, 수리"},{"en":"maintenance","ko":"유지·보수"},{"en":"reservation","ko":"예약 (미국식)"},{"en":"booking","ko":"예약 (영국식)"},{"en":"available","ko":"이용 가능한"},{"en":"confirmation","ko":"확인, 확정"},{"en":"deposit","ko":"보증금, 예치금"},{"en":"refund","ko":"환불"},{"en":"reference number","ko":"예약 번호, 참조 번호"},{"en":"enquiry","ko":"문의"},{"en":"register","ko":"등록하다"},{"en":"application","ko":"신청, 지원서"},{"en":"check-in","ko":"체크인"},{"en":"check-out","ko":"체크아웃"},{"en":"cancellation","ko":"취소"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"raw materials","ko":"원자재, 원료"},{"en":"byproduct","ko":"부산물, 부작용"},{"en":"power plant","ko":"발전소"},{"en":"indication","ko":"징후, 표시, 암시"},{"en":"ingredient","ko":"성분, 재료"},{"en":"abundance","ko":"풍부함, 다량"},{"en":"alternative","ko":"대안, 대안적인"},{"en":"architect","ko":"건축가, 설계자"},{"en":"drive A to B","ko":"A를 B로 이끌다, 몰아가다"},{"en":"atmosphere","ko":"대기, 분위기"},{"en":"prone","ko":"~하기 쉬운, ~하는 경향이 있는"},{"en":"absorb","ko":"흡수하다, 받아들이다"},{"en":"susceptible","ko":"영향받기 쉬운, 취약한"},{"en":"glue","ko":"풀, 접착제 / 붙이다"},{"en":"adhesive","ko":"접착제 / 접착성의"},{"en":"in terms of","ko":"~의 관점에서, ~에 있어서"},{"en":"generate","ko":"발생시키다, 만들어내다"},{"en":"fossil fuels","ko":"화석 연료"},{"en":"perspective","ko":"관점, 시각"},{"en":"comparable","ko":"비슷한, 비교할 만한"},{"en":"property","ko":"재산, 부동산 / 특성, 성질"},{"en":"expense","ko":"비용, 지출"},{"en":"factor","ko":"요인, 요소"},{"en":"response","ko":"반응, 응답"},{"en":"rarely","ko":"거의 ~하지 않는, 드물게"},{"en":"cost-effective","ko":"비용 효율적인"},{"en":"conventional","ko":"전통적인, 관습적인"},{"en":"face","ko":"직면하다 / 얼굴, 표면"},{"en":"shortage","ko":"부족, 결핍"},{"en":"resistance","ko":"저항, 내성"}]},"task1":{"words":[{"en":"remain stable","ko":"안정세를 유지하다"},{"en":"level off","ko":"안정되다 / 수평을 이루다"},{"en":"plateau","ko":"정체되다 / 고원, 안정기"},{"en":"fluctuate","ko":"변동하다 / 오르내리다"},{"en":"hover around","ko":"~주변에서 맴돌다 / ~수준을 유지하다"}]},"task2":{"topic":"🌍 Environment","topicKo":"환경","words":[{"en":"protect","ko":"보호하다"},{"en":"enforce","ko":"시행하다"},{"en":"introduce","ko":"도입하다"},{"en":"utilize","ko":"활용하다"},{"en":"alleviate","ko":"완화하다"},{"en":"maintain","ko":"유지하다"},{"en":"ignore","ko":"무시하다"},{"en":"dispose","ko":"처분하다"},{"en":"pollute","ko":"오염시키다"},{"en":"expose","ko":"노출시키다"},{"en":"deter","ko":"억제하다"},{"en":"ensure","ko":"보장하다"},{"en":"decompose","ko":"분해되다"},{"en":"disregard","ko":"무시하다"},{"en":"solve","ko":"해결하다"},{"en":"cause","ko":"야기하다"},{"en":"address","ko":"해결하다"},{"en":"regulate","ko":"규제하다"},{"en":"produce","ko":"생산하다"},{"en":"develop","ko":"개발하다"},{"en":"boost","ko":"증대시키다"},{"en":"raise","ko":"인상하다"},{"en":"represent","ko":"나타내다"},{"en":"alternative","ko":"대안의 / 대안"},{"en":"environmental","ko":"환경적인"},{"en":"stringent","ko":"엄격한"},{"en":"long-term","ko":"장기적인"},{"en":"industrial","ko":"산업의"},{"en":"additional","ko":"추가적인"},{"en":"clean","ko":"청정한"},{"en":"day-to-day","ko":"일상적인"},{"en":"📘  문법책  →  6단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"properly","ko":"적절하게"},{"en":"unfortunately","ko":"불행히도"},{"en":"annually","ko":"매년"},{"en":"considerably","ko":"상당히"},{"en":"currently","ko":"현재"},{"en":"large amounts","ko":"대량으로"},{"en":"near future","ko":"가까운 미래"}]}},{"day":7,"date":"3/12","weekday":"목","year":2026,"month":3,"dayNum":12,"mock":null,"grammar":{"units":[7],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"appointment","ko":"예약, 약속"},{"en":"waiting list","ko":"대기자 명단"},{"en":"weekday","ko":"평일 (월~금)"},{"en":"weekend","ko":"주말 (토~일)"},{"en":"daily","ko":"매일"},{"en":"weekly","ko":"매주"},{"en":"monthly","ko":"매월, 월간"},{"en":"annually","ko":"매년, 연간"},{"en":"fortnight","ko":"2주 (14일)"},{"en":"schedule","ko":"일정, 스케줄"},{"en":"midday","ko":"정오"},{"en":"midnight","ko":"자정"},{"en":"decade","ko":"10년"},{"en":"century","ko":"세기, 100년"},{"en":"fee","ko":"요금, 수수료"},{"en":"charge","ko":"요금; 청구하다"},{"en":"discount","ko":"할인"},{"en":"receipt","ko":"영수증"},{"en":"payment","ko":"지불, 납부"},{"en":"cash","ko":"현금"},{"en":"credit card","ko":"신용카드"},{"en":"debit card","ko":"직불카드"},{"en":"invoice","ko":"청구서 (기업 간)"},{"en":"bill","ko":"청구서 (개인)"},{"en":"installment","ko":"할부"},{"en":"surcharge","ko":"추가 요금"},{"en":"membership fee","ko":"회원 요금"},{"en":"annual fee","ko":"연회비"},{"en":"insurance","ko":"보험"},{"en":"damage","ko":"손해, 피해"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"arise","ko":"발생하다, 생기다"},{"en":"publicity","ko":"홍보, 대중의 관심"},{"en":"prototype","ko":"원형, 시제품"},{"en":"automobile","ko":"자동차"},{"en":"improvement","ko":"개선, 향상"},{"en":"deposit","ko":"예금, 보증금 / 퇴적물 / 맡기다"},{"en":"negligible","ko":"무시해도 될 정도의, 사소한"},{"en":"literacy","ko":"문해력, 읽고 쓰는 능력"},{"en":"demand","ko":"수요, 요구 / 요구하다"},{"en":"tentative","ko":"잠정적인, 불확실한"},{"en":"plot","ko":"줄거리, 음모 / 계획하다"},{"en":"summary","ko":"요약, 개요"},{"en":"statement","ko":"진술, 성명"},{"en":"advocate","ko":"지지하다, 옹호하다 / 지지자"},{"en":"moderation","ko":"절제, 중용, 온건"},{"en":"passionate","ko":"열정적인, 열렬한"},{"en":"engagement","ko":"참여, 약속, 관계"},{"en":"disrupt","ko":"방해하다, 혼란을 일으키다"},{"en":"virtue","ko":"덕목, 미덕, 장점"},{"en":"diagnose","ko":"진단하다"},{"en":"attainment","ko":"성취, 달성"},{"en":"comprehensive","ko":"포괄적인, 종합적인"},{"en":"intuitively","ko":"직관적으로"},{"en":"appealing","ko":"매력적인, 흥미로운"},{"en":"stakeholder","ko":"이해관계자"},{"en":"analogy","ko":"유추, 비유"},{"en":"fittest","ko":"가장 적합한, 최강자"},{"en":"frustrating","ko":"좌절스러운, 답답한"},{"en":"enthusiasm","ko":"열정, 열의"},{"en":"wane","ko":"줄어들다, 약해지다"}]},"task1":{"words":[{"en":"stagnate","ko":"정체하다 / 침체되다"},{"en":"hold steady","ko":"안정을 유지하다"},{"en":"stay flat","ko":"변화 없이 유지되다 / 횡보하다"},{"en":"vary little","ko":"거의 변화가 없다"},{"en":"overtake","ko":"추월하다 / 앞지르다"}]},"task2":{"topic":"🌍 Environment","topicKo":"환경","words":[{"en":"positive impact","ko":"긍정적인 영향"},{"en":"climate change","ko":"기후 변화"},{"en":"global warming","ko":"지구 온난화"},{"en":"carbon emissions","ko":"탄소 배출"},{"en":"renewable energy","ko":"재생 에너지"},{"en":"fossil fuels","ko":"화석 연료"},{"en":"environmental degradation","ko":"환경 악화"},{"en":"biodiversity","ko":"생물 다양성"},{"en":"deforestation","ko":"삼림 벌채"},{"en":"sustainable development","ko":"지속 가능한 발전"},{"en":"eco-friendly","ko":"친환경적인"},{"en":"government regulation","ko":"정부 규제"},{"en":"waste management","ko":"폐기물 관리"},{"en":"public awareness","ko":"대중 인식"},{"en":"greenhouse effect","ko":"온실 효과"},{"en":"ecosystem","ko":"생태계"},{"en":"contamination","ko":"오염"},{"en":"habitat","ko":"서식지"},{"en":"drought","ko":"가뭄"},{"en":"pollution","ko":"오염"},{"en":"erosion","ko":"침식"},{"en":"toxic waste","ko":"유해 폐기물"},{"en":"carbon footprint","ko":"탄소 발자국"},{"en":"endangered species","ko":"멸종 위기 종"},{"en":"water conservation","ko":"수자원 보존"},{"en":"net-zero emissions","ko":"탄소 중립"},{"en":"📘  문법책  →  7단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"machinery","ko":"기계"},{"en":"factory","ko":"공장"},{"en":"workplace","ko":"작업장"},{"en":"production","ko":"생산"},{"en":"manufacturing","ko":"제조"},{"en":"profit","ko":"수익"},{"en":"surgery","ko":"수술"},{"en":"procedure","ko":"절차"},{"en":"operation","ko":"작업, 수술"},{"en":"supervision","ko":"감독"},{"en":"surgeon","ko":"외과 의사"},{"en":"legislation","ko":"법률"}]}},{"day":8,"date":"3/13","weekday":"금","year":2026,"month":3,"dayNum":13,"mock":null,"grammar":{"units":[8],"hot":[]},"listening":{"part":"Part 1","words":[{"en":"exchanges","ko":"교환; 환전"},{"en":"money","ko":"돈"},{"en":"budget","ko":"예산"},{"en":"mortgage","ko":"주택담보대출"},{"en":"interest","ko":"이자; 관심"},{"en":"withdraw","ko":"출금하다"},{"en":"currency","ko":"통화, 화폐"},{"en":"transaction","ko":"거래"},{"en":"tip","ko":"팁, 봉사료"},{"en":"litter","ko":"쓰레기; 쓰레기를 버리다"},{"en":"rubbish","ko":"쓰레기 (영국식)"},{"en":"insects","ko":"곤충"},{"en":"butterflies","ko":"나비"},{"en":"island","ko":"섬"},{"en":"wall","ko":"담장, 벽"},{"en":"bay","ko":"만(灣), 해안"},{"en":"stream","ko":"개울, 시냇물"},{"en":"pond","ko":"연못"},{"en":"wetland","ko":"습지"},{"en":"woodland","ko":"숲지대"},{"en":"grassland","ko":"초원"},{"en":"wildlife","ko":"야생동물"},{"en":"habitat","ko":"서식지"},{"en":"species","ko":"종(種)"},{"en":"endangered","ko":"멸종 위기의"},{"en":"conservation","ko":"보전, 보존"},{"en":"pollution","ko":"오염, 공해"},{"en":"deforestation","ko":"삼림 벌채"},{"en":"recycling","ko":"재활용"},{"en":"nature reserve","ko":"자연 보호 구역"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"summit","ko":"정상, 꼭대기 / 정상회담"},{"en":"straggler","ko":"낙오자, 뒤처지는 사람"},{"en":"stroll","ko":"산책하다 / 산책"},{"en":"perhaps","ko":"아마도, 어쩌면"},{"en":"collective","ko":"집단적인, 공동의 / 집단"},{"en":"mediocrity","ko":"평범함, 보통 수준"},{"en":"prevail","ko":"만연하다, 우세하다"},{"en":"pedagogy","ko":"교육학, 교수법"},{"en":"paradigm","ko":"패러다임, 전형적 사례"},{"en":"construct","ko":"구성하다, 건설하다 / 개념, 구조물"},{"en":"emerge","ko":"나타나다, 등장하다"},{"en":"regard","ko":"여기다, 간주하다 / 존중, 관심"},{"en":"aptitude","ko":"적성, 소질"},{"en":"mad","ko":"화난, 미친"},{"en":"assist","ko":"돕다, 지원하다"},{"en":"initial","ko":"초기의, 처음의 / 이니셜"},{"en":"appropriate","ko":"적절한, 알맞은 / 전용하다"},{"en":"despite","ko":"~에도 불구하고"},{"en":"empirical","ko":"경험적인, 실증적인"},{"en":"institute","ko":"기관, 연구소 / 설립하다"},{"en":"assign","ko":"할당하다, 배정하다"},{"en":"socioeconomic","ko":"사회경제적인"},{"en":"represent","ko":"나타내다, 대표하다"},{"en":"divide","ko":"나누다, 분리하다 / 분열"},{"en":"pupil","ko":"학생, 눈동자"},{"en":"operate","ko":"운영하다, 작동하다"},{"en":"structure","ko":"구조, 체계 / 구성하다"},{"en":"master","ko":"주인, 달인 / 숙달하다"},{"en":"zeal","ko":"열정, 열의"},{"en":"interaction","ko":"상호작용, 교류"}]},"task1":{"words":[{"en":"surpass","ko":"능가하다 / 뛰어넘다"},{"en":"catch up with","ko":"~을 따라잡다"},{"en":"narrow the gap","ko":"격차를 좁히다"},{"en":"widen the gap","ko":"격차를 벌리다"},{"en":"lead","ko":"선두를 달리다 / 이끌다"}]},"task2":{"topic":"💻 Technology","topicKo":"기술","words":[{"en":"destination","ko":"목적지"},{"en":"research","ko":"연구"},{"en":"frequency","ko":"빈도"},{"en":"distance","ko":"거리"},{"en":"sensitive data","ko":"민감한 데이터"},{"en":"personal details","ko":"개인 정보"},{"en":"statistic","ko":"통계"},{"en":"harassment","ko":"괴롭힘"},{"en":"prevalence","ko":"만연함"},{"en":"counseling session","ko":"상담 세션"},{"en":"generate","ko":"창출하다"},{"en":"occupy","ko":"차지하다"},{"en":"replace","ko":"대체하다"},{"en":"perform","ko":"수행하다"},{"en":"monitor","ko":"모니터하다"},{"en":"collect","ko":"수집하다"},{"en":"blur","ko":"흐리게 하다"},{"en":"encroach","ko":"침해하다"},{"en":"suffer","ko":"고통받다"},{"en":"oversee","ko":"감독하다"},{"en":"restrict","ko":"제한하다"},{"en":"educate","ko":"교육하다"},{"en":"treat","ko":"다루다"},{"en":"resolve","ko":"해결하다"},{"en":"automated","ko":"자동화된"},{"en":"essential","ko":"필수적인"},{"en":"surgical","ko":"외과의"},{"en":"📘  문법책  →  8단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"redundant","ko":"불필요한"},{"en":"professional","ko":"전문적인"},{"en":"secure","ko":"안전한"},{"en":"commonplace","ko":"흔한"},{"en":"well-mannered","ko":"예의 바른"},{"en":"proper","ko":"적절한"},{"en":"physically","ko":"물리적으로"},{"en":"widely","ko":"널리"},{"en":"continuously","ko":"지속적으로"},{"en":"efficiently","ko":"효율적으로"}]}},{"day":9,"date":"3/14","weekday":"토","year":2026,"month":3,"dayNum":14,"mock":null,"grammar":{"units":[9],"hot":[]},"listening":{"part":"Part 1+4","words":[{"en":"outdoor","ko":"야외의"},{"en":"trail","ko":"산책로, 오솔길"},{"en":"compass","ko":"나침반"},{"en":"boots","ko":"장화, 워터스포츠 부츠"},{"en":"wetsuit","ko":"잠수복"},{"en":"surfboard","ko":"서핑보드"},{"en":"beginners","ko":"초보자들"},{"en":"equipment","ko":"장비"},{"en":"helmet","ko":"헬멧"},{"en":"goggles","ko":"보호 안경"},{"en":"session","ko":"수업, 시간"},{"en":"court","ko":"코트 (테니스 등)"},{"en":"pitch","ko":"경기장 (축구 등)"},{"en":"stadium","ko":"경기장"},{"en":"tournament","ko":"토너먼트, 대회"},{"en":"championship","ko":"선수권 대회"},{"en":"recreation","ko":"오락, 여가"},{"en":"leisure","ko":"여가, 레저"},{"en":"hiking","ko":"하이킹"},{"en":"cycling","ko":"자전거 타기"},{"en":"climbing","ko":"등반"},{"en":"surfing","ko":"서핑"},{"en":"jogging","ko":"조깅"},{"en":"swimming","ko":"수영"},{"en":"instrument","ko":"악기; 도구"},{"en":"ear","ko":"귀; 청음 능력"},{"en":"clapping","ko":"박수 치기"},{"en":"recording","ko":"녹음, 녹화"},{"en":"guitar","ko":"기타"},{"en":"violin","ko":"바이올린"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"rewarding","ko":"보람 있는, 가치 있는"},{"en":"acquire","ko":"습득하다, 얻다"},{"en":"constructivist","ko":"구성주의적인 / 구성주의자"},{"en":"peer","ko":"동료, 또래 / 응시하다"},{"en":"flourish","ko":"번성하다, 번창하다"},{"en":"reluctant","ko":"꺼리는, 마지못한"},{"en":"knowledgeable","ko":"박식한, 아는 것이 많은"},{"en":"acquire","ko":"습득하다, 얻다"},{"en":"consideration","ko":"고려, 사려 / 배려"},{"en":"install","ko":"설치하다, 취임시키다"},{"en":"installation","ko":"설치, 시설"},{"en":"requirement","ko":"요건, 필요조건"},{"en":"combination","ko":"결합, 조합"},{"en":"initiative","ko":"주도권, 계획 / 주도적인"},{"en":"integrate","ko":"통합하다, 합치다"},{"en":"drainage","ko":"배수, 배수 시스템"},{"en":"mitigate","ko":"완화하다, 줄이다"},{"en":"tackle","ko":"다루다, 해결하다 / 태클"},{"en":"recommend","ko":"추천하다, 권고하다"},{"en":"prescribe","ko":"처방하다, 규정하다"},{"en":"dealing","ko":"거래, 처리 / 다루기"},{"en":"cope","ko":"대처하다, 극복하다"},{"en":"obesity","ko":"비만"},{"en":"availability","ko":"이용 가능성, 유용성"},{"en":"sustainable","ko":"지속 가능한"},{"en":"solar panel","ko":"태양광 패널"},{"en":"wild","ko":"야생의, 거친 / 야생"},{"en":"nature","ko":"자연, 본성"},{"en":"landscape","ko":"풍경, 경관 / 조경하다"},{"en":"innate","ko":"타고난, 선천적인"}]},"task1":{"words":[{"en":"trail","ko":"뒤처지다 / 추적하다"},{"en":"rank first / last","ko":"1위 / 꼴찌를 차지하다"},{"en":"stood at","ko":"~에 달했다 / ~을 기록했다"},{"en":"reached","ko":"~에 도달했다 / ~을 기록했다"},{"en":"accounted for","ko":"~을 차지했다 / ~을 설명했다"}]},"task2":{"topic":"💻 Technology","topicKo":"기술","words":[{"en":"continually","ko":"지속적으로"},{"en":"on-board computer","ko":"탑재된 컴퓨터"},{"en":"road conditions","ko":"도로 상태"},{"en":"hurtful messages","ko":"상처 주는 메시지"},{"en":"technological advancement","ko":"기술 발전"},{"en":"artificial intelligence (AI)","ko":"인공지능"},{"en":"automation","ko":"자동화"},{"en":"digital communication","ko":"디지털 소통"},{"en":"social media platforms","ko":"소셜미디어 플랫폼"},{"en":"data privacy","ko":"데이터 프라이버시"},{"en":"cybersecurity","ko":"사이버 보안"},{"en":"screen time","ko":"화면 사용 시간"},{"en":"online dependency","ko":"온라인 의존"},{"en":"remote working","ko":"원격 근무"},{"en":"innovation","ko":"혁신"},{"en":"efficiency","ko":"효율성"},{"en":"digital divide","ko":"디지털 격차"},{"en":"cloud computing","ko":"클라우드 컴퓨팅"},{"en":"machine learning","ko":"머신러닝"},{"en":"Internet of Things (IoT)","ko":"사물인터넷"},{"en":"virtual reality (VR)","ko":"가상현실"},{"en":"cyberbullying","ko":"사이버 괴롭힘"},{"en":"data breach","ko":"데이터 침해"},{"en":"big data","ko":"빅 데이터"},{"en":"surveillance","ko":"감시"},{"en":"obsolete","ko":"구식의"},{"en":"overreliance","ko":"과도한 의존"},{"en":"disruptive technology","ko":"파괴적 기술"},{"en":"algorithm","ko":"알고리즘"},{"en":"📘  문법책  →  9단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"amount","ko":"양"},{"en":"spending","ko":"지출"},{"en":"preparation","ko":"준비"},{"en":"treatment","ko":"치료"},{"en":"loan","ko":"대출"},{"en":"emergency","ko":"비상사태"},{"en":"expenditure","ko":"지출"},{"en":"hobby","ko":"취미"},{"en":"tension","ko":"긴장"}]}},{"day":10,"date":"3/15","weekday":"일","year":2026,"month":3,"dayNum":15,"mock":null,"grammar":{"units":[10],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"piano","ko":"피아노"},{"en":"drums","ko":"드럼"},{"en":"orchestra","ko":"오케스트라"},{"en":"conductor","ko":"지휘자"},{"en":"concert","ko":"콘서트"},{"en":"rehearsal","ko":"리허설, 연습"},{"en":"performance","ko":"공연"},{"en":"exhibition","ko":"전시회"},{"en":"gallery","ko":"갤러리, 화랑"},{"en":"photography","ko":"사진 촬영"},{"en":"painting","ko":"그림 그리기"},{"en":"pottery","ko":"도예"},{"en":"sculpture","ko":"조각"},{"en":"festival","ko":"축제"},{"en":"carnival","ko":"카니발"},{"en":"ballet","ko":"발레"},{"en":"opera","ko":"오페라"},{"en":"audience","ko":"관객"},{"en":"fridge","ko":"냉장고 (구어체)"},{"en":"shirts","ko":"셔츠"},{"en":"windows","ko":"창문"},{"en":"dust","ko":"먼지; 먼지를 털다"},{"en":"vacuum cleaner","ko":"진공청소기"},{"en":"mop","ko":"대걸레"},{"en":"broom","ko":"빗자루"},{"en":"detergent","ko":"세제"},{"en":"bleach","ko":"표백제"},{"en":"review","ko":"후기, 리뷰"},{"en":"training","ko":"교육, 훈련"},{"en":"housework","ko":"집안일"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"supplant","ko":"대체하다, 밀어내다"},{"en":"author","ko":"저자, 작가 / 저술하다"},{"en":"capability","ko":"능력, 역량"},{"en":"incorrectly","ko":"잘못되게, 부정확하게"},{"en":"interpret","ko":"해석하다, 통역하다"},{"en":"misapply","ko":"잘못 적용하다, 오용하다"},{"en":"apply","ko":"적용하다, 신청하다"},{"en":"promote","ko":"촉진하다, 홍보하다"},{"en":"intervention","ko":"개입, 중재"},{"en":"subtle","ko":"미묘한, subtle한"},{"en":"maximise","ko":"극대화하다, 최대화하다"},{"en":"handle","ko":"다루다, 처리하다 / 손잡이"},{"en":"admirable","ko":"존경할 만한, 훌륭한"},{"en":"deserve","ko":"~을 받을 자격이 있다"},{"en":"credit","ko":"공로, 신용 / 인정하다"},{"en":"adapt","ko":"적응하다, 개조하다"},{"en":"accordingly","ko":"따라서, 그에 맞게"},{"en":"continent","ko":"대륙"},{"en":"continental drift","ko":"대륙 이동설"},{"en":"defend","ko":"방어하다, 옹호하다"},{"en":"publication","ko":"출판, 발행 / 출판물"},{"en":"geology","ko":"지질학"},{"en":"geophysics","ko":"지구물리학"},{"en":"paleontology","ko":"고생물학"},{"en":"climatology","ko":"기후학"},{"en":"meteorologist","ko":"기상학자"},{"en":"tectonic","ko":"지각의, 구조적인"},{"en":"respect","ko":"존중, 경의 / 존중하다"},{"en":"proposal","ko":"제안, 제의"},{"en":"biographer","ko":"전기 작가"}]},"task1":{"words":[{"en":"was recorded at","ko":"~로 기록되었다"},{"en":"peaked at","ko":"~에서 최고점을 기록했다"},{"en":"bottomed out at","ko":"~에서 최저점을 기록했다"},{"en":"approximately","ko":"대략, 약"},{"en":"roughly","ko":"대략, 약"}]},"task2":{"topic":"🏥 Health","topicKo":"건강","words":[{"en":"cycling","ko":"자전거 타기"},{"en":"positive energy","ko":"긍정적인 에너지"},{"en":"training","ko":"훈련"},{"en":"fitness level","ko":"체력 수준"},{"en":"reputation","ko":"명성"},{"en":"champion","ko":"챔피언"},{"en":"coverage","ko":"보도"},{"en":"gold medal","ko":"금메달"},{"en":"sponsor","ko":"후원하다 / 후원자"},{"en":"spend","ko":"소비하다"},{"en":"reveal","ko":"드러내다"},{"en":"revitalize","ko":"활력을 되찾게 하다"},{"en":"afford","ko":"감당하다"},{"en":"regret","ko":"후회하다"},{"en":"prioritize","ko":"우선시하다"},{"en":"solve","ko":"해결하다"},{"en":"contribute","ko":"기여하다"},{"en":"cope","ko":"대처하다"},{"en":"generate","ko":"생성하다"},{"en":"allocate","ko":"할당하다"},{"en":"bolster","ko":"강화하다"},{"en":"participate","ko":"참여하다"},{"en":"relieve","ko":"완화하다"},{"en":"subsidize","ko":"보조하다"},{"en":"recent","ko":"최근의"},{"en":"unexpected","ko":"예상치 못한"},{"en":"unfavorable","ko":"불리한"},{"en":"unable","ko":"할 수 없는"},{"en":"competitive","ko":"경쟁적인"},{"en":"📘  문법책  →  10단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"healthy","ko":"건강한"},{"en":"entertaining","ko":"재미있는"},{"en":"successful","ko":"성공적인"},{"en":"justified","ko":"정당화된"},{"en":"warranted","ko":"정당한"},{"en":"particularly","ko":"특히"},{"en":"extremely","ko":"극도로"},{"en":"recently","ko":"최근에"}]}},{"day":11,"date":"3/16","weekday":"월","year":2026,"month":3,"dayNum":16,"mock":null,"grammar":{"units":[11],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"shower","ko":"샤워"},{"en":"memory","ko":"기억; 기억력"},{"en":"lifting","ko":"들어올리기"},{"en":"fall","ko":"넘어짐"},{"en":"stress","ko":"스트레스"},{"en":"break","ko":"휴식, 쉬는 시간"},{"en":"prescription","ko":"처방전"},{"en":"symptom","ko":"증상"},{"en":"treatment","ko":"치료"},{"en":"medication","ko":"약, 투약"},{"en":"surgery","ko":"수술; 진료실"},{"en":"allergy","ko":"알레르기"},{"en":"disability","ko":"장애"},{"en":"nursing home","ko":"요양원"},{"en":"welfare","ko":"복지"},{"en":"ambulance","ko":"구급차"},{"en":"supermarket","ko":"슈퍼마켓"},{"en":"vegetarian","ko":"채식주의자(의)"},{"en":"vegan","ko":"완전채식주의자(의)"},{"en":"fish","ko":"생선; 물고기"},{"en":"reviews","ko":"리뷰, 후기"},{"en":"average","ko":"평균; 보통의"},{"en":"menu","ko":"메뉴"},{"en":"appetizer","ko":"에피타이저"},{"en":"dessert","ko":"디저트"},{"en":"buffet","ko":"뷔페"},{"en":"cuisine","ko":"요리, 음식"},{"en":"ingredient","ko":"재료, 성분"},{"en":"recipe","ko":"조리법"},{"en":"nutrition","ko":"영양"}]},"reading":{"source":"Cambridge 17-18","words":[{"en":"modest fame","ko":"적당한 명성, 소박한 명성"},{"en":"desirable","ko":"바람직한, 탐나는"},{"en":"urge","ko":"촉구하다, 강력히 권하다 / 충동"},{"en":"retrospectively","ko":"소급하여, 돌이켜 보면"},{"en":"coherent","ko":"일관된, 논리적인"},{"en":"narrative","ko":"이야기, 서술 / 서술적인"},{"en":"fulfil","ko":"이행하다, 성취하다"},{"en":"happenstance","ko":"우연한 사건, 우연의 일치"},{"en":"nutrition","ko":"영양, 영양 섭취"},{"en":"denial","ko":"부정, 거부, 부인"},{"en":"piracy","ko":"해적 행위, 저작권 침해"},{"en":"substantial","ko":"상당한, 실질적인"},{"en":"disruption","ko":"혼란, 방해, 붕괴"},{"en":"commerce","ko":"상업, 무역"},{"en":"divide","ko":"나누다, 분리하다 / 분열"},{"en":"assign","ko":"할당하다, 배정하다"},{"en":"fleet","ko":"함대, 선단 / 빠른"},{"en":"commander","ko":"사령관, 지휘관"},{"en":"eradicate","ko":"근절하다, 박멸하다"},{"en":"resort","ko":"의지하다, 호소하다 / 리조트"},{"en":"against","ko":"~에 반대하여, ~에 맞서"},{"en":"opponent","ko":"반대자, 상대방"},{"en":"state","ko":"국가, 상태 / 진술하다"},{"en":"crew","ko":"승무원, 선원 / 팀"},{"en":"misfit","ko":"부적응자, 어울리지 않는 사람"},{"en":"daredevil","ko":"무모한 사람, 겁 없는 / 무모한"},{"en":"adventure","ko":"모험 / 모험하다"},{"en":"authority","ko":"권위, 권한 / 당국"},{"en":"retaliation","ko":"보복, 앙갚음"},{"en":"grain","ko":"곡물, 낟알 / 결, 입자"}]},"task1":{"words":[{"en":"around","ko":"약, ~쯤"},{"en":"just under","ko":"약간 못 미치는"},{"en":"just over","ko":"약간 넘는"},{"en":"more than double","ko":"두 배 이상"},{"en":"nearly tripled","ko":"거의 세 배가 되었다"}]},"task2":{"topic":"🏥 Health","topicKo":"건강","words":[{"en":"furthermore","ko":"게다가"},{"en":"interestingly","ko":"흥미롭게도"},{"en":"work-related anxiety","ko":"업무 관련 불안"},{"en":"blow off steam","ko":"스트레스를 풀다"},{"en":"high degree of tension","ko":"높은 수준의 긴장감"},{"en":"overall stress levels","ko":"전반적인 스트레스 수준"},{"en":"surgical procedures","ko":"외과 수술 절차"},{"en":"public health","ko":"공중 보건"},{"en":"balanced diet","ko":"균형 잡힌 식단"},{"en":"sedentary lifestyle","ko":"좌식 생활"},{"en":"mental health","ko":"정신 건강"},{"en":"healthcare system","ko":"보건 의료 체계"},{"en":"preventive measures","ko":"예방 조치"},{"en":"obesity rate","ko":"비만율"},{"en":"life expectancy","ko":"기대 수명"},{"en":"medical treatment","ko":"의료 치료"},{"en":"health awareness","ko":"건강 인식"},{"en":"malnutrition","ko":"영양실조"},{"en":"cardiovascular disease","ko":"심혈관 질환"},{"en":"epidemic","ko":"전염병, 유행병"},{"en":"chronic disease","ko":"만성 질환"},{"en":"junk food","ko":"정크 푸드"},{"en":"well-being","ko":"안녕, 웰빙"},{"en":"addiction","ko":"중독"},{"en":"mortality rate","ko":"사망률"},{"en":"metabolism","ko":"신진대사"},{"en":"eating disorder","ko":"섭식 장애"},{"en":"sanitation","ko":"위생 시설"},{"en":"holistic approach","ko":"전인적 접근법"},{"en":"📘  문법책  →  11단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"government","ko":"정부"},{"en":"purpose","ko":"목적"},{"en":"safety","ko":"안전"},{"en":"security","ko":"보안, 안보"},{"en":"privacy","ko":"사생활"},{"en":"violence","ko":"폭력"},{"en":"regulation","ko":"규제"},{"en":"infringement","ko":"침해"},{"en":"priority","ko":"우선순위"}]}},{"day":12,"date":"3/17","weekday":"화","year":2026,"month":3,"dayNum":17,"mock":null,"grammar":{"units":[12],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"calorie","ko":"칼로리"},{"en":"takeaway","ko":"포장 음식 (영국식)"},{"en":"portion","ko":"1인분, 부분"},{"en":"lamp","ko":"조명, 램프"},{"en":"electronic","ko":"전자의"},{"en":"app","ko":"앱, 애플리케이션"},{"en":"furniture","ko":"가구"},{"en":"sofa","ko":"소파"},{"en":"cupboard","ko":"찬장"},{"en":"wardrobe","ko":"옷장"},{"en":"shelf / shelves","ko":"선반"},{"en":"drawer","ko":"서랍"},{"en":"curtain","ko":"커튼"},{"en":"carpet","ko":"카펫"},{"en":"mattress","ko":"매트리스"},{"en":"cushion","ko":"쿠션"},{"en":"appliance","ko":"가전제품"},{"en":"microwave","ko":"전자레인지"},{"en":"refrigerator","ko":"냉장고"},{"en":"washing machine","ko":"세탁기"},{"en":"air conditioner","ko":"에어컨"},{"en":"heater","ko":"난방기"},{"en":"college","ko":"대학교, 전문대"},{"en":"skills","ko":"기술, 능력"},{"en":"freedom","ko":"자유"},{"en":"data","ko":"데이터, 자료"},{"en":"map","ko":"지도"},{"en":"leaders","ko":"지도자, 리더"},{"en":"curriculum","ko":"교육과정"},{"en":"syllabus","ko":"강의계획서"}]},"reading":{"source":"Cambridge 19","words":[{"en":"demand","ko":"수요, 요구 / 요구하다"},{"en":"culprit","ko":"범인, 원인 제공자"},{"en":"ransom","ko":"몸값, 身代金 / 몸값을 내다"},{"en":"embolden","ko":"대담하게 하다, 용기를 주다"},{"en":"prominent","ko":"저명한, 눈에 띄는"},{"en":"dignitary","ko":"고위 인사, 귀빈"},{"en":"official","ko":"공식적인 / 관리, 공무원"},{"en":"means","ko":"방법, 수단"},{"en":"correct","ko":"올바른, 정확한 / 수정하다"},{"en":"facilitate","ko":"용이하게 하다, 촉진하다"},{"en":"facility","ko":"시설, 기관 / 용이함"},{"en":"mass communication","ko":"대중 통신, 매스컴"},{"en":"issue","ko":"발표하다, 공표하다 / 문제, 사안"},{"en":"simplify","ko":"단순화하다, 간소화하다"},{"en":"laudable","ko":"칭찬할 만한, 훌륭한"},{"en":"airwave","ko":"전파, 방송"},{"en":"notification","ko":"알림, 통보, 공지"},{"en":"preemptive","ko":"선제적인, 예방적인"},{"en":"mechanisms","ko":"메커니즘, 기제, 방법"},{"en":"summarize","ko":"요약하다, 정리하다"},{"en":"contrast","ko":"대조, 차이 / 대비하다"},{"en":"describe","ko":"묘사하다, 설명하다"},{"en":"engagement","ko":"참여, 약속, 관계"},{"en":"conflicting","ko":"상충하는, 모순되는"},{"en":"prediction","ko":"예측, 예언"},{"en":"empirical","ko":"경험적인, 실증적인"},{"en":"scepticism","ko":"회의주의, 의구심"},{"en":"perceive","ko":"인식하다, 감지하다"},{"en":"encoding","ko":"부호화, 인코딩"},{"en":"reside","ko":"거주하다, 있다"}]},"task1":{"words":[{"en":"rose by","ko":"~만큼 증가했다"},{"en":"percentage points","ko":"퍼센트 포인트"},{"en":"the highest figure","ko":"최고치"},{"en":"the lowest figure","ko":"최저치"},{"en":"however","ko":"그러나, 하지만"}]},"task2":{"topic":"🏛️ Gov & Society","topicKo":"정부 & 사회","words":[{"en":"intention","ko":"의도"},{"en":"agency","ko":"기관"},{"en":"public institution","ko":"공공 기관"},{"en":"belonging","ko":"소지품"},{"en":"liberty","ko":"자유"},{"en":"measure","ko":"조치"},{"en":"conduct","ko":"수행하다 / 행동"},{"en":"harm","ko":"해치다 / 해"},{"en":"guarantee","ko":"보장하다 / 보장"},{"en":"function","ko":"기능하다 / 기능"},{"en":"support","ko":"지원하다 / 지원"},{"en":"prevent","ko":"방지하다"},{"en":"ensure","ko":"보장하다"},{"en":"observe","ko":"준수하다"},{"en":"justify","ko":"정당화하다"},{"en":"intrude","ko":"침입하다"},{"en":"violate","ko":"위반하다"},{"en":"infringe","ko":"침해하다"},{"en":"trespass","ko":"불법 침입하다"},{"en":"endanger","ko":"위험에 처하게 하다"},{"en":"undergo","ko":"겪다, 받다"},{"en":"enable","ko":"가능하게 하다"},{"en":"assist","ko":"돕다"},{"en":"rescue","ko":"구조하다"},{"en":"📘  문법책  →  12단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"donate","ko":"기부하다"},{"en":"fail","ko":"실패하다"},{"en":"suffer","ko":"고통받다"},{"en":"overstay","ko":"체류 기간을 넘기다"},{"en":"affect","ko":"영향을 미치다"},{"en":"permit","ko":"허용하다"},{"en":"communicate","ko":"의사소통하다"},{"en":"develop","ko":"발달하다"},{"en":"enhance","ko":"향상시키다"},{"en":"interact","ko":"상호작용하다"},{"en":"decide","ko":"결정하다"},{"en":"ultimate","ko":"궁극적인"},{"en":"potential","ko":"잠재적인"},{"en":"intrusive","ko":"침입적인"}]}},{"day":13,"date":"3/18","weekday":"수","year":2026,"month":3,"dayNum":18,"mock":null,"grammar":{"units":[13],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"assignment","ko":"과제"},{"en":"assessment","ko":"평가"},{"en":"semester","ko":"학기"},{"en":"tutor","ko":"튜터, 지도 교수"},{"en":"scholarship","ko":"장학금"},{"en":"enroll","ko":"등록하다"},{"en":"graduate","ko":"졸업하다; 졸업생"},{"en":"degree","ko":"학위"},{"en":"lecture","ko":"강의"},{"en":"laboratory","ko":"실험실"},{"en":"library","ko":"도서관"},{"en":"deadline","ko":"마감 기한"},{"en":"presentation","ko":"발표"},{"en":"alone","ko":"혼자, 독립적으로"},{"en":"hotels","ko":"호텔"},{"en":"resort","ko":"리조트"},{"en":"itinerary","ko":"여행 일정"},{"en":"luggage","ko":"짐, 수하물"},{"en":"souvenir","ko":"기념품"},{"en":"tourist attraction","ko":"관광 명소"},{"en":"aquarium","ko":"수족관"},{"en":"guided tour","ko":"가이드 투어"},{"en":"community","ko":"지역사회"},{"en":"council","ko":"의회, 지방자치단체"},{"en":"charity","ko":"자선단체"},{"en":"donation","ko":"기부"},{"en":"fundraising","ko":"모금 활동"},{"en":"support","ko":"지원, 지지"},{"en":"assistance","ko":"도움, 지원"},{"en":"fuel","ko":"연료"}]},"reading":{"source":"Cambridge 19","words":[{"en":"suggest","ko":"제안하다, 암시하다"},{"en":"utility","ko":"유용성, 실용성 / 공공시설"},{"en":"overcome","ko":"극복하다, 이겨내다"},{"en":"undoubtedly","ko":"의심할 여지 없이, 분명히"},{"en":"arduous","ko":"힘든, 고된"},{"en":"labour","ko":"노동, 노력 / 일하다"},{"en":"textile","ko":"직물, 섬유 / 섬유의"},{"en":"mechanised","ko":"기계화된"},{"en":"once","ko":"한번, 일단 ~하면 / 예전에"},{"en":"metal","ko":"금속 / 금속의"},{"en":"material","ko":"재료, 물질 / 물질적인"},{"en":"enable","ko":"가능하게 하다, 허용하다"},{"en":"demand","ko":"수요, 요구 / 요구하다"},{"en":"sufficient","ko":"충분한, 족한"},{"en":"inadequate","ko":"불충분한, 부적절한"},{"en":"sanitation","ko":"위생, 위생 시설"},{"en":"canal","ko":"운하, 수로"},{"en":"compound","ko":"복합물, 화합물 / 복합적인"},{"en":"strategy","ko":"전략, 방법"},{"en":"account","ko":"설명하다, 차지하다 / 계정, 계좌"},{"en":"attribute","ko":"특성, 속성 / ~의 탓으로 돌리다"},{"en":"excitement","ko":"흥분, 설렘"},{"en":"buzz","ko":"웅웅거리는 소리 / 화제, 소문"},{"en":"symptom","ko":"증상, 징후"},{"en":"severe","ko":"심각한, 가혹한"},{"en":"intensity","ko":"강도, 강렬함"},{"en":"appeal","ko":"매력, 호소 / 호소하다"},{"en":"fascination","ko":"매혹, 매력"},{"en":"determined","ko":"결심한, 단호한"},{"en":"resolute","ko":"단호한, 결연한"}]},"task1":{"words":[{"en":"nevertheless","ko":"그럼에도 불구하고"},{"en":"in contrast","ko":"대조적으로"},{"en":"by contrast","ko":"대조적으로"},{"en":"whereas","ko":"~인 반면에"},{"en":"while","ko":"~인 반면에 / ~하는 동안"}]},"task2":{"topic":"🏛️ Gov & Society","topicKo":"정부 & 사회","words":[{"en":"innocent","ko":"무고한"},{"en":"acceptable","ko":"받아들일 수 있는"},{"en":"medical","ko":"의학적인"},{"en":"capable","ko":"능력 있는"},{"en":"abhorrent","ko":"혐오스러운"},{"en":"aware","ko":"알고 있는"},{"en":"concerned","ko":"걱정하는"},{"en":"frequent","ko":"빈번한"},{"en":"possible","ko":"가능한"},{"en":"useful","ko":"유용한"},{"en":"rapid","ko":"빠른"},{"en":"sufficient","ko":"충분한"},{"en":"elderly","ko":"노인의"},{"en":"available","ko":"이용 가능한"},{"en":"adversely","ko":"부정적으로"},{"en":"rapidly","ko":"빠르게"},{"en":"illegally","ko":"불법적으로"},{"en":"negatively","ko":"부정적으로"},{"en":"eventually","ko":"결국"},{"en":"📘  문법책  →  13단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"throughout","ko":"전역에서, 내내"},{"en":"unfortunately","ko":"불행히도"},{"en":"in this regard","ko":"이 점에서"},{"en":"full capacity","ko":"최대 역량"},{"en":"humanitarian crisis","ko":"인도적 위기"},{"en":"migrant","ko":"이주자"},{"en":"guidance","ko":"지침"},{"en":"region","ko":"지역"},{"en":"tragedy","ko":"비극"},{"en":"earthquake","ko":"지진"},{"en":"disaster","ko":"재난"},{"en":"conflict","ko":"갈등"},{"en":"resource","ko":"자원"},{"en":"citizen","ko":"시민"},{"en":"community","ko":"공동체"},{"en":"population","ko":"인구"},{"en":"birth rate","ko":"출생률"},{"en":"retiree","ko":"은퇴자"},{"en":"livelihood","ko":"생계"}]}},{"day":14,"date":"3/19","weekday":"목","year":2026,"month":3,"dayNum":19,"mock":null,"grammar":{"units":[14],"hot":[14]},"listening":{"part":"Part 4","words":[{"en":"neighbourhood","ko":"이웃, 근처"},{"en":"resident","ko":"주민"},{"en":"local authority","ko":"지방당국"},{"en":"conservation","ko":"보존/보호"},{"en":"flooding","ko":"홍수"},{"en":"agriculture","ko":"농업"},{"en":"fishing","ko":"어업"},{"en":"disease","ko":"질병"},{"en":"competition","ko":"경쟁"},{"en":"maps","ko":"지도"},{"en":"cattle","ko":"가축"},{"en":"factories","ko":"공장"},{"en":"pollution","ko":"오염"},{"en":"habitat","ko":"서식지"},{"en":"ecosystem","ko":"생태계"},{"en":"biodiversity","ko":"생물 다양성"},{"en":"deforestation","ko":"삼림 벌채"},{"en":"reforestation","ko":"재조림"},{"en":"erosion","ko":"침식"},{"en":"sustainable","ko":"지속 가능한"},{"en":"renewable","ko":"재생 가능한"},{"en":"carbon emissions","ko":"탄소 배출량"},{"en":"wetland","ko":"습지"},{"en":"mangrove","ko":"맹그로브"},{"en":"invasive species","ko":"외래종"},{"en":"irrigation","ko":"관개"},{"en":"sewage","ko":"하수"},{"en":"vegetation","ko":"식물/초목"},{"en":"fences","ko":"울타리"},{"en":"family","ko":"무리(가족)"}]},"reading":{"source":"Cambridge 19","words":[{"en":"persistent","ko":"끈질긴, 지속적인"},{"en":"intrigues","ko":"음모, 흥미를 자아내다"},{"en":"single","ko":"단일의, 하나의 / 독신의"},{"en":"devoted","ko":"헌신적인, 충실한"},{"en":"unique","ko":"독특한, 유일한"},{"en":"innovative","ko":"혁신적인, 창의적인"},{"en":"original","ko":"독창적인, 원본의 / 원본"},{"en":"intent","ko":"의도, 목적 / 열중한"},{"en":"absorbed","ko":"몰두한, 열중한"},{"en":"setback","ko":"좌절, 차질, 후퇴"},{"en":"rewarding","ko":"보람 있는, 가치 있는"},{"en":"prestigious","ko":"권위 있는, 명망 있는"},{"en":"unexceptional","ko":"평범한, 특별하지 않은"},{"en":"innate","ko":"타고난, 선천적인"},{"en":"appear","ko":"나타나다, ~처럼 보이다"},{"en":"modification","ko":"수정, 변경"},{"en":"dense","ko":"밀집한, 빽빽한"},{"en":"excavation","ko":"발굴, 굴착"},{"en":"cave","ko":"동굴 / 무너지다"},{"en":"reveal","ko":"드러내다, 밝히다"},{"en":"axe","ko":"도끼 / 삭감하다"},{"en":"coincidence","ko":"우연의 일치, 동시 발생"},{"en":"craft","ko":"공예, 기술 / 만들다"},{"en":"unearth","ko":"발굴하다, 파내다"},{"en":"acknowledge","ko":"인정하다, 알아보다"},{"en":"recognise","ko":"인식하다, 인정하다"},{"en":"religious","ko":"종교적인, 신앙심 깊은"},{"en":"historical","ko":"역사적인, 역사상의"},{"en":"archaeological","ko":"고고학적인"},{"en":"community","ko":"지역사회, 공동체"}]},"task1":{"words":[{"en":"although","ko":"~임에도 불구하고"},{"en":"on the other hand","ko":"반면에 / 다른 한편으로는"},{"en":"despite this","ko":"이에도 불구하고"},{"en":"even so","ko":"그렇더라도 / 그럼에도"},{"en":"furthermore","ko":"게다가 / 더욱이"}]},"task2":{"topic":"🏛️ Gov & Society","topicKo":"정부 & 사회","words":[{"en":"budget","ko":"예산"},{"en":"labor","ko":"노동"},{"en":"workforce","ko":"노동력"},{"en":"interaction","ko":"상호작용"},{"en":"supervision","ko":"감독"},{"en":"daily lives","ko":"일상 생활"},{"en":"public policy","ko":"공공 정책"},{"en":"social welfare","ko":"사회 복지"},{"en":"income inequality","ko":"소득 불평등"},{"en":"taxation system","ko":"세금 제도"},{"en":"law enforcement","ko":"법 집행"},{"en":"government funding","ko":"정부 지원금"},{"en":"social responsibility","ko":"사회적 책임"},{"en":"economic growth","ko":"경제 성장"},{"en":"📘  문법책  →  14단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"unemployment rate","ko":"실업률"},{"en":"social stability","ko":"사회 안정"},{"en":"overpopulation","ko":"인구 과잉"},{"en":"urbanisation","ko":"도시화"},{"en":"ageing population","ko":"고령화 사회"},{"en":"poverty","ko":"빈곤"},{"en":"gender equality","ko":"성 평등"},{"en":"social mobility","ko":"사회적 이동성"},{"en":"homelessness","ko":"노숙, 주거 불안"},{"en":"discrimination","ko":"차별"},{"en":"welfare state","ko":"복지국가"},{"en":"social cohesion","ko":"사회적 결속"},{"en":"generation gap","ko":"세대 차이"},{"en":"social exclusion","ko":"사회적 소외"},{"en":"minority group","ko":"소수 집단"},{"en":"civic responsibility","ko":"시민의 의무"},{"en":"empowerment","ko":"권한 부여"},{"en":"consumerism","ko":"소비주의"},{"en":"public expenditure","ko":"공공 지출"},{"en":"fiscal policy","ko":"재정 정책"},{"en":"infrastructure","ko":"인프라"},{"en":"subsidy","ko":"보조금"},{"en":"national debt","ko":"국가 부채"},{"en":"foreign aid","ko":"해외 원조"}]}},{"day":15,"date":"3/20","weekday":"금","year":2026,"month":3,"dayNum":20,"mock":null,"grammar":{"units":[15],"hot":[15]},"listening":{"part":"Part 4","words":[{"en":"helicopters","ko":"헬리콥터"},{"en":"stress","ko":"스트레스"},{"en":"breathing","ko":"호흡"},{"en":"feet","ko":"발"},{"en":"employment","ko":"고용"},{"en":"weapons","ko":"무기"},{"en":"tourism","ko":"관광"},{"en":"feathers","ko":"깃털"},{"en":"evidence","ko":"증거"},{"en":"destinations","ko":"목적지"},{"en":"oceans","ko":"바다"},{"en":"recovery","ko":"회수/회복"},{"en":"atlas","ko":"지도책"},{"en":"rats","ko":"쥐"},{"en":"snakes","ko":"뱀"},{"en":"poison","ko":"독"},{"en":"migration","ko":"이동/이주"},{"en":"hibernation","ko":"동면"},{"en":"predator","ko":"포식자"},{"en":"prey","ko":"먹이"},{"en":"poaching","ko":"밀렵"},{"en":"translocation","ko":"이전/이동"},{"en":"breeding","ko":"번식"},{"en":"whale","ko":"고래"},{"en":"park","ko":"공원"},{"en":"art","ko":"예술"},{"en":"beaches","ko":"해변"},{"en":"ferry","ko":"페리"},{"en":"bikes","ko":"자전거"},{"en":"drones","ko":"드론"}]},"reading":{"source":"Cambridge 19","words":[{"en":"plantation","ko":"농장, 재배지"},{"en":"destroy","ko":"파괴하다, 없애다"},{"en":"biodiversity","ko":"생물 다양성"},{"en":"revenue","ko":"수익, 세입"},{"en":"swamp","ko":"늪, 습지 / 압도하다"},{"en":"float","ko":"떠다니다, 띄우다 / 부유물"},{"en":"log","ko":"통나무 / 기록하다"},{"en":"subsidence","ko":"지반 침하, 가라앉음"},{"en":"coastal","ko":"해안의, 연안의"},{"en":"flood","ko":"홍수 / 범람하다"},{"en":"remainder","ko":"나머지, 잔여"},{"en":"matter","ko":"문제, 물질 / 중요하다"},{"en":"downward","ko":"아래쪽으로, 하향의"},{"en":"toward","ko":"~을 향하여, ~쪽으로"},{"en":"vary","ko":"다양하다, 변화하다"},{"en":"restore","ko":"회복하다, 복원하다"},{"en":"deny","ko":"부정하다, 거부하다"},{"en":"cause","ko":"원인, 이유 / 야기하다"},{"en":"intention","ko":"의도, 목적"},{"en":"recognise","ko":"인식하다, 인정하다"},{"en":"laboratory","ko":"실험실, 연구소"},{"en":"cope","ko":"대처하다, 극복하다"},{"en":"station","ko":"역, 기지 / 배치하다"},{"en":"assist","ko":"돕다, 지원하다"},{"en":"reluctance","ko":"꺼림, 마지못함, 저항감"},{"en":"understandable","ko":"이해할 수 있는, 당연한"},{"en":"barrier","ko":"장벽, 방해물"},{"en":"note","ko":"메모, 주목 / 주목하다"},{"en":"take off","ko":"이륙하다, 벗다, 급성장하다"},{"en":"a range of","ko":"다양한, 여러 가지의"}]},"task1":{"words":[{"en":"moreover","ko":"게다가 / 더불어"},{"en":"in addition","ko":"또한, 게다가"},{"en":"additionally","ko":"추가적으로 / 더불어"},{"en":"at the same time","ko":"동시에 / 한편으로는"},{"en":"likewise","ko":"마찬가지로 / 똑같이"}]},"task2":{"topic":"🏛️ Gov & Society","topicKo":"정부 & 사회","words":[{"en":"tax revenue","ko":"세수"},{"en":"austerity measures","ko":"긴축 정책"},{"en":"privatisation","ko":"민영화"},{"en":"welfare benefits","ko":"복지 혜택"},{"en":"defence spending","ko":"국방비"},{"en":"transparency","ko":"투명성"},{"en":"accountability","ko":"책임성"},{"en":"bureaucracy","ko":"관료주의"},{"en":"📘  문법책  →  15단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"association","ko":"연관"},{"en":"suicide","ko":"자살"},{"en":"mistreatment","ko":"학대"},{"en":"ridicule","ko":"조롱"},{"en":"provision","ko":"규정"},{"en":"issue","ko":"문제"},{"en":"incidence","ko":"발생률"},{"en":"character","ko":"등장인물"},{"en":"consequence","ko":"결과"},{"en":"website","ko":"웹사이트"},{"en":"prison","ko":"감옥"},{"en":"ordeal","ko":"시련"},{"en":"campaign","ko":"캠페인"},{"en":"broadcast","ko":"방송하다"},{"en":"safeguard","ko":"보호하다"},{"en":"victimize","ko":"피해자로 만들다"},{"en":"commit","ko":"저지르다"},{"en":"handle","ko":"다루다"},{"en":"announce","ko":"발표하다"},{"en":"publicize","ko":"공표하다"},{"en":"combat","ko":"싸우다"},{"en":"promote","ko":"촉진하다"},{"en":"ruin","ko":"망치다"},{"en":"convict","ko":"유죄 판결하다"},{"en":"release","ko":"석방하다"},{"en":"portray","ko":"묘사하다"},{"en":"devote","ko":"헌신하다"},{"en":"purchase","ko":"구매하다"},{"en":"inform","ko":"알리다"}]}},{"day":16,"date":"3/21","weekday":"토","year":2026,"month":3,"dayNum":21,"mock":null,"grammar":{"units":[16],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"apartments","ko":"아파트"},{"en":"traffic","ko":"교통"},{"en":"building","ko":"건물"},{"en":"transport","ko":"교통/운송"},{"en":"fuel","ko":"연료"},{"en":"parking","ko":"주차"},{"en":"deliveries","ko":"배달"},{"en":"freight","ko":"화물"},{"en":"barge","ko":"바지선"},{"en":"pedestrian","ko":"보행자"},{"en":"commuter","ko":"통근자"},{"en":"infrastructure","ko":"기반시설"},{"en":"congestion","ko":"교통 체증"},{"en":"reservoir","ko":"저수지"},{"en":"canal","ko":"운하"},{"en":"harbour","ko":"항구"},{"en":"revitalise","ko":"되살리다"},{"en":"golden","ko":"황금빛"},{"en":"nutritious","ko":"영양가 있는"},{"en":"yields","ko":"수확량"},{"en":"diameter","ko":"직경"},{"en":"pipe","ko":"파이프/관"},{"en":"steam","ko":"증기"},{"en":"cloudy","ko":"흐린/탁한"},{"en":"litre","ko":"리터"},{"en":"stone","ko":"돌"},{"en":"food","ko":"식량"},{"en":"sap","ko":"수액"},{"en":"bark","ko":"나무껍질"},{"en":"trunk","ko":"나무 줄기"}]},"reading":{"source":"Cambridge 19","words":[{"en":"immediate","ko":"즉각적인, 가까운"},{"en":"simultaneous","ko":"동시의, 동시에 일어나는"},{"en":"speak over","ko":"말을 가로막다, 겹쳐 말하다"},{"en":"politician","ko":"정치인, 정치가"},{"en":"outsource","ko":"외주를 주다, 아웃소싱하다"},{"en":"open question","ko":"미해결 문제, 열린 질문"},{"en":"conduct","ko":"수행하다, 지휘하다 / 행동, 행위"},{"en":"caterpillar","ko":"애벌레, 모충"},{"en":"consume","ko":"소비하다, 먹다"},{"en":"mammal","ko":"포유류, 포유동물"},{"en":"alter","ko":"바꾸다, 변경하다"},{"en":"way","ko":"방법, 길 / 방식"},{"en":"reproduce","ko":"번식하다, 재현하다"},{"en":"suit","ko":"어울리다, 적합하다 / 정장"},{"en":"lifespan","ko":"수명, 생애"},{"en":"colony","ko":"군집, 식민지"},{"en":"strong","ko":"강한, 강력한"},{"en":"specific","ko":"특정한, 구체적인"},{"en":"occupy","ko":"차지하다, 점령하다"},{"en":"capacity","ko":"용량, 능력, 수용력"},{"en":"continental","ko":"대륙의, 대륙적인"},{"en":"exist","ko":"존재하다, 살아있다"},{"en":"solely","ko":"오직, 단독으로"},{"en":"relatively","ko":"상대적으로, 비교적"},{"en":"unexplored","ko":"미탐험의, 미개척의"},{"en":"particular","ko":"특정한, 특별한"},{"en":"mineral","ko":"광물, 미네랄 / 광물의"},{"en":"coexist","ko":"공존하다"},{"en":"form","ko":"형태, 형식 / 형성하다"},{"en":"biodiversity","ko":"생물 다양성"}]},"task1":{"words":[{"en":"similarly","ko":"비슷하게 / 마찬가지로"},{"en":"from — to —","ko":"~부터 ~까지"},{"en":"between — and —","ko":"~와 ~ 사이에"},{"en":"by —","ko":"~까지 / ~에 의해"},{"en":"until","ko":"~까지 / ~할 때까지"}]},"task2":{"topic":"⚖️ Crime & Punishment","topicKo":"범죄 & 처벌","words":[{"en":"violent","ko":"폭력적인"},{"en":"private","ko":"사적인"},{"en":"short-sighted","ko":"근시안적인"},{"en":"illegal","ko":"불법의"},{"en":"suspicious","ko":"의심스러운"},{"en":"influential","ko":"영향력 있는"},{"en":"📘  문법책  →  16단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"risky","ko":"위험한"},{"en":"dangerous","ko":"위험한"},{"en":"inherently","ko":"본질적으로"},{"en":"freely","ko":"자유롭게"},{"en":"candidly","ko":"솔직하게"},{"en":"furthermore","ko":"더욱이"},{"en":"afterwards","ko":"그 후에"},{"en":"general public","ko":"일반 대중"},{"en":"sex offender","ko":"성범죄자"},{"en":"anti-drug campaign","ko":"마약 반대 캠페인"},{"en":"adverse effects","ko":"부정적인 영향"},{"en":"mistaken belief","ko":"잘못된 믿음"},{"en":"terrible ordeal","ko":"끔찍한 시련"},{"en":"criminal offense","ko":"범죄 행위"},{"en":"juvenile delinquency","ko":"청소년 비행"},{"en":"prison sentence","ko":"징역형"},{"en":"rehabilitation","ko":"재활, 사회 복귀"},{"en":"deterrent effect","ko":"억제 효과"},{"en":"capital punishment","ko":"사형 제도"},{"en":"law-abiding citizens","ko":"법을 준수하는 시민"},{"en":"reoffending rate","ko":"재범률"},{"en":"strict punishment","ko":"엄격한 처벌"},{"en":"offender","ko":"범죄자, 위반자"},{"en":"victim","ko":"피해자"},{"en":"community service","ko":"사회봉사 명령"},{"en":"probation","ko":"집행유예, 보호 관찰"},{"en":"acquit","ko":"무죄 판결하다"},{"en":"judiciary","ko":"사법부"},{"en":"white-collar crime","ko":"화이트칼라 범죄"},{"en":"restorative justice","ko":"회복적 사법"},{"en":"parole","ko":"가석방"},{"en":"criminal record","ko":"전과 기록"}]}},{"day":17,"date":"3/22","weekday":"일","year":2026,"month":3,"dayNum":22,"mock":null,"grammar":{"units":[17],"hot":[17]},"listening":{"part":"Part 4","words":[{"en":"evaporation","ko":"증발"},{"en":"fertiliser","ko":"비료"},{"en":"pesticide","ko":"살충제"},{"en":"harvest","ko":"수확"},{"en":"pollination","ko":"수분(受粉)"},{"en":"canopy","ko":"수관(숲 지붕)"},{"en":"photosynthesis","ko":"광합성"},{"en":"organic","ko":"유기농의"},{"en":"compost","ko":"퇴비"},{"en":"cultivation","ko":"재배"},{"en":"germination","ko":"발아"},{"en":"plantation","ko":"농장/조림지"},{"en":"puzzle","ko":"퍼즐"},{"en":"logic","ko":"논리"},{"en":"confusion","ko":"혼란"},{"en":"meditation","ko":"명상"},{"en":"coins","ko":"동전"},{"en":"tree","ko":"나무"},{"en":"paper","ko":"종이"},{"en":"anxiety","ko":"불안"},{"en":"plot","ko":"줄거리"},{"en":"poverty","ko":"빈곤"},{"en":"poetry","ko":"시"},{"en":"drawings","ko":"그림"},{"en":"furniture","ko":"가구"},{"en":"exile","ko":"망명"},{"en":"revolution","ko":"혁명"},{"en":"labyrinth","ko":"미로"},{"en":"mythology","ko":"신화"},{"en":"manuscript","ko":"필사본"}]},"reading":{"source":"Cambridge 19","words":[{"en":"urge","ko":"촉구하다, 강력히 권하다 / 충동"},{"en":"caution","ko":"주의, 경고 / 경고하다"},{"en":"ramifications","ko":"결과, 파급 효과"},{"en":"draft","ko":"초안, 草稿 / 초안을 작성하다"},{"en":"untapped","ko":"미개발의, 활용되지 않은"},{"en":"sustainable","ko":"지속 가능한"},{"en":"continually","ko":"계속해서, 끊임없이"},{"en":"deplete","ko":"고갈시키다, 소모하다"},{"en":"meet","ko":"충족시키다, 만나다"},{"en":"destructive","ko":"파괴적인, 해로운"},{"en":"assault","ko":"공격, 폭행 / 공격하다"},{"en":"inflict","ko":"가하다, 입히다"},{"en":"extract","ko":"추출하다, 뽑아내다 / 추출물"},{"en":"worthwhile","ko":"가치 있는, 보람 있는"},{"en":"mineral","ko":"광물, 미네랄 / 광물의"},{"en":"marine","ko":"해양의, 바다의 / 해병대원"},{"en":"remark","ko":"언급, 발언 / 말하다"},{"en":"respect","ko":"존중, 경의 / 존중하다"},{"en":"vent","ko":"배출구, 환기구 / 발산하다"},{"en":"yield","ko":"생산하다, 산출하다 / 수확량"},{"en":"ore","ko":"광석, 원광"},{"en":"superior","ko":"우월한, 상위의 / 상사"},{"en":"adapt","ko":"적응하다, 개조하다"},{"en":"convert","ko":"전환하다, 변환하다"},{"en":"machinery","ko":"기계류, 기계 장치"},{"en":"terrestrial","ko":"육지의, 지구의"},{"en":"material","ko":"재료, 물질 / 물질적인"},{"en":"oppose","ko":"반대하다, 대항하다"},{"en":"greedy","ko":"욕심 많은, 탐욕스러운"},{"en":"assumption","ko":"가정, 추정"}]},"task1":{"words":[{"en":"then","ko":"그 후에 / 그다음에"},{"en":"before -ing","ko":"~하기 전에"},{"en":"subsequently","ko":"그 후에 / 이어서"},{"en":"from this point on","ko":"이 시점부터"},{"en":"over the period","ko":"해당 기간 동안"}]},"task2":{"topic":"⚖️ Crime & Punishment","topicKo":"범죄 & 처벌","words":[{"en":"legislation","ko":"법률, 입법"},{"en":"prevention","ko":"예방"},{"en":"📘  문법책  →  17단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"ability","ko":"능력"},{"en":"wage","ko":"임금"},{"en":"degree","ko":"학위"},{"en":"accounting","ko":"회계"},{"en":"array","ko":"배열, 다양함"},{"en":"career","ko":"직업, 경력"},{"en":"majority","ko":"대다수"},{"en":"respondent","ko":"응답자"},{"en":"satisfaction","ko":"만족"},{"en":"wealth","ko":"부"},{"en":"fortune","ko":"재산"},{"en":"misconduct","ko":"부정행위"},{"en":"owner","ko":"소유자"},{"en":"corruption","ko":"부패"},{"en":"breakdown","ko":"붕괴"},{"en":"setting","ko":"설정, 환경"},{"en":"top position","ko":"최고 직위"},{"en":"quota","ko":"할당량"},{"en":"representation","ko":"대표성"},{"en":"management","ko":"관리"},{"en":"option","ko":"선택지"},{"en":"employee","ko":"직원"},{"en":"field","ko":"분야"},{"en":"incidence","ko":"발생률"},{"en":"primary role","ko":"주요 역할"},{"en":"master","ko":"숙달하다"},{"en":"acquire","ko":"습득하다"},{"en":"earn","ko":"벌다"},{"en":"utilize","ko":"활용하다"},{"en":"transform","ko":"변화시키다"},{"en":"accomplish","ko":"성취하다"},{"en":"interact","ko":"상호작용하다"},{"en":"indicate","ko":"나타내다"},{"en":"separate","ko":"분리하다"},{"en":"sacrifice","ko":"희생하다"}]}},{"day":18,"date":"3/23","weekday":"월","year":2026,"month":3,"dayNum":23,"mock":null,"grammar":{"units":[18],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"artefact","ko":"유물"},{"en":"heritage","ko":"문화유산"},{"en":"archaeology","ko":"고고학"},{"en":"sculpture","ko":"조각"},{"en":"renaissance","ko":"르네상스"},{"en":"narrative","ko":"서술"},{"en":"masterpiece","ko":"걸작"},{"en":"mud","ko":"진흙"},{"en":"shape","ko":"형태"},{"en":"moon","ko":"달"},{"en":"neck","ko":"목"},{"en":"nesting","ko":"둥지 틀기"},{"en":"rain","ko":"비"},{"en":"ringing","ko":"가락지 부착"},{"en":"migration","ko":"이동"},{"en":"hibernation","ko":"동면"},{"en":"flock","ko":"무리(새)"},{"en":"predator","ko":"포식자"},{"en":"prey","ko":"먹이"},{"en":"wingspan","ko":"날개폭"},{"en":"talon","ko":"발톱"},{"en":"plumage","ko":"깃털(전체)"},{"en":"nocturnal","ko":"야행성의"},{"en":"migratory","ko":"이동하는"},{"en":"sanctuary","ko":"보호구역"},{"en":"ornithology","ko":"조류학"},{"en":"habitat","ko":"서식지"},{"en":"immune","ko":"면역의"},{"en":"cancer","ko":"암"},{"en":"depression","ko":"우울증"}]},"reading":{"source":"Cambridge 19","words":[{"en":"essentially","ko":"본질적으로, 근본적으로"},{"en":"radical","ko":"급진적인, 근본적인 / 급진주의자"},{"en":"present","ko":"현재의, 참석한 / 제시하다 / 선물"},{"en":"in line with","ko":"~와 일치하여, ~에 맞게"},{"en":"bleak","ko":"암울한, 황량한"},{"en":"ethos","ko":"기풍, 정신, 가치관"},{"en":"prevalent","ko":"만연한, 널리 퍼진"},{"en":"era","ko":"시대, 연대"},{"en":"plentiful","ko":"풍부한, 많은"},{"en":"estimate","ko":"추정하다, 견적하다 / 추정, 견적"},{"en":"density","ko":"밀도, 밀집도"},{"en":"against","ko":"~에 반대하여, ~에 맞서"},{"en":"refer","ko":"언급하다, 참조하다"},{"en":"egalitarianism","ko":"평등주의"},{"en":"preserve","ko":"보존하다, 보호하다"},{"en":"disparity","ko":"불평등, 격차"},{"en":"status","ko":"지위, 상태"},{"en":"disrupt","ko":"방해하다, 혼란을 일으키다"},{"en":"inability","ko":"무능, 할 수 없음"},{"en":"parrots","ko":"앵무새 / 흉내 내다"},{"en":"flightless","ko":"날지 못하는"},{"en":"stare","ko":"응시하다, 빤히 보다"},{"en":"introduce","ko":"소개하다, 도입하다"},{"en":"deplete","ko":"고갈시키다, 소모하다"},{"en":"consist","ko":"구성되다, ~로 이루어지다"},{"en":"definite","ko":"확실한, 명확한"},{"en":"sighting","ko":"목격, 발견"},{"en":"recovery","ko":"회복, 복구"},{"en":"funding","ko":"자금 지원, 재원"},{"en":"supplementary","ko":"보충적인, 추가적인"}]},"task1":{"words":[{"en":"throughout the period","ko":"전체 기간에 걸쳐"},{"en":"throughout","ko":"전체에 걸쳐 / 내내"},{"en":"at the start of","ko":"~의 시작 시점에"},{"en":"at the end of","ko":"~의 끝 시점에"},{"en":"in the first half of","ko":"~의 전반기에"}]},"task2":{"topic":"💼 Work & Economy","topicKo":"직업 & 경제","words":[{"en":"📘  문법책  →  18단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"rank","ko":"순위를 매기다"},{"en":"amass","ko":"축적하다"},{"en":"drive","ko":"추진하다"},{"en":"lead","ko":"이끌다"},{"en":"boost","ko":"증대시키다"},{"en":"create","ko":"창출하다"},{"en":"disrupt","ko":"방해하다"},{"en":"pursue","ko":"추구하다"},{"en":"concentrate","ko":"집중하다"},{"en":"decide","ko":"결정하다"},{"en":"adopt","ko":"채택하다"},{"en":"suit","ko":"적합하다"},{"en":"institute","ko":"도입하다"},{"en":"succeed","ko":"성공하다"},{"en":"remain","ko":"남다"},{"en":"diminish","ko":"감소하다"},{"en":"perceive","ko":"인지하다"},{"en":"prioritize","ko":"우선시하다"},{"en":"shrink","ko":"줄어들다"},{"en":"express","ko":"표현하다"},{"en":"effective","ko":"효과적인"},{"en":"marketable","ko":"시장성이 있는"},{"en":"limited","ko":"제한된"},{"en":"numerous","ko":"많은"},{"en":"multiple","ko":"여러 가지의"},{"en":"critical","ko":"중요한"},{"en":"preferable","ko":"선호되는"},{"en":"beneficial","ko":"유익한"},{"en":"valuable","ko":"귀중한"},{"en":"crucial","ko":"중대한"},{"en":"corporate","ko":"기업의"},{"en":"anti-monopoly","ko":"독점 방지의"},{"en":"rich","ko":"부유한"},{"en":"evident","ko":"명백한"},{"en":"widespread","ko":"광범위한"},{"en":"📘  문법책  →  19단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"qualified","ko":"자격이 있는"}]}},{"day":19,"date":"3/24","weekday":"화","year":2026,"month":3,"dayNum":24,"mock":null,"grammar":{"units":[19],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"solitude","ko":"고독"},{"en":"cardiovascular","ko":"심혈관"},{"en":"loneliness","ko":"외로움"},{"en":"urban","ko":"도시의"},{"en":"diagnosis","ko":"진단"},{"en":"supplement","ko":"보충제"},{"en":"genetics","ko":"유전학"},{"en":"obesity","ko":"비만"},{"en":"insulin","ko":"인슐린"},{"en":"metabolism","ko":"신진대사"},{"en":"diet","ko":"식단"},{"en":"hypothesis","ko":"가설"},{"en":"variable","ko":"변수"},{"en":"observation","ko":"관찰"},{"en":"neurological","ko":"신경학적"},{"en":"hormone","ko":"호르몬"},{"en":"symptom","ko":"증상"},{"en":"cognitive","ko":"인지의"},{"en":"anxiety","ko":"불안"},{"en":"chronic","ko":"만성의"},{"en":"rehabilitation","ko":"재활"},{"en":"digital","ko":"디지털"},{"en":"minority","ko":"소수"},{"en":"software","ko":"소프트웨어"},{"en":"recognition","ko":"인식"},{"en":"endangered","ko":"위기에 처한"},{"en":"translation","ko":"번역"},{"en":"preservation","ko":"보존"},{"en":"dialect","ko":"방언"},{"en":"cursive","ko":"필기체"}]},"reading":{"source":"Cambridge 20","words":[{"en":"restore","ko":"회복하다, 복원하다"},{"en":"accommodate","ko":"수용하다, 적응하다"},{"en":"preservation","ko":"보존, 보호"},{"en":"stakeholder","ko":"이해관계자"},{"en":"reintroducing","ko":"재도입하다, 다시 소개하다"},{"en":"enable","ko":"가능하게 하다, 허용하다"},{"en":"escape","ko":"탈출하다, 피하다 / 탈출"},{"en":"condition","ko":"상태, 조건 / 조건화하다"},{"en":"determined","ko":"결심한, 단호한"},{"en":"determine","ko":"결정하다, 판단하다"},{"en":"vulnerable","ko":"취약한, 상처받기 쉬운"},{"en":"trunk","ko":"나무 줄기 / 트렁크, 코"},{"en":"diameter","ko":"지름, 직경"},{"en":"infect","ko":"감염시키다, 전염시키다"},{"en":"prominent","ko":"저명한, 눈에 띄는"},{"en":"specifying","ko":"명시하다, 구체적으로 말하다"},{"en":"weigh up","ko":"따져보다, 신중히 고려하다"},{"en":"investigate","ko":"조사하다, 수사하다"},{"en":"operate","ko":"운영하다, 작동하다"},{"en":"firefighter","ko":"소방관"},{"en":"hectic","ko":"매우 바쁜, 정신없는"},{"en":"incident","ko":"사건, 사고"},{"en":"present","ko":"현재의 / 제시하다 / 선물"},{"en":"experiment","ko":"실험 / 실험하다"},{"en":"regular","ko":"규칙적인, 정기적인"},{"en":"ideal","ko":"이상적인 / 이상, 이념"},{"en":"subject","ko":"주제, 과목 / 대상 / 종속시키다"},{"en":"objective","ko":"목표, 목적 / 객관적인"},{"en":"methodology","ko":"방법론, 연구 방법"},{"en":"heighten","ko":"높이다, 강화하다"}]},"task1":{"words":[{"en":"in the second half of","ko":"~의 후반기에"},{"en":"compared to the previous month","ko":"전월 대비"},{"en":"from — onwards","ko":"~부터 계속"},{"en":"overall","ko":"전반적으로 / 전체적인"},{"en":"in general","ko":"일반적으로"}]},"task2":{"topic":"💼 Work & Economy","topicKo":"직업 & 경제","words":[{"en":"overlooked","ko":"간과된"},{"en":"empowered","ko":"권한을 부여받은"},{"en":"equal","ko":"평등한"},{"en":"contemporary","ko":"현대의"},{"en":"prominent","ko":"두드러진"},{"en":"permanently","ko":"영구적으로"},{"en":"primarily","ko":"주로"},{"en":"dramatically","ko":"급격하게"},{"en":"solely","ko":"오직"},{"en":"separately","ko":"별도로"},{"en":"wide range","ko":"광범위한"},{"en":"wrongdoing","ko":"잘못된 행위"},{"en":"fledgling","ko":"신생의"},{"en":"job satisfaction","ko":"직업 만족도"},{"en":"work-life balance","ko":"일·생활 균형"},{"en":"minimum wage","ko":"최저 임금"},{"en":"career prospects","ko":"직업 전망"},{"en":"job security","ko":"고용 안정"},{"en":"economic recession","ko":"경기 침체"},{"en":"entrepreneurship","ko":"기업가 정신"},{"en":"financial stability","ko":"재정 안정"},{"en":"productivity","ko":"생산성"},{"en":"outsourcing","ko":"아웃소싱"},{"en":"blue-collar","ko":"육체 노동직의"},{"en":"white-collar","ko":"사무직의"},{"en":"labour market","ko":"노동 시장"},{"en":"gig economy","ko":"단기 계약 경제"},{"en":"gender pay gap","ko":"성별 임금 격차"},{"en":"pension","ko":"연금"},{"en":"redundancy","ko":"정리해고"},{"en":"self-employed","ko":"자영업의"},{"en":"strike","ko":"파업"},{"en":"globalised economy","ko":"세계화된 경제"},{"en":"📘  문법책  →  20단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"farm","ko":"농장"},{"en":"product","ko":"제품"},{"en":"argument","ko":"주장"},{"en":"livelihood","ko":"생계"},{"en":"price","ko":"가격"}]}},{"day":20,"date":"3/25","weekday":"수","year":2026,"month":3,"dayNum":25,"mock":null,"grammar":{"units":[20],"hot":[20]},"listening":{"part":"Part 4","words":[{"en":"dyslexia","ko":"난독증"},{"en":"fluency","ko":"유창성"},{"en":"keyboard","ko":"키보드"},{"en":"cognitive","ko":"인지의"},{"en":"literacy","ko":"문해력"},{"en":"algorithm","ko":"알고리즘"},{"en":"automation","ko":"자동화"},{"en":"artificial intelligence","ko":"인공 지능"},{"en":"database","ko":"데이터베이스"},{"en":"encryption","ko":"암호화"},{"en":"satellite","ko":"위성"},{"en":"simulation","ko":"시뮬레이션"},{"en":"bandwidth","ko":"대역폭"},{"en":"navigation","ko":"항법"},{"en":"interface","ko":"인터페이스"},{"en":"research","ko":"연구"},{"en":"species","ko":"종"},{"en":"programme","ko":"프로그램"},{"en":"posture","ko":"자세"},{"en":"endurance","ko":"지구력"},{"en":"muscles","ko":"근육"},{"en":"injury","ko":"부상"},{"en":"motivation","ko":"동기"},{"en":"curriculum","ko":"교육과정"},{"en":"syllabus","ko":"강의 계획서"},{"en":"assessment","ko":"평가"},{"en":"scholarship","ko":"장학금"},{"en":"laboratory","ko":"실험실"},{"en":"dissertation","ko":"논문"},{"en":"hypothesis","ko":"가설"}]},"reading":{"source":"Cambridge 20","words":[{"en":"indication","ko":"징후, 표시, 암시"},{"en":"external","ko":"외부의, 외적인"},{"en":"neural","ko":"신경의, 신경계의"},{"en":"embrace","ko":"받아들이다, 포용하다 / 포옹"},{"en":"emerge","ko":"나타나다, 등장하다"},{"en":"hyper-vigilant","ko":"과도하게 경계하는"},{"en":"likelihood","ko":"가능성, 개연성"},{"en":"alter","ko":"바꾸다, 변경하다"},{"en":"process","ko":"과정, 절차 / 처리하다"},{"en":"reflect","ko":"반영하다, 되돌아보다"},{"en":"trigger","ko":"유발하다, 촉발하다 / 방아쇠"},{"en":"chance","ko":"기회, 가능성 / 우연의"},{"en":"further","ko":"더 나아가, 추가적인 / 촉진하다"},{"en":"conscientious","ko":"양심적인, 성실한"},{"en":"agent","ko":"대리인, 요원 / 작용제"},{"en":"precaution","ko":"예방 조치, 사전 대비"},{"en":"broad","ko":"넓은, 폭넓은"},{"en":"tail","ko":"꼬리 / 미행하다"},{"en":"whale","ko":"고래"},{"en":"aquatic","ko":"수생의, 물속의"},{"en":"marine","ko":"해양의, 바다의"},{"en":"grasp","ko":"붙잡다, 이해하다 / 이해, 파악"},{"en":"entanglement","ko":"얽힘, 복잡한 상황"},{"en":"consumption","ko":"소비, 섭취"},{"en":"undergo","ko":"겪다, 경험하다"},{"en":"realisation","ko":"인식, 깨달음 / 실현"},{"en":"procrastinate","ko":"미루다, 꾸물거리다"},{"en":"detection","ko":"발견, 감지"},{"en":"chronically","ko":"만성적으로, 지속적으로"},{"en":"loaded","ko":"가득 찬, 부담스러운 / 부유한"}]},"task1":{"words":[{"en":"as a whole","ko":"전체적으로"},{"en":"it is clear that","ko":"~은 분명하다"},{"en":"the most notable feature is","ko":"가장 주목할 만한 특징은 ~이다"},{"en":"with the exception of","ko":"~을 제외하고"},{"en":"notably","ko":"특히, 주목할 만하게"}]},"task2":{"topic":"🌐 Globalisation","topicKo":"세계화","words":[{"en":"variety","ko":"다양성"},{"en":"supply","ko":"공급"},{"en":"fruit","ko":"과일"},{"en":"agriculture","ko":"농업"},{"en":"industry","ko":"산업"},{"en":"equipment","ko":"장비"},{"en":"visitor","ko":"방문자"},{"en":"conservation","ko":"보존"},{"en":"artifact","ko":"유물"},{"en":"palace","ko":"궁전"},{"en":"history","ko":"역사"},{"en":"preservation","ko":"보존"},{"en":"consume","ko":"소비하다"},{"en":"compete","ko":"경쟁하다"},{"en":"match","ko":"맞추다"},{"en":"prefer","ko":"선호하다"},{"en":"occur","ko":"발생하다"},{"en":"behave","ko":"행동하다"},{"en":"avoid","ko":"피하다"},{"en":"appreciate","ko":"감사하다"},{"en":"inform","ko":"알리다"},{"en":"instill","ko":"주입하다"},{"en":"persuasive","ko":"설득력 있는"},{"en":"domestic","ko":"국내의"},{"en":"agricultural","ko":"농업의"},{"en":"exotic","ko":"이국적인"},{"en":"cheap","ko":"저렴한"},{"en":"negative","ko":"부정적인"},{"en":"competitive","ko":"경쟁력 있는"},{"en":"undeniable","ko":"부정할 수 없는"},{"en":"low-priced","ko":"저가의"},{"en":"expensive","ko":"비싼"},{"en":"responsible","ko":"책임이 있는"},{"en":"ancient","ko":"고대의"},{"en":"📘  문법책  →  21단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"irreparable","ko":"복구할 수 없는"},{"en":"respectful","ko":"존경하는"},{"en":"informed","ko":"정보를 제공받은"},{"en":"permitted","ko":"허용된"}]}},{"day":21,"date":"3/26","weekday":"목","year":2026,"month":3,"dayNum":26,"mock":null,"grammar":{"units":[21],"hot":[21]},"listening":{"part":"Part 4","words":[{"en":"methodology","ko":"방법론"},{"en":"peer review","ko":"동료 심사"},{"en":"bibliography","ko":"참고문헌"},{"en":"seminar","ko":"세미나"},{"en":"tutorial","ko":"개인지도"},{"en":"faculty","ko":"교수진"},{"en":"module","ko":"모듈/강좌"},{"en":"undergraduate","ko":"학부생"},{"en":"wellbeing","ko":"복지/건강"},{"en":"carer","ko":"돌봄인"},{"en":"disability","ko":"장애"},{"en":"shopping","ko":"쇼핑"},{"en":"housework","ko":"집안일"},{"en":"assessment","ko":"평가"},{"en":"stress","ko":"스트레스"},{"en":"breathing","ko":"호흡"},{"en":"vaccination","ko":"예방접종"},{"en":"epidemic","ko":"유행병"},{"en":"pandemic","ko":"세계적 유행병"},{"en":"surgery","ko":"수술"},{"en":"prescription","ko":"처방전"},{"en":"pharmacist","ko":"약사"},{"en":"allergy","ko":"알레르기"},{"en":"symptom","ko":"증상"},{"en":"treatment","ko":"치료"},{"en":"dementia","ko":"치매"},{"en":"chronic","ko":"만성의"},{"en":"nutrition","ko":"영양"},{"en":"ambulance","ko":"구급차"},{"en":"hygiene","ko":"위생"}]},"reading":{"source":"Cambridge 20","words":[{"en":"emotionally","ko":"감정적으로, 정서적으로"},{"en":"prime","ko":"주요한, 최고의 / 준비시키다"},{"en":"candidate","ko":"후보자, 지원자"},{"en":"stability","ko":"안정성, 안정"},{"en":"admit","ko":"인정하다, 입장을 허가하다"},{"en":"critical","ko":"중요한, 비판적인"},{"en":"fend off","ko":"막아내다, 피하다"},{"en":"distraction","ko":"집중을 방해하는 것, 주의 산만"},{"en":"get on with","ko":"~을 계속하다, 잘 지내다"},{"en":"occupy","ko":"차지하다, 점령하다"},{"en":"modify","ko":"수정하다, 변경하다"},{"en":"umpire","ko":"심판 / 심판을 보다"},{"en":"feed","ko":"먹이다, 공급하다 / 먹이"},{"en":"tweak","ko":"미세 조정하다, 살짝 바꾸다"},{"en":"dimension","ko":"차원, 규모, 측면"},{"en":"consensus","ko":"합의, 의견 일치"},{"en":"profoundly","ko":"깊이, 심오하게"},{"en":"consistent","ko":"일관된, 한결같은"},{"en":"amend","ko":"수정하다, 개정하다"},{"en":"calculation","ko":"계산, 산출"},{"en":"proposal","ko":"제안, 제의"},{"en":"alteration","ko":"변경, 수정"},{"en":"fierce","ko":"맹렬한, 격렬한"},{"en":"debate","ko":"토론, 논쟁 / 토론하다"},{"en":"load","ko":"짐, 부담 / 싣다"},{"en":"feasible","ko":"실현 가능한, 타당한"},{"en":"former","ko":"이전의, 전(前)~"},{"en":"commission","ko":"위원회, 수수료 / 의뢰하다"},{"en":"announce","ko":"발표하다, 알리다"},{"en":"subjective","ko":"주관적인"}]},"task1":{"words":[{"en":"particularly","ko":"특히, 특별히"},{"en":"especially","ko":"특히, 무엇보다도"},{"en":"significantly","ko":"상당히 / 의미 있게"},{"en":"turning to","ko":"~으로 넘어가면 / ~에 관해서는"},{"en":"regarding","ko":"~에 관하여"}]},"task2":{"topic":"🌐 Globalisation","topicKo":"세계화","words":[{"en":"domestically","ko":"국내에서"},{"en":"luckily","ko":"다행히도"},{"en":"nowadays","ko":"요즘"},{"en":"abroad","ko":"해외에서"},{"en":"easily","ko":"쉽게"},{"en":"properly","ko":"적절하게"},{"en":"historical sites","ko":"역사적인 장소"},{"en":"ancient structures","ko":"고대 구조물"},{"en":"unique experience","ko":"독특한 경험"},{"en":"cultural significance","ko":"문화적 중요성"},{"en":"raise awareness","ko":"인식을 높이다"},{"en":"irreparable damage","ko":"복구할 수 없는 손상"},{"en":"cultural diversity","ko":"문화 다양성"},{"en":"cultural identity","ko":"문화 정체성"},{"en":"global trade","ko":"국제 무역"},{"en":"multinational companies","ko":"다국적 기업"},{"en":"cultural exchange","ko":"문화 교류"},{"en":"westernization","ko":"서구화"},{"en":"local traditions","ko":"지역 전통"},{"en":"cultural heritage","ko":"문화유산"},{"en":"globalisation","ko":"세계화"},{"en":"cultural homogenisation","ko":"문화 동질화"},{"en":"multiculturalism","ko":"다문화주의"},{"en":"cultural assimilation","ko":"문화 동화"},{"en":"free trade","ko":"자유무역"},{"en":"migration","ko":"이주"},{"en":"interdependence","ko":"상호의존"},{"en":"cultural fusion","ko":"문화 융합"},{"en":"brain drain","ko":"두뇌 유출"},{"en":"lingua franca","ko":"공통어"},{"en":"diaspora","ko":"디아스포라"},{"en":"xenophobia","ko":"외국인 혐오"},{"en":"cosmopolitan","ko":"세계주의적인"},{"en":"intercultural communication","ko":"상호 문화 소통"},{"en":"📘  문법책  →  22단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"outlook","ko":"전망"},{"en":"tolerance","ko":"관용"},{"en":"documentary","ko":"다큐멘터리"}]}},{"day":22,"date":"3/27","weekday":"금","year":2026,"month":3,"dayNum":27,"mock":null,"grammar":{"units":[22],"hot":[22]},"listening":{"part":"Part 4","words":[{"en":"sanitation","ko":"위생설비"},{"en":"poverty","ko":"빈곤"},{"en":"revolution","ko":"혁명"},{"en":"trade","ko":"무역"},{"en":"settlement","ko":"정착"},{"en":"mythology","ko":"신화"},{"en":"navigation","ko":"항해"},{"en":"isolation","ko":"고립"},{"en":"runes","ko":"룬 문자"},{"en":"employment","ko":"고용"},{"en":"weapons","ko":"무기"},{"en":"inequality","ko":"불평등"},{"en":"unemployment","ko":"실업"},{"en":"urbanisation","ko":"도시화"},{"en":"legislation","ko":"입법"},{"en":"democracy","ko":"민주주의"},{"en":"globalisation","ko":"세계화"},{"en":"subsidy","ko":"보조금"},{"en":"taxation","ko":"과세"},{"en":"census","ko":"인구 조사"}]},"reading":{"source":"Cambridge 20","words":[{"en":"assessment","ko":"평가, 사정"},{"en":"batter","ko":"반죽 / 두드리다, 난타하다"},{"en":"perceive","ko":"인식하다, 감지하다"},{"en":"dispute","ko":"분쟁, 논쟁 / 반박하다"},{"en":"ban","ko":"금지 / 금지하다"},{"en":"animate","ko":"생기 있게 하다 / 살아있는"},{"en":"force","ko":"힘, 강제 / 강요하다"},{"en":"countless","ko":"무수한, 셀 수 없는"},{"en":"unforgiving","ko":"용납하지 않는, 가혹한"},{"en":"pedantic","ko":"지나치게 학문적인, 꼼꼼한"},{"en":"legalistic","ko":"법률 만능주의적인, 지나치게 법적인"},{"en":"appeal","ko":"호소, 매력 / 호소하다"},{"en":"executive","ko":"임원, 경영진 / 행정적인"},{"en":"attempt","ko":"시도 / 시도하다"},{"en":"dissenting","ko":"반대하는, 이의를 제기하는"},{"en":"accuracy","ko":"정확성, 정밀도"},{"en":"conserve","ko":"보존하다, 아끼다"},{"en":"consume","ko":"소비하다, 먹다"},{"en":"inhabitant","ko":"주민, 거주자"},{"en":"shipment","ko":"선적, 화물"},{"en":"inventor","ko":"발명가, 고안자"},{"en":"release","ko":"방출하다, 출시하다 / 석방, 출시"},{"en":"crystal","ko":"수정, 결정체 / 투명한"},{"en":"shortage","ko":"부족, 결핍"},{"en":"ration","ko":"배급, 할당량 / 배급하다"},{"en":"abundant","ko":"풍부한, 많은"},{"en":"abandon","ko":"포기하다, 버리다"},{"en":"appliance","ko":"가전제품, 기기"},{"en":"affordable","ko":"저렴한, 감당할 수 있는"},{"en":"wealthy","ko":"부유한, 풍요로운"}]},"task1":{"words":[{"en":"as for","ko":"~에 관해서는"},{"en":"in the case of","ko":"~의 경우에"},{"en":"as a result","ko":"결과적으로 / 그 결과"},{"en":"consequently","ko":"결과적으로 / 따라서"},{"en":"finishing as","ko":"~로 마무리되다"}]},"task2":{"topic":"📺 Media & Advertising","topicKo":"미디어 & 광고","words":[{"en":"simplification","ko":"단순화"},{"en":"value","ko":"가치"},{"en":"background","ko":"배경"},{"en":"element","ko":"요소"},{"en":"medium","ko":"매체"},{"en":"aspect","ko":"측면"},{"en":"impression","ko":"인상"},{"en":"connotation","ko":"함의"},{"en":"combination","ko":"조합"},{"en":"role model","ko":"롤모델"},{"en":"stardom","ko":"스타덤"},{"en":"phenomenon","ko":"현상"},{"en":"entertainer","ko":"연예인"},{"en":"exposure","ko":"노출"},{"en":"drawback","ko":"단점"},{"en":"younger generation","ko":"젊은 세대"},{"en":"diversify","ko":"다양화하다"},{"en":"broaden","ko":"넓히다"},{"en":"depict","ko":"묘사하다"},{"en":"create","ko":"창조하다"},{"en":"merge","ko":"통합하다"},{"en":"include","ko":"포함하다"},{"en":"emerge","ko":"나타나다"},{"en":"address","ko":"다루다"},{"en":"filter out","ko":"걸러내다"},{"en":"comprehend","ko":"이해하다"},{"en":"convey","ko":"전달하다"},{"en":"emulate","ko":"모방하다"},{"en":"📘  문법책  →  23단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""},{"en":"attain","ko":"얻다"},{"en":"aspire","ko":"열망하다"},{"en":"invest","ko":"투자하다"},{"en":"aim","ko":"목표하다"},{"en":"interesting","ko":"흥미로운"},{"en":"diverse","ko":"다양한"},{"en":"versatile","ko":"다재다능한"},{"en":"innovative","ko":"혁신적인"},{"en":"exciting","ko":"흥미진진한"},{"en":"unsuitable","ko":"부적합한"}]}},{"day":23,"date":"3/28","weekday":"토","year":2026,"month":3,"dayNum":28,"mock":null,"grammar":{"units":[23],"hot":[]},"listening":{"part":"Part 4","words":[{"en":"charity","ko":"자선단체"},{"en":"fundraising","ko":"모금 활동"},{"en":"council","ko":"위원회"},{"en":"authority","ko":"당국"},{"en":"regulation","ko":"규정"},{"en":"capitalism","ko":"자본주의"}]},"reading":{"source":"Cambridge 20","words":[{"en":"corn","ko":"옥수수 / 곡물"},{"en":"conservation","ko":"보존, 보호"},{"en":"carry out","ko":"수행하다, 실행하다"},{"en":"further","ko":"더 나아가, 추가적인 / 촉진하다"},{"en":"ahead","ko":"앞에, 앞으로"},{"en":"majesty","ko":"장엄함, 폐하"},{"en":"immediate","ko":"즉각적인, 가까운"},{"en":"thermal","ko":"열의, 온열의 / 상승 기류"},{"en":"lessen","ko":"줄이다, 감소시키다"},{"en":"breed","ko":"번식하다, 사육하다 / 품종"},{"en":"statements","ko":"진술, 성명"},{"en":"laboratory","ko":"실험실, 연구소"},{"en":"core","ko":"핵심, 중심 / 핵심적인"},{"en":"artificial","ko":"인공적인, 인위적인"},{"en":"reproduction","ko":"번식, 복제 / 재현"},{"en":"investigate","ko":"조사하다, 수사하다"},{"en":"material","ko":"재료, 물질 / 물질적인"},{"en":"welfare","ko":"복지, 안녕"},{"en":"personality","ko":"성격, 개성 / 유명인"},{"en":"attribute","ko":"특성, 속성 / ~의 탓으로 돌리다"},{"en":"advance","ko":"발전, 진보 / 나아가다"},{"en":"compose","ko":"구성하다, 작곡하다"},{"en":"marine","ko":"해양의, 바다의 / 해병대원"},{"en":"transparent","ko":"투명한, 명백한"},{"en":"algae","ko":"조류, 해조류"},{"en":"ray","ko":"광선, 빛줄기 / 가오리"},{"en":"nutrient","ko":"영양소, 영양분"},{"en":"trigger","ko":"유발하다, 촉발하다 / 방아쇠"},{"en":"bleach","ko":"탈색하다, 표백하다 / 표백제"},{"en":"strip","ko":"벗기다, 제거하다 / 띠, 줄"}]},"task1":{"words":[{"en":"by the end of the period","ko":"기간 말에는 / 기간이 끝날 무렵"},{"en":"overall trend","ko":"전반적인 추세"}]},"task2":{"topic":"📺 Media & Advertising","topicKo":"미디어 & 광고","words":[{"en":"worthwhile","ko":"가치 있는"},{"en":"dedicated","ko":"헌신적인"},{"en":"popular","ko":"인기 있는"},{"en":"accepting attitude","ko":"수용적 태도"},{"en":"rather than","ko":"~보다는"},{"en":"growing number","ko":"증가하는 수"},{"en":"censorship","ko":"검열"},{"en":"freedom of speech","ko":"언론의 자유"},{"en":"misinformation","ko":"잘못된 정보, 오보"},{"en":"propaganda","ko":"선전, 프로파간다"},{"en":"media bias","ko":"미디어 편향"},{"en":"consumer behaviour","ko":"소비자 행동"},{"en":"tabloid","ko":"타블로이드"},{"en":"investigative journalism","ko":"탐사 저널리즘"},{"en":"social media influencer","ko":"소셜 미디어 인플루언서"},{"en":"target audience","ko":"목표 독자층"},{"en":"stereotype","ko":"고정관념"},{"en":"manipulation","ko":"조작"},{"en":"ban","ko":"금지"},{"en":"commercialisation","ko":"상업화"}]}},{"day":24,"date":"3/29","weekday":"일","year":2026,"month":3,"dayNum":29,"mock":null,"grammar":{"units":[24],"hot":[24]},"listening":{"part":"","words":[]},"reading":{"source":"Cambridge 20","words":[{"en":"capacity","ko":"용량, 능력, 수용력"},{"en":"outwit","ko":"꾀로 이기다, 능가하다"},{"en":"surpass","ko":"능가하다, 뛰어넘다"},{"en":"ability","ko":"능력, 재능"},{"en":"calculate","ko":"계산하다, 산출하다"},{"en":"colonise","ko":"식민지화하다, 군집을 이루다"},{"en":"moral","ko":"도덕적인 / 교훈, 도덕"},{"en":"dubious","ko":"의심스러운, 수상한"},{"en":"spirit","ko":"정신, 영혼 / 의지, 기개"},{"en":"genuine","ko":"진짜의, 진심 어린"},{"en":"impose","ko":"부과하다, 강요하다"},{"en":"virus","ko":"바이러스"},{"en":"persist","ko":"지속하다, 끈질기게 계속하다"},{"en":"none","ko":"아무것도 ~없다, 전혀 없는"},{"en":"supremacy","ko":"우위, 패권, 지배권"},{"en":"genre","ko":"장르, 유형"},{"en":"portrayal","ko":"묘사, 표현"},{"en":"collide","ko":"충돌하다, 부딪히다"},{"en":"inclination","ko":"성향, 경향 / 기울기"},{"en":"entity","ko":"실체, 존재, 개체"},{"en":"stem","ko":"줄기 / ~에서 비롯되다"},{"en":"inanimate","ko":"무생물의, 생기 없는"},{"en":"contrary","ko":"반대의, 상반된 / 반대"},{"en":"charcoal","ko":"숯, 목탄 / 짙은 회색"},{"en":"experiment","ko":"실험 / 실험하다"},{"en":"abstract","ko":"추상적인 / 추상화 / 요약하다"},{"en":"composition","ko":"구성, 작곡 / 작문"},{"en":"architectural","ko":"건축의, 건축학적인"},{"en":"depict","ko":"묘사하다, 그리다"},{"en":"soaring","ko":"치솟는, 높이 나는"},{"en":"magnify","ko":"확대하다, 과장하다"},{"en":"state","ko":"국가, 상태 / 진술하다"},{"en":"rugged","ko":"험한, 울퉁불퉁한"},{"en":"terrain","ko":"지형, 지역"},{"en":"sparkle","ko":"반짝이다, 빛나다 / 광채"},{"en":"spectacular","ko":"장관을 이루는, 눈부신"},{"en":"landscape","ko":"풍경, 경관 / 조경하다"},{"en":"formations","ko":"형성, 지층 / 대형"},{"en":"clarity","ko":"명확성, 선명함"},{"en":"exotic","ko":"이국적인, 외래의"},{"en":"vegetation","ko":"식물, 초목"},{"en":"aerial","ko":"공중의, 항공의 / 안테나"},{"en":"above","ko":"위에, ~보다 위"},{"en":"quantity","ko":"양, 수량"},{"en":"emission","ko":"배출, 방출"},{"en":"release","ko":"방출하다, 출시하다 / 석방"},{"en":"prediction","ko":"예측, 예언"},{"en":"forecast","ko":"예보, 예측 / 예측하다"},{"en":"intervention","ko":"개입, 중재"},{"en":"intervene","ko":"개입하다, 중재하다"},{"en":"identify","ko":"확인하다, 식별하다"},{"en":"multifunctional","ko":"다기능의, 다목적의"},{"en":"functional","ko":"기능적인, 실용적인"},{"en":"embed","ko":"내포하다, 심다"},{"en":"engage","ko":"참여하다, 관여하다"}]},"task1":{"words":[]},"task2":{"topic":"📺 Media & Advertising","topicKo":"미디어 & 광고","words":[{"en":"📘  문법책  →  24단원     |     🖊️  에세이: Task1 + Task2 각 1개 + 오답노트","ko":""}]}}];
+
+let currentDayIdx = 0;
+window.checkedState = JSON.parse(localStorage.getItem('ielts_checked2') || '{}');
+let checkedState = window.checkedState;
+window._checkedState = checkedState;
+let quizState = null;
+window.studyHistory = JSON.parse(localStorage.getItem('ielts_history2') || '[]');
+let studyHistory = window.studyHistory;
+window._studyHistory = studyHistory;
+
+function init() {
+  // localStorage에서 항상 최신 상태 로드 (Firebase sync 후 재호출 대응)
+  checkedState = JSON.parse(localStorage.getItem('ielts_checked2') || '{}');
+  studyHistory = JSON.parse(localStorage.getItem('ielts_history2') || '[]');
+  // 날짜 무관 — 마지막으로 보던 Day 복원, 없으면 Day 1
+  const saved = parseInt(localStorage.getItem('ielts_last_day') || '0');
+  currentDayIdx = (saved >= 0 && saved < SCHEDULE.length) ? saved : 0;
+  buildDateNav();
+  renderDay(currentDayIdx);
+}
+
+function isDayComplete(dayIdx) {
+  const dk = `d${dayIdx}`;
+  const s = SCHEDULE[dayIdx];
+  const sections = [];
+  if (s.listening && s.listening.words.length > 0) sections.push('listening');
+  if (s.reading   && s.reading.words.length   > 0) sections.push('reading');
+  if (s.task1     && s.task1.words.length     > 0) sections.push('task1');
+  if (s.task2     && s.task2.words.length     > 0) sections.push('task2');
+  if (sections.length === 0) return false;
+  return sections.every(sec => checkedState[dk] && checkedState[dk][sec]);
+}
+
+function buildDateNav() {
+  const nav = document.getElementById('dateNav');
+  nav.innerHTML = '';
+  SCHEDULE.forEach((s,i) => {
+    const btn = document.createElement('button');
+    const isDone = isDayComplete(i);
+    btn.className = 'date-btn' + (i===currentDayIdx?' active':'') + (isDone?' day-done':'');
+    btn.textContent = isDone ? `✓ Day ${s.day}` : `Day ${s.day}`;
+    btn.onclick = () => { currentDayIdx=i; localStorage.setItem('ielts_last_day', i); buildDateNav(); renderDay(i); };
+    nav.appendChild(btn);
+  });
+  setTimeout(() => {
+    const a = nav.querySelector('.active');
+    if(a) a.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  }, 50);
+}
+
+function updateProgress(dayIdx) {
+  const s = SCHEDULE[dayIdx];
+  const dk = `d${dayIdx}`;
+  const sections = ['listening','reading','task1','task2'];
+  let total=0, done=0;
+  sections.forEach(sec => {
+    const words = s[sec].words;
+    total += words.length;
+    if(checkedState[dk] && checkedState[dk][sec]) done += words.length;
+  });
+  const pct = total>0 ? Math.round(done/total*100) : 0;
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = `Day ${s.day} / 24 (${pct}% 완료)`;
+  document.getElementById('headerSubtitle').textContent = `Day ${s.day} · 총 ${total}단어`;
+}
+
+function renderDay(dayIdx) {
+  updateProgress(dayIdx);
+  const s = SCHEDULE[dayIdx];
+  let html = '';
+
+  // Day info
+  let mb = s.mock==='리스닝 모의고사'
+    ? `<span class="mock-badge listening">🎧 리스닝 모의고사</span>`
+    : s.mock==='리딩 모의고사'
+      ? `<span class="mock-badge reading">📖 리딩 모의고사</span>`
+      : `<span class="mock-badge">✏️ 단어 집중일</span>`;
+  html += `<div class="day-info-card">
+    <div class="day-info-left">
+      <h2>Day ${s.day} <span style="font-size:15px;font-weight:500;color:var(--header-sub);">/ 24</span></h2>
+    </div>${mb}
+  </div>`;
+
+  // Summary (4-column)
+  html += `<div class="summary-grid">
+    <div class="summary-tile"><div class="tile-num">${s.listening.words.length}</div><div class="tile-label">🎧 리스닝</div></div>
+    <div class="summary-tile"><div class="tile-num">${s.reading.words.length}</div><div class="tile-label">📖 리딩</div></div>
+    <div class="summary-tile"><div class="tile-num">${s.task1.words.length}</div><div class="tile-label">✍️ Task1</div></div>
+    <div class="summary-tile"><div class="tile-num">${s.task2.words.length}</div><div class="tile-label">💬 Task2</div></div>
+  </div>`;
+
+
+
+  // Section cards
+  html += buildSectionCard(dayIdx,'listening','🎧',`리스닝 — ${s.listening.part||''}`,s.listening.words);
+  html += buildSectionCard(dayIdx,'reading','📖',`리딩 — ${s.reading.source||''}`,s.reading.words);
+  html += buildSectionCard(dayIdx,'task1','✍️','Writing Task 1',s.task1.words);
+  const t2title = s.task2.topicKo ? `Task 2 — ${s.task2.topicKo}` : 'Writing Task 2';
+  html += buildSectionCard(dayIdx,'task2','💬',t2title,s.task2.words);
+
+  // Learn button
+  const totalW = s.listening.words.length+s.reading.words.length+s.task1.words.length+s.task2.words.length;
+  html += `<div class="learn-btn-wrap"><button class="learn-btn" onclick="openQuiz(${dayIdx})">📝 오늘의 단어 학습하기 (${totalW}개)</button></div>`;
+
+  document.getElementById('homeContent').innerHTML = html;
+}
+
+function isSectionDone(dayIdx, sectionKey) {
+  const dk = `d${dayIdx}`;
+  return !!(checkedState[dk] && checkedState[dk][sectionKey]);
+}
+
+function buildSectionCard(dayIdx, sectionKey, icon, title, words) {
+  const done = isSectionDone(dayIdx, sectionKey);
+  const doneClass = done ? ' done' : '';
+  const doneCheck = done ? '✓' : '';
+  
+  let wordItems = words.map((w,i) =>
+    `<li class="word-item${done?' checked':''}">
+      <span class="word-num">${i+1}</span>
+      <span class="word-text">
+        <div class="word-en">${w.en}</div>
+        <div class="word-ko">${w.ko}</div>
+      </span>
+      <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" title="발음 듣기">🔊</button>
+    </li>`
+  ).join('');
+
+  return `<div class="section-card">
+    <div class="section-header" onclick="toggleSection('${dayIdx}_${sectionKey}')">
+      <div class="section-header-left">
+        <span class="section-icon">${icon}</span>
+        <div>
+          <div class="section-title-text">${title}</div>
+          <div class="section-count">${done ? words.length : 0} / ${words.length} 완료</div>
+        </div>
+      </div>
+      <div class="section-header-right">
+        <button class="section-check-btn${doneClass}" 
+          onclick="toggleSectionCheck(event,${dayIdx},'${sectionKey}')" 
+          title="섹션 전체 완료">${doneCheck}</button>
+        <span class="section-chevron" id="chev_${dayIdx}_${sectionKey}">▼</span>
+      </div>
+    </div>
+    <div class="section-body" id="body_${dayIdx}_${sectionKey}">
+      <ul class="word-list">${wordItems}</ul>
+    </div>
+  </div>`;
+}
+
+function toggleSection(id) {
+  const body = document.getElementById('body_'+id);
+  const chev = document.getElementById('chev_'+id);
+  if(!body) return;
+  body.classList.toggle('open');
+  if(chev) chev.classList.toggle('open');
+}
+
+function toggleSectionCheck(event, dayIdx, sectionKey) {
+  event.stopPropagation();
+  const dk = `d${dayIdx}`;
+  if(!checkedState[dk]) checkedState[dk] = {};
+  if(checkedState[dk][sectionKey]) {
+    delete checkedState[dk][sectionKey];
+  } else {
+    checkedState[dk][sectionKey] = true;
+  }
+  localStorage.setItem('ielts_checked2', JSON.stringify(checkedState));
+    buildDateNav(); // Day 완료 체크 갱신
+  window._checkedState = checkedState;
+  if (window.fbSaveChecked) window.fbSaveChecked();
+  renderDay(dayIdx);
+  updateProgress(dayIdx);
+}
+
+function speak(text, event) {
+  if(event) event.stopPropagation();
+  // ResponsiveVoice — UK English Female (자연스러운 영국식 발음)
+  if(window.responsiveVoice) {
+    responsiveVoice.cancel();
+    responsiveVoice.speak(text, "UK English Female", { rate: 0.9, pitch: 1 });
+  } else {
+    // 오프라인 fallback: 브라우저 내장 TTS
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-GB'; u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+// ── QUIZ ──
+function openQuiz(dayIdx) {
+  const s = SCHEDULE[dayIdx];
+  const allWords = [
+    ...s.listening.words.map(w=>({...w,section:'리스닝'})),
+    ...s.reading.words.map(w=>({...w,section:'리딩'})),
+    ...s.task1.words.map(w=>({...w,section:'Task 1'})),
+    ...s.task2.words.map(w=>({...w,section:'Task 2'})),
+  ];
+  quizState = {dayIdx, allWords, mode:null, words:[], idx:0, correct:[], wrong:[]};
+  document.getElementById('quizTitle').textContent='학습하기';
+  renderQuizModeSelect(allWords);
+  document.getElementById('quizOverlay').classList.add('open');
+}
+function closeQuiz() {
+  document.getElementById('quizOverlay').classList.remove('open');
+  quizState = null;
+}
+
+function renderQuizModeSelect(allWords) {
+  const html = `
+    <div style="font-size:13px;font-weight:600;color:var(--header-text);margin-bottom:8px;">📚 학습 범위 선택</div>
+    <div class="section-radio-grid">
+      <div><input type="radio" name="qsec" id="sec_all" value="all" class="section-radio" checked>
+        <label for="sec_all" class="section-radio-label">전체 (${allWords.length})</label></div>
+      <div><input type="radio" name="qsec" id="sec_l" value="리스닝" class="section-radio">
+        <label for="sec_l" class="section-radio-label">🎧 리스닝</label></div>
+      <div><input type="radio" name="qsec" id="sec_r" value="리딩" class="section-radio">
+        <label for="sec_r" class="section-radio-label">📖 리딩</label></div>
+      <div><input type="radio" name="qsec" id="sec_t1" value="Task 1" class="section-radio">
+        <label for="sec_t1" class="section-radio-label">✍️ Task 1</label></div>
+      <div><input type="radio" name="qsec" id="sec_t2" value="Task 2" class="section-radio">
+        <label for="sec_t2" class="section-radio-label">💬 Task 2</label></div>
+    </div>
+    <div class="mode-select-grid">
+      <div class="mode-card" onclick="startQuiz('flashcard')">
+        <span class="mode-icon">🃏</span>
+        <div class="mode-info"><div class="mode-name">플래시카드</div><div class="mode-desc">단어를 보고 뜻을 떠올려 보세요</div></div>
+      </div>
+      <div class="mode-card" onclick="startQuiz('mc')">
+        <span class="mode-icon">📝</span>
+        <div class="mode-info"><div class="mode-name">객관식 퀴즈</div><div class="mode-desc">4가지 보기 중 올바른 뜻 선택</div></div>
+      </div>
+      <div class="mode-card" onclick="startQuiz('dictation')">
+        <span class="mode-icon">🎤</span>
+        <div class="mode-info"><div class="mode-name">받아쓰기</div><div class="mode-desc">한국어 뜻을 보고 영어 단어 입력</div></div>
+      </div>
+    </div>`;
+  document.getElementById('quizContent').innerHTML = html;
+}
+
+function getSelectedSection() {
+  const radios = document.querySelectorAll('input[name="qsec"]');
+  for(const r of radios) { if(r.checked) return r.value; }
+  return 'all';
+}
+
+function startQuiz(mode, wordsOverride) {
+  const sec = wordsOverride ? null : getSelectedSection();
+  let words = wordsOverride ? wordsOverride : quizState.allWords.filter(w => sec==='all' || w.section===sec);
+  if(!words.length){ alert('선택한 섹션에 단어가 없습니다.'); return; }
+  words = [...words].sort(()=>Math.random()-0.5);
+  quizState.mode=mode; quizState.words=words; quizState.idx=0; quizState.correct=[]; quizState.wrong=[];
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const q = quizState;
+  if(q.idx>=q.words.length){ renderQuizResult(); return; }
+  const w = q.words[q.idx];
+  const pct = Math.round(q.idx/q.words.length*100);
+  const prog = `<div class="quiz-progress">
+    <div class="quiz-progress-bar-outer"><div class="quiz-progress-bar-inner" style="width:${pct}%"></div></div>
+    <div class="quiz-progress-text">${q.idx+1} / ${q.words.length}</div>
+  </div>`;
+
+  if(q.mode==='flashcard'){
+    document.getElementById('quizTitle').textContent='🃏 플래시카드';
+    document.getElementById('quizContent').innerHTML = prog +
+      `<div class="flashcard-wrap" onclick="flipCard()">
+        <div class="flashcard" id="theFlashcard">
+          <div class="flashcard-face flashcard-front">
+            <div class="flashcard-word">${w.en}</div>
+            <div class="flashcard-hint">탭하여 뒤집기 👆</div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <div class="flashcard-meaning">${w.ko}</div>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn sound-big" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)">🔊</button>
+        <button class="quiz-btn secondary" onclick="markFlashcard(false)">❌ 몰라요</button>
+        <button class="quiz-btn primary" onclick="markFlashcard(true)">✅ 알아요</button>
+      </div>`;
+    speak(w.en);
+  } else if(q.mode==='mc'){
+    document.getElementById('quizTitle').textContent='📝 객관식 퀴즈';
+    let wrongs = quizState.allWords.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3);
+    let opts = [...wrongs.map(x=>x.ko), w.ko].sort(()=>Math.random()-0.5);
+    const optHtml = opts.map(opt=>
+      `<button class="mc-option" onclick="checkMC(this,'${opt.replace(/'/g,"\\'")}','${w.ko.replace(/'/g,"\\'")}')">${opt}</button>`
+    ).join('');
+    document.getElementById('quizContent').innerHTML = prog +
+      `<div class="mc-question"><div style="font-size:13px;color:var(--header-sub);margin-bottom:6px;">다음 단어의 의미는?</div>
+        <div class="mc-question-word">${w.en}</div></div>
+      <div class="mc-options">${optHtml}</div>
+      <div class="quiz-nav"><button class="quiz-btn sound-big" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)">🔊</button></div>`;
+    speak(w.en);
+  } else {
+    document.getElementById('quizTitle').textContent='🎤 받아쓰기';
+    document.getElementById('quizContent').innerHTML = prog +
+      `<div class="dictation-area">
+        <div class="dictation-hint">다음 뜻에 해당하는 영어 단어를 입력하세요</div>
+        <div class="dictation-meaning">${w.ko}</div>
+        <input type="text" class="dictation-input" id="dictInput" placeholder="영어 단어 입력..."
+          autocomplete="off" autocorrect="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter')checkDictation()">
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn sound-big" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)">🔊</button>
+        <button class="quiz-btn primary" onclick="checkDictation()">확인 →</button>
+      </div>`;
+    setTimeout(()=>{ const inp=document.getElementById('dictInput'); if(inp) inp.focus(); speak(w.en); },150);
+  }
+}
+
+function flipCard(){
+  const c=document.getElementById('theFlashcard'); if(c) c.classList.toggle('flipped');
+}
+function markFlashcard(known){
+  const w=quizState.words[quizState.idx];
+  if(known) quizState.correct.push(w); else quizState.wrong.push(w);
+  quizState.idx++; renderQuizQuestion();
+}
+function checkMC(btn,selected,correct){
+  document.querySelectorAll('.mc-option').forEach(b=>b.disabled=true);
+  const w=quizState.words[quizState.idx];
+  if(selected===correct){ btn.classList.add('correct'); quizState.correct.push(w); }
+  else { btn.classList.add('wrong'); quizState.wrong.push(w);
+    document.querySelectorAll('.mc-option').forEach(b=>{ if(b.textContent===correct) b.classList.add('correct'); }); }
+  setTimeout(()=>{ quizState.idx++; renderQuizQuestion(); },900);
+}
+function checkDictation(){
+  const inp=document.getElementById('dictInput'); if(!inp) return;
+  const val=inp.value.trim().toLowerCase();
+  const w=quizState.words[quizState.idx];
+  const ok=val===w.en.toLowerCase();
+  inp.disabled=true; inp.classList.add(ok?'correct':'wrong');
+  if(ok){
+    quizState.correct.push(w);
+    setTimeout(()=>{ quizState.idx++; renderQuizQuestion(); }, 800);
+  } else {
+    quizState.wrong.push(w);
+    // 오답노트 팝업 열기 → 닫힌 후 다음 문제
+    setTimeout(()=>{
+      openWrongNote(w, val).then(()=>{
+        quizState.idx++; renderQuizQuestion();
+      });
+    }, 400);
+  }
+}
+
+function renderQuizResult(){
+  const q=quizState;
+  const total=q.correct.length+q.wrong.length;
+  const acc=total>0?Math.round(q.correct.length/total*100):0;
+  const rec={id:Date.now(),date:SCHEDULE[q.dayIdx].date,dayLabel:`Day ${SCHEDULE[q.dayIdx].day}`,
+    mode:q.mode==='flashcard'?'플래시카드':q.mode==='mc'?'객관식 퀴즈':'받아쓰기',
+    total,correct:q.correct.length,wrong:q.wrong.length,acc,
+    correctWords:q.correct,wrongWords:q.wrong};
+  studyHistory.unshift(rec);
+  if(studyHistory.length>100) studyHistory=studyHistory.slice(0,100);
+  localStorage.setItem('ielts_history2',JSON.stringify(studyHistory));
+  window._studyHistory = studyHistory;
+  if (window.fbSaveHistory) window.fbSaveHistory();
+
+  const emoji=acc>=90?'🎉':acc>=70?'👏':acc>=50?'💪':'📖';
+  const mkList=(arr,icon)=>arr.length?arr.map(w=>
+    `<div class="result-word-item">
+      <span>${icon}</span>
+      <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" style="font-size:14px;">🔊</button>
+      <span class="rw-en">${w.en}</span><span class="rw-ko">${w.ko}</span>
+    </div>`).join('')
+    :`<div style="color:var(--header-sub);font-size:13px;text-align:center;padding:16px;">${icon==='❌'?'틀린 단어가 없어요! 🎉':'정답 없음'}</div>`;
+
+  document.getElementById('quizTitle').textContent='📊 학습 결과';
+  document.getElementById('quizContent').innerHTML=`
+    <div class="result-screen">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-title">${acc}% 정확도</div>
+      <div class="result-subtitle">${total}개 중 ${q.correct.length}개 정답</div>
+      <div class="result-stats">
+        <div class="result-stat"><div class="stat-num">${total}</div><div class="stat-label">전체</div></div>
+        <div class="result-stat"><div class="stat-num" style="color:#2d6a4f;">${q.correct.length}</div><div class="stat-label">정답</div></div>
+        <div class="result-stat"><div class="stat-num" style="color:#c0392b;">${q.wrong.length}</div><div class="stat-label">오답</div></div>
+      </div>
+      <div class="result-word-list">
+        <div class="result-tabs">
+          <button class="result-tab active" id="tab_wrong" onclick="switchResultTab('wrong')">❌ 오답 (${q.wrong.length})</button>
+          <button class="result-tab" id="tab_correct" onclick="switchResultTab('correct')">✅ 정답 (${q.correct.length})</button>
+        </div>
+        <div id="result_wrong_list">${mkList(q.wrong,'❌')}</div>
+        <div id="result_correct_list" style="display:none;">${mkList(q.correct,'✅')}</div>
+      </div>
+      <button class="show-retry-btn" onclick="showRetryChoice()">🔄 다시 풀기</button>
+      <div id="retryChoiceArea"></div>
+      <button class="home-btn" onclick="closeQuiz()">🏠 홈으로 돌아가기</button>
+    </div>`;
+}
+
+function switchResultTab(tab){
+  document.getElementById('tab_wrong').classList.toggle('active',tab==='wrong');
+  document.getElementById('tab_correct').classList.toggle('active',tab==='correct');
+  document.getElementById('result_wrong_list').style.display=tab==='wrong'?'':'none';
+  document.getElementById('result_correct_list').style.display=tab==='correct'?'':'none';
+}
+function showRetryChoice(){
+  document.getElementById('retryChoiceArea').innerHTML=`
+    <div class="retry-choice-wrap">
+      <button class="retry-choice-btn primary-choice" onclick="retryWrong()" ${quizState.wrong.length===0?'disabled style="opacity:0.5"':''}>
+        ❌ 오답만 다시 풀기 (${quizState.wrong.length}개)
+      </button>
+      <button class="retry-choice-btn" onclick="retryAll()">
+        🔁 전체 다시 풀기 (${quizState.correct.length+quizState.wrong.length}개)
+      </button>
+    </div>`;
+}
+function retryWrong(){ const w=quizState.wrong,m=quizState.mode,d=quizState.dayIdx,a=quizState.allWords; quizState={dayIdx:d,allWords:a,mode:m,words:[],idx:0,correct:[],wrong:[]}; startQuiz(m,w); }
+function retryAll(){ const w=[...quizState.correct,...quizState.wrong],m=quizState.mode,d=quizState.dayIdx,a=quizState.allWords; quizState={dayIdx:d,allWords:a,mode:m,words:[],idx:0,correct:[],wrong:[]}; startQuiz(m,w); }
+
+// ── HISTORY ──
+function showPage(page){
+  document.getElementById('homePage').classList.toggle('active',page==='home');
+  document.getElementById('historyPage').classList.toggle('active',page==='history');
+  document.getElementById('navHome').classList.toggle('active',page==='home');
+  document.getElementById('navHistory').classList.toggle('active',page==='history');
+  if(page==='history') renderHistory();
+}
+
+function renderHistory(){
+  const c=document.getElementById('historyContent');
+  if(!studyHistory.length){ c.innerHTML='<div class="history-empty">📭 아직 학습 기록이 없어요.<br>단어 학습을 시작해 보세요!</div>'; return; }
+  let html=`<div style="padding:4px 0 12px;font-size:14px;font-weight:700;color:var(--header-text);">📊 학습 기록 (${studyHistory.length}건)</div>`;
+  studyHistory.forEach((rec,idx)=>{
+    const mkW=(arr,icon)=>arr&&arr.length?arr.map(w=>
+      `<div class="history-word-item">
+        <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" style="font-size:13px;">🔊</button>
+        <span class="hw-en">${icon} ${w.en}</span><span class="hw-ko">${w.ko}</span>
+      </div>`).join('')
+      :`<div style="font-size:12px;color:var(--header-sub);padding:8px 0;">${icon==='❌'?'오답 없음 🎉':'정답 없음'}</div>`;
+    html+=`<div class="history-card">
+      <div class="history-header" onclick="toggleHistory(${idx})">
+        <div><div class="history-date">${rec.date} ${rec.dayLabel} · ${rec.mode}</div>
+          <div class="history-meta">${rec.total}개 · 정답 ${rec.correct} · 오답 ${rec.wrong}</div></div>
+        <div class="history-score">${rec.acc}%</div>
+      </div>
+      <div class="history-body" id="hbody_${idx}">
+        <div class="history-tabs">
+          <button class="history-tab active" id="htw_${idx}" onclick="switchHistTab(${idx},'wrong')">❌ 오답 (${rec.wrong})</button>
+          <button class="history-tab" id="htc_${idx}" onclick="switchHistTab(${idx},'correct')">✅ 정답 (${rec.correct})</button>
+        </div>
+        <div id="hwlist_${idx}">${mkW(rec.wrongWords,'❌')}</div>
+        <div id="hclist_${idx}" style="display:none;">${mkW(rec.correctWords,'✅')}</div>
+      </div>
+    </div>`;
+  });
+  c.innerHTML=html;
+}
+function toggleHistory(i){ const b=document.getElementById('hbody_'+i); if(b) b.classList.toggle('open'); }
+function switchHistTab(i,tab){
+  document.getElementById(`htw_${i}`).classList.toggle('active',tab==='wrong');
+  document.getElementById(`htc_${i}`).classList.toggle('active',tab==='correct');
+  document.getElementById(`hwlist_${i}`).style.display=tab==='wrong'?'':'none';
+  document.getElementById(`hclist_${i}`).style.display=tab==='correct'?'':'none';
+}
+
+init();
+
+
+/* ══════════════════════════════════════════════
+   오답노트 팝업 (받아쓰기 틀렸을 때)
+   ══════════════════════════════════════════════ */
+let _wnWord = null;      // 현재 오답 단어
+let _wnResolve = null;   // Promise resolve (닫힐 때 호출)
+
+// 오답노트 열기 (Promise 반환 → 닫힐 때 resolve)
+function openWrongNote(word, userAns) {
+  _wnWord = word;
+  document.getElementById('wn-word').textContent    = word.en;
+  document.getElementById('wn-meaning').textContent = word.ko;
+  document.getElementById('wn-user-ans').textContent =
+    userAns ? `내가 쓴 답: "${userAns}"` : '';
+  document.getElementById('wn-feedback').textContent = '';
+  document.getElementById('wn-feedback').style.color = '';
+
+  const inp = document.getElementById('wnInput');
+  inp.value = '';
+  inp.className = 'wrong-note-input';
+  inp.disabled = false;
+
+  // 미국식 버튼 active 초기화
+  document.querySelectorAll('.wrong-note-accent-btn')
+    .forEach((b,i) => b.classList.toggle('active', i===1));
+
+  document.getElementById('wrongNoteOverlay').classList.add('open');
+
+  // 자동 발음 (UK Female)
+  setTimeout(() => wnSpeak('영국식'), 400);
+
+  // 입력창 포커스
+  setTimeout(() => inp.focus(), 500);
+
+  return new Promise(res => { _wnResolve = res; });
+}
+
+// 발음 재생
+function wnSpeak(accent) {
+  if (!_wnWord) return;
+  // 버튼 active 처리
+  document.querySelectorAll('.wrong-note-accent-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === accent);
+  });
+  const voiceMap = {
+    '미국식': 'US English Female',
+    '영국식': 'UK English Female',
+    '호주식': 'Australian Female',
+  };
+  const voice = voiceMap[accent] || 'UK English Female';
+  if (window.responsiveVoice) {
+    responsiveVoice.cancel();
+    responsiveVoice.speak(_wnWord.en, voice, { rate: 0.85 });
+  } else if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(_wnWord.en);
+    u.lang = accent === '미국식' ? 'en-US' : 'en-GB';
+    u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+// 정답 체크
+function wnCheck() {
+  const inp = document.getElementById('wnInput');
+  const val = inp.value.trim().toLowerCase();
+  if (!val || !_wnWord) return;
+
+  const ok = val === _wnWord.en.toLowerCase();
+  inp.className = 'wrong-note-input ' + (ok ? 'correct' : 'wrong');
+  inp.disabled = true;
+
+  const fb = document.getElementById('wn-feedback');
+  if (ok) {
+    fb.textContent = '✅ 정확해요! 잘 외웠어요 💪';
+    fb.style.color = '#28a745';
+    setTimeout(() => wnClose(), 900);
+  } else {
+    fb.textContent = `❌ 정답: ${_wnWord.en}`;
+    fb.style.color = '#e63946';
+    // 다시 시도할 수 있게 0.8초 후 재활성화
+    setTimeout(() => {
+      inp.value = '';
+      inp.className = 'wrong-note-input';
+      inp.disabled = false;
+      inp.focus();
+      fb.textContent = '다시 한 번 써보세요 ✏️';
+      fb.style.color = '#f4a261';
+    }, 900);
+  }
+}
+
+// 닫기
+function wnClose() {
+  document.getElementById('wrongNoteOverlay').classList.remove('open');
+  if (_wnResolve) { _wnResolve(); _wnResolve = null; }
+  _wnWord = null;
+}
+
+</script>
+
+<!-- ============================================================
+     Firebase Realtime Database 동기화
+     ============================================================ -->
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getDatabase, ref, set, onValue }
+  from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+/* ── Config ── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyBFVRxY9KSrxI-5qx7g-3GWnnNWfYfAuxU",
+  authDomain:        "ielts-vocab-app-c3c2c.firebaseapp.com",
+  projectId:         "ielts-vocab-app-c3c2c",
+  databaseURL:       "https://ielts-vocab-app-c3c2c-default-rtdb.asia-southeast1.firebasedatabase.app",
+  storageBucket:     "ielts-vocab-app-c3c2c.firebasestorage.app",
+  messagingSenderId: "910225994215",
+  appId:             "1:910225994215:web:2217637ee732b657470d42"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db    = getDatabase(fbApp);
+
+/* ── UID ── */
+let uid = localStorage.getItem('ielts_uid');
+if (!uid) {
+  uid = 'user_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  localStorage.setItem('ielts_uid', uid);
+}
+
+/* ── 동기화 배지 ── */
+function showSyncBadge(msg, color) {
+  let badge = document.getElementById('fb-sync-badge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'fb-sync-badge';
+    badge.style.cssText = [
+      'position:fixed','bottom:70px','right:12px','z-index:9999',
+      'padding:6px 12px','border-radius:20px','font-size:11px','font-weight:700',
+      'color:#fff','box-shadow:0 2px 8px rgba(0,0,0,.2)',
+      'transition:opacity .5s','pointer-events:none'
+    ].join(';');
+    document.body.appendChild(badge);
+  }
+  badge.textContent = msg;
+  badge.style.background = color;
+  badge.style.opacity = '1';
+  clearTimeout(badge._t);
+  badge._t = setTimeout(() => badge.style.opacity = '0', 2500);
+}
+
+/* ── 저장 플래그 (저장 직후 onValue 무시용) ── */
+let _saving = false;
+
+/* ── Firebase → 앱 수신 (앱 시작 시 1회 + 다기기 실시간) ── */
+onValue(ref(db, `users/${uid}/checked`), (snap) => {
+  if (_saving) return;            // 내가 저장한 직후 echo 무시
+  if (!snap.exists()) return;
+  const remote = snap.val();
+  const localStr = localStorage.getItem('ielts_checked2') || '{}';
+  if (JSON.stringify(remote) === localStr) return;  // 동일하면 skip
+  // 앱 변수 + localStorage 동기화
+  localStorage.setItem('ielts_checked2', JSON.stringify(remote));
+  window.checkedState = remote;
+  // main script 변수 갱신: init() 재호출로 처리
+  if (typeof init === 'function') init();
+  showSyncBadge('🔄 체크 동기화', '#52b788');
+});
+
+onValue(ref(db, `users/${uid}/history`), (snap) => {
+  if (_saving) return;
+  if (!snap.exists()) return;
+  const remote = snap.val();
+  const localStr = localStorage.getItem('ielts_history2') || '[]';
+  if (JSON.stringify(remote) === localStr) return;
+  localStorage.setItem('ielts_history2', JSON.stringify(remote));
+  window.studyHistory = remote;
+});
+
+/* ── 앱 → Firebase 저장 (localStorage 직접 읽기 → 항상 최신) ── */
+window.fbSaveChecked = () => {
+  const data = JSON.parse(localStorage.getItem('ielts_checked2') || '{}');
+  if (Object.keys(data).length === 0) return;   // 빈 객체면 저장 불필요
+  _saving = true;
+  set(ref(db, `users/${uid}/checked`), data)
+    .then(() => { showSyncBadge('✅ 저장됨', '#2d6a4f'); setTimeout(()=>_saving=false, 1000); })
+    .catch((e) => { showSyncBadge('⚠️ 저장 실패', '#e63946'); _saving=false; console.error(e); });
+};
+
+window.fbSaveHistory = () => {
+  const data = JSON.parse(localStorage.getItem('ielts_history2') || '[]');
+  if (!data.length) return;
+  _saving = true;
+  set(ref(db, `users/${uid}/history`), data)
+    .then(() => setTimeout(()=>_saving=false, 1000))
+    .catch((e) => { _saving=false; console.error(e); });
+};
+
+/* ── UID 공유 ── */
+window.showUidInfo = () => {
+  alert(`현재 UID: ${uid}\n\n다른 기기 콘솔에서:\nlocalStorage.setItem('ielts_uid','${uid}')\n후 새로고침`);
+};
+
+showSyncBadge('🔥 Firebase 연결됨', '#f4a261');
+console.log(`🔥 Firebase 연결됨 | UID: ${uid}`);
+</script>
+
+
+<!-- 오답노트 팝업 -->
+<div class="wrong-note-overlay" id="wrongNoteOverlay">
+  <div class="wrong-note-sheet">
+    <div style="text-align:center">
+      <span class="wrong-note-badge">❌ 오답</span>
+    </div>
+    <div class="wrong-note-word" id="wn-word"></div>
+    <div class="wrong-note-meaning" id="wn-meaning"></div>
+    <div id="wn-user-ans" class="wrong-note-your"></div>
+    <div class="wrong-note-accents">
+      <button class="wrong-note-accent-btn active" onclick="wnSpeak('미국식')">미국식</button>
+      <button class="wrong-note-accent-btn" onclick="wnSpeak('영국식')">영국식</button>
+      <button class="wrong-note-accent-btn" onclick="wnSpeak('호주식')">호주식</button>
+    </div>
+    <div class="wrong-note-feedback" id="wn-feedback"></div>
+    <div class="wrong-note-input-wrap">
+      <input type="text" class="wrong-note-input" id="wnInput"
+        placeholder="정답을 따라 적어보세요."
+        onkeydown="if(event.key==='Enter') wnCheck()">
+      <button class="wrong-note-submit" onclick="wnCheck()">↵</button>
+    </div>
+    <button class="wrong-note-skip" onclick="wnClose()">그냥 넘어가기</button>
+  </div>
+</div>
+
+</body>
+</html>
