@@ -10,100 +10,100 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Noto+Serif+KR:wght@400;500;600;700;900&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   IELTS VOCABULARY — VINTAGE EDITORIAL + APPLE MUSIC PLAYER
+   IELTS VOCABULARY — CLEAN EDITORIAL LIGHT THEME
+   Dashboard: Cream + Cobalt Blue + Vintage Red accents
+   Modal:     Deep-navy glass Apple Music player (unchanged)
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --bg-cream:          #F4F1EA;
-  --color-deep-blue:   #0A1B3F;
-  --color-vintage-red: #D9381E;
-  --glass-blue:        rgba(10, 27, 63, 0.85);
-  /* derived */
+  /* ── PRIMARY PALETTE ── */
+  --bg-cream:          #F4F1EA;   /* warm cream — whole page bg */
+  --color-main-blue:   #1434A4;   /* strong cobalt blue — main UI elements */
+  --color-vintage-red: #D9381E;   /* vintage red — accents only */
+
+  /* ── DERIVED DASHBOARD TOKENS ── */
+  --color-white:       #FFFFFF;
   --color-muted:       #6b7494;
-  --color-divider:     rgba(10,27,63,0.10);
-  --color-cream-card:  #FDFAF5;
-  --color-card-hover:  #EDE9E0;
-  --progress-bg:       rgba(255,255,255,0.18);
-  /* legacy aliases — keep JS/Firebase working */
+  --color-divider:     rgba(20,52,164,0.12);
+  --color-cream-card:  #FFFFFF;   /* section cards are pure white */
+  --color-card-hover:  #F0EEF8;
+  --glass-blue:        rgba(10, 27, 63, 0.85);  /* modal only */
+
+  /* ── LEGACY ALIASES — keep JS/Firebase untouched ── */
   --bg: var(--bg-cream); --header-bg: var(--bg-cream);
-  --header-text: var(--color-deep-blue); --header-sub: var(--color-muted);
-  --card-bg: var(--color-cream-card); --card-border: var(--color-deep-blue);
-  --card-hover: var(--color-card-hover); --cobalt: var(--color-deep-blue);
-  --cobalt-dark: #071230; --red: var(--color-vintage-red);
+  --header-text: var(--color-main-blue); --header-sub: var(--color-muted);
+  --card-bg: var(--color-cream-card); --card-border: var(--color-main-blue);
+  --card-hover: var(--color-card-hover);
+  --cobalt: var(--color-main-blue); --cobalt-dark: #0d2482;
+  --color-deep-blue: var(--color-main-blue);  /* map old deep-blue → cobalt */
+  --red: var(--color-vintage-red);
   --olive: #2e6b3e; --cream: var(--bg-cream); --charcoal: #1A1A1A;
-  --tag-bg: #EDE9E0; --tag-border: var(--color-deep-blue);
-  --progress-fill: var(--color-deep-blue);
-  --green-dark: var(--color-deep-blue); --green-mid: var(--color-deep-blue);
+  --tag-bg: #EDE9E0; --tag-border: var(--color-main-blue);
+  --progress-fill: var(--color-main-blue);
+  --green-dark: var(--color-main-blue); --green-mid: var(--color-main-blue);
   --green-light: #a0b0e0;
 }
 
 /* ── RESET ── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── GRAIN PAPER BODY ── */
+/* ── CLEAN LIGHT BODY ── */
 body {
   background-color: var(--bg-cream);
+  background-image: none !important;
   font-family: 'Noto Serif KR', Georgia, serif;
-  color: var(--color-deep-blue);
+  color: var(--color-main-blue);
   min-height: 100vh;
 }
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-}
-body > * { position: relative; z-index: 1; }
 
 /* ══════════════════════════════════════════════════════════
-   HEADER — Ocean Photo → Cream Blend
+   HEADER — Clean Light Theme (NO background images)
 ══════════════════════════════════════════════════════════ */
 .app-header {
   position: sticky; top: 0; z-index: 100;
   background: var(--bg-cream);
+  background-image: none !important;
+  border-bottom: 2px solid var(--color-main-blue);
 }
 
-/* Ocean photo strip — sea at top, sand visible, fades into cream */
-.header-photo-strip {
-  width: 100%; height: 180px;
-  background: url('https://sspark.genspark.ai/cfimages?u1=vsaNzaKoCGcX%2BlcrB1e4JAX3vKofTmvk6h%2F80%2BSsgi3fsmmEr4kr6wZ6Q0Uwp0FFhceUYJmx56LjiFzb%2BWxwEsLmuDhDtquLfvSRokPm3GMtS2cTijbuVIhn&u2=mTVYmOsRjscNcVwt&width=2560') center 30% / cover no-repeat;
-  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-  mask-image:         linear-gradient(to bottom, black 40%, transparent 100%);
-  margin-bottom: -36px;
-}
+/* Photo strip removed — hidden completely */
+.header-photo-strip { display: none !important; }
 
-/* Title block that sits over the fade zone */
+/* Title bar — clean cream background */
 .header-title-bar {
   position: relative;
-  padding: 0 20px 0;
-  pointer-events: none;
+  padding: 14px 20px 10px;
+  background: var(--bg-cream);
+  background-image: none !important;
 }
-.header-logo-block { pointer-events: auto; }
+.header-logo-block { }
 
-/* LOGO — Playfair Display Italic (Decorative) */
+/* LOGO — Playfair Display Italic, strong cobalt blue */
 .app-header h1 {
   font-family: 'Playfair Display', serif;
   font-style: italic; font-weight: 900;
-  font-size: 27px; color: var(--color-deep-blue);
+  font-size: 27px; color: var(--color-main-blue);
   letter-spacing: -0.5px; text-transform: uppercase;
-  text-shadow: 0 1px 8px rgba(255,255,255,0.8);
   line-height: 1;
 }
 .header-red-rule {
   display: block; width: 32px; height: 2px;
   background: var(--color-vintage-red); margin-top: 5px;
 }
+/* Subtitle under logo — VINTAGE RED, prominent */
 .app-header .subtitle {
   font-family: 'Poppins', sans-serif;
-  font-size: 10px; font-weight: 500;
-  color: var(--color-muted); margin-top: 3px;
-  letter-spacing: 0.8px; text-transform: uppercase;
+  font-size: 10px; font-weight: 700;
+  color: var(--color-vintage-red);
+  margin-top: 4px;
+  letter-spacing: 1.2px; text-transform: uppercase;
 }
 
 /* Date nav strip */
 .header-nav-strip {
   padding: 10px 16px 8px;
   background: var(--bg-cream);
-  border-bottom: 1px solid var(--color-deep-blue);
+  background-image: none !important;
+  border-bottom: 1px solid var(--color-main-blue);
 }
 .date-nav {
   display: flex; align-items: center; gap: 6px;
@@ -113,33 +113,45 @@ body > * { position: relative; z-index: 1; }
 .date-btn {
   flex-shrink: 0;
   background: transparent;
-  border: 1px solid var(--color-deep-blue);
+  border: 1.5px solid var(--color-main-blue);
   border-radius: 20px; padding: 4px 12px;
   font-size: 10px; font-weight: 700;
   font-family: 'Poppins', sans-serif;
-  color: var(--color-deep-blue);
+  color: var(--color-main-blue);
   cursor: pointer; transition: all 0.15s; white-space: nowrap;
   letter-spacing: 0.4px;
 }
-.date-btn:hover { background: var(--color-deep-blue); color: #fff; }
-.date-btn.active { background: var(--color-deep-blue); color: #fff; }
-/* Completed day — vintage red checkmark in label (set via JS) */
-.date-btn.day-done { opacity: 0.65; background: var(--color-deep-blue); color: #fff; }
-.date-btn.day-done:not(.active) { opacity: 0.45; }
+.date-btn:hover { background: var(--color-main-blue); color: #fff; }
+/* Active day — solid cobalt blue, white text */
+.date-btn.active {
+  background: var(--color-main-blue); color: #fff;
+  border-color: var(--color-main-blue);
+}
+/* Completed day — outlined cobalt, vintage-red ✓ appended by JS */
+.date-btn.day-done {
+  background: transparent;
+  border-color: var(--color-main-blue);
+  color: var(--color-main-blue);
+  opacity: 0.70;
+}
+.date-btn.day-done.active {
+  background: var(--color-main-blue); color: #fff; opacity: 1;
+}
 
 /* ── PROGRESS BAR ── */
 .progress-wrap {
   padding: 5px 20px 0;
   background: var(--bg-cream);
+  background-image: none !important;
   border-bottom: 1px solid var(--color-divider);
 }
-.progress-bar-outer { height: 2px; background: #DDD9D0; overflow: hidden; }
-.progress-bar-inner { height: 100%; background: var(--color-deep-blue); transition: width 0.4s ease; }
+.progress-bar-outer { height: 3px; background: rgba(20,52,164,0.12); overflow: hidden; }
+.progress-bar-inner { height: 100%; background: var(--color-main-blue); transition: width 0.4s ease; }
 .progress-label {
-  font-size: 9px; color: var(--color-muted);
+  font-size: 9px; color: var(--color-vintage-red);
   text-align: right; padding-bottom: 5px; margin-top: 3px;
   font-family: 'Poppins', sans-serif; letter-spacing: 0.5px;
-  text-transform: uppercase;
+  text-transform: uppercase; font-weight: 700;
 }
 
 /* ── MAIN CONTENT ── */
@@ -147,79 +159,90 @@ body > * { position: relative; z-index: 1; }
 .page { display: none; }
 .page.active { display: block; }
 
-/* ── DAY INFO CARD — Outline only ── */
+/* ── DAY INFO CARD — Solid cobalt blue bg, white text ── */
 .day-info-card {
-  background: transparent;
-  border: 1px solid var(--color-deep-blue);
+  background: var(--color-main-blue);
+  border: none;
   border-radius: 12px;
   padding: 16px 20px; margin-bottom: 12px;
   display: flex; align-items: flex-start;
   justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  box-shadow: 0 4px 16px rgba(20,52,164,0.25);
 }
 .day-info-left h2 {
   font-family: 'Playfair Display', serif;
   font-style: italic; font-weight: 900;
-  font-size: 28px; color: var(--color-deep-blue);
+  font-size: 28px; color: #fff;
   letter-spacing: -1px;
 }
 .day-info-left .day-label {
-  font-size: 10px; margin-top: 3px; letter-spacing: 0.5px;
+  font-size: 10px; margin-top: 3px; letter-spacing: 0.8px;
   font-family: 'Poppins', sans-serif;
-  /* Vintage red for sub-text label */
-  color: var(--color-vintage-red);
-  font-weight: 600;
+  /* Warm red-orange on blue for contrast */
+  color: #ffb3a3;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 .mock-badge {
   padding: 4px 12px; border-radius: 20px;
   font-size: 10px; font-weight: 700;
-  background: transparent; color: var(--color-deep-blue);
-  border: 1px solid var(--color-deep-blue);
+  background: transparent; color: rgba(255,255,255,0.85);
+  border: 1.5px solid rgba(255,255,255,0.55);
   letter-spacing: 0.5px; font-family: 'Poppins', sans-serif;
 }
-.mock-badge.listening { border-color: var(--color-vintage-red); color: var(--color-vintage-red); }
-.mock-badge.reading { border-color: var(--color-deep-blue); }
+.mock-badge.listening {
+  border-color: #ffb3a3;
+  color: #ffb3a3;
+  background: rgba(217,56,30,0.25);
+}
+.mock-badge.reading { border-color: rgba(255,255,255,0.55); }
 
-/* ── SUMMARY GRID — Outline tiles ── */
+/* ── SUMMARY GRID — White tiles, cobalt border, vintage-red labels ── */
 .summary-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 12px; }
 .summary-tile {
-  background: transparent;
-  border: 1px solid var(--color-deep-blue);
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-main-blue);
   border-radius: 8px; padding: 10px 6px; text-align: center;
+  box-shadow: 0 1px 4px rgba(20,52,164,0.06);
 }
 .summary-tile .tile-num {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px; font-weight: 800; color: var(--color-deep-blue);
+  font-size: 20px; font-weight: 800; color: var(--color-main-blue);
 }
 .summary-tile .tile-label {
-  font-size: 8px; color: var(--color-muted);
-  margin-top: 2px; letter-spacing: 0.6px;
+  font-size: 8px; color: var(--color-vintage-red);
+  margin-top: 2px; letter-spacing: 0.8px;
   font-family: 'Poppins', sans-serif; text-transform: uppercase;
+  font-weight: 700;
 }
 
-/* ── SECTION CARD — Outline ── */
+/* ── SECTION CARD — White bg, cobalt border ── */
 .section-card {
-  background: var(--color-cream-card);
-  border: 1px solid var(--color-deep-blue);
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-main-blue);
   border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+  box-shadow: 0 1px 6px rgba(20,52,164,0.07);
 }
 .section-header {
   display: flex; align-items: center;
   padding: 12px 16px; cursor: pointer; user-select: none;
   background: transparent; transition: background 0.15s; gap: 10px;
 }
-.section-header:hover { background: rgba(10,27,63,0.04); }
+.section-header:hover { background: rgba(20,52,164,0.04); }
 .section-header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+/* Category badge — VINTAGE RED accent */
 .section-icon {
   font-size: 9px; flex-shrink: 0;
   font-family: 'Poppins', sans-serif; font-weight: 700;
-  color: var(--color-deep-blue);
-  border: 1px solid var(--color-deep-blue);
+  color: var(--color-vintage-red);
+  border: 1.5px solid var(--color-vintage-red);
   padding: 3px 8px; border-radius: 20px;
   letter-spacing: 0.8px; white-space: nowrap; text-transform: uppercase;
+  background: rgba(217,56,30,0.06);
 }
 .section-title-text {
   font-family: 'Playfair Display', serif; font-style: italic;
-  font-size: 14px; font-weight: 700; color: var(--color-deep-blue);
+  font-size: 14px; font-weight: 700; color: var(--color-main-blue);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .section-count {
@@ -229,23 +252,23 @@ body > * { position: relative; z-index: 1; }
 .section-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .section-check-btn {
   width: 26px; height: 26px; border-radius: 50%;
-  border: 1.5px solid var(--color-deep-blue);
+  border: 1.5px solid var(--color-main-blue);
   background: transparent; cursor: pointer;
   font-size: 13px; display: flex; align-items: center; justify-content: center;
   transition: all 0.15s; flex-shrink: 0; color: transparent;
 }
-.section-check-btn:hover { background: rgba(10,27,63,0.08); }
-/* Completed checkmark — vintage red */
+.section-check-btn:hover { background: rgba(20,52,164,0.08); }
+/* Completed checkmark — VINTAGE RED, prominent */
 .section-check-btn.done {
-  background: transparent;
+  background: rgba(217,56,30,0.08);
   border-color: var(--color-vintage-red);
   color: var(--color-vintage-red);
 }
-.section-chevron { font-size: 10px; color: var(--color-muted); transition: transform 0.3s; }
+.section-chevron { font-size: 10px; color: var(--color-main-blue); transition: transform 0.3s; opacity: 0.5; }
 .section-chevron.open { transform: rotate(180deg); }
 
 /* ── WORD LIST ── */
-.section-body { display: none; padding: 0 16px 14px; border-top: 1px solid var(--color-divider); }
+.section-body { display: none; padding: 0 16px 14px; border-top: 1.5px solid var(--color-divider); }
 .section-body.open { display: block; }
 .word-list { list-style: none; }
 .word-item {
@@ -263,7 +286,7 @@ body > * { position: relative; z-index: 1; }
 .word-en {
   font-family: 'Poppins', sans-serif;
   font-size: 15px; font-weight: 700;
-  color: var(--color-deep-blue); letter-spacing: -0.2px;
+  color: var(--color-main-blue); letter-spacing: -0.2px;
 }
 .word-ko {
   font-size: 11px; color: var(--color-muted);
@@ -273,24 +296,25 @@ body > * { position: relative; z-index: 1; }
 .sound-btn {
   width: 30px; height: 30px;
   background: transparent;
-  border: 1px solid var(--color-deep-blue);
+  border: 1.5px solid var(--color-main-blue);
   border-radius: 50%; cursor: pointer; font-size: 10px;
-  color: var(--color-deep-blue);
+  color: var(--color-main-blue);
   display: flex; align-items: center; justify-content: center;
   transition: all 0.12s; flex-shrink: 0;
 }
-.sound-btn:active { background: var(--color-deep-blue); color: #fff; transform: scale(0.92); }
+.sound-btn:active { background: var(--color-main-blue); color: #fff; transform: scale(0.92); }
 
-/* ── LEARN BUTTON — Outline ── */
+/* ── LEARN BUTTON — Solid cobalt ── */
 .learn-btn-wrap { padding: 14px 0 4px; }
 .learn-btn {
   width: 100%; padding: 15px;
-  background: var(--color-deep-blue); color: #fff;
-  border: 1px solid var(--color-deep-blue); border-radius: 30px;
+  background: var(--color-main-blue); color: #fff;
+  border: none; border-radius: 30px;
   font-family: 'Poppins', sans-serif;
   font-size: 13px; font-weight: 700;
   cursor: pointer; transition: all 0.15s;
   letter-spacing: 1px; text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(20,52,164,0.30);
 }
 .learn-btn:hover { background: var(--cobalt-dark); }
 
@@ -298,19 +322,20 @@ body > * { position: relative; z-index: 1; }
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: var(--bg-cream);
-  border-top: 1px solid var(--color-deep-blue);
+  background-image: none !important;
+  border-top: 2px solid var(--color-main-blue);
   display: flex; z-index: 200;
 }
 .bottom-nav-btn {
   flex: 1; padding: 10px 4px 10px;
   background: none; border: none; cursor: pointer;
-  font-size: 9px; color: rgba(10,27,63,0.35);
+  font-size: 9px; color: rgba(20,52,164,0.35);
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   font-family: 'Poppins', sans-serif; font-weight: 700;
   letter-spacing: 0.6px; text-transform: uppercase; transition: color 0.2s;
 }
 .bottom-nav-btn .nav-icon { font-size: 15px; }
-.bottom-nav-btn.active { color: var(--color-deep-blue); }
+.bottom-nav-btn.active { color: var(--color-main-blue); }
 
 /* ══════════════════════════════════════════════════════════
    STUDY MODAL — APPLE MUSIC PLAYER (CENTERED FLOAT)
@@ -849,9 +874,10 @@ body > * { position: relative; z-index: 1; }
   font-family: 'Noto Serif KR', serif;
 }
 .history-card {
-  background: var(--color-cream-card);
-  border: 1px solid var(--color-deep-blue);
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-main-blue);
   border-radius: 12px; margin-bottom: 10px; overflow: hidden;
+  box-shadow: 0 1px 6px rgba(20,52,164,0.07);
 }
 .history-header {
   padding: 12px 14px; background: transparent;
@@ -860,7 +886,7 @@ body > * { position: relative; z-index: 1; }
 }
 .history-date {
   font-family: 'Poppins', sans-serif;
-  font-size: 13px; font-weight: 700; color: var(--color-deep-blue);
+  font-size: 13px; font-weight: 700; color: var(--color-main-blue);
 }
 .history-meta {
   font-size: 10px; color: var(--color-muted);
@@ -868,7 +894,7 @@ body > * { position: relative; z-index: 1; }
 }
 .history-score {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px; font-weight: 800; color: var(--color-deep-blue);
+  font-size: 20px; font-weight: 800; color: var(--color-main-blue);
 }
 .history-body { display: none; padding: 10px 14px; }
 .history-body.open { display: block; }
@@ -885,12 +911,12 @@ body > * { position: relative; z-index: 1; }
 .retry-wrong-btn:hover { background: var(--color-vintage-red); color: #fff; }
 .history-tab {
   flex: 1; padding: 6px; border-radius: 50px;
-  border: 1px solid var(--color-deep-blue);
+  border: 1.5px solid var(--color-main-blue);
   background: transparent; font-size: 10px; font-weight: 700;
-  cursor: pointer; color: var(--color-deep-blue); transition: all 0.15s; text-align: center;
+  cursor: pointer; color: var(--color-main-blue); transition: all 0.15s; text-align: center;
   font-family: 'Poppins', sans-serif;
 }
-.history-tab.active { background: var(--color-deep-blue); color: #fff; }
+.history-tab.active { background: var(--color-main-blue); color: #fff; }
 .history-word-item {
   display: flex; align-items: center; gap: 8px;
   padding: 7px 0; border-bottom: 1px solid var(--color-divider);
@@ -898,7 +924,7 @@ body > * { position: relative; z-index: 1; }
 .history-word-item:last-child { border-bottom: none; }
 .hw-en {
   font-family: 'Poppins', sans-serif;
-  font-size: 13px; font-weight: 700; flex: 1; color: var(--color-deep-blue);
+  font-size: 13px; font-weight: 700; flex: 1; color: var(--color-main-blue);
 }
 .hw-ko { font-size: 10px; color: var(--color-muted); font-family: 'Noto Serif KR', serif; }
 
@@ -916,10 +942,9 @@ body > * { position: relative; z-index: 1; }
 <body>
 
 <header class="app-header">
-  <!-- Aerial photo strip: deep sea top → sand → fades into cream -->
-  <div class="header-photo-strip"></div>
+  <!-- Photo strip removed — Light Theme uses cream bg only -->
 
-  <!-- Title overlay sitting at the bottom of the photo strip -->
+  <!-- Title block -->
   <div class="header-title-bar">
     <div class="header-logo-block">
       <h1>IELTS VOCABULARY</h1>
@@ -1006,7 +1031,9 @@ function buildDateNav() {
     const btn = document.createElement('button');
     const isDone = isDayComplete(i);
     btn.className = 'date-btn' + (i===currentDayIdx?' active':'') + (isDone?' day-done':'');
-    btn.textContent = isDone ? `✓ Day ${s.day}` : `Day ${s.day}`;
+    btn.innerHTML = isDone
+      ? `<span style="color:var(--color-vintage-red);font-weight:800">✓</span> Day ${s.day}`
+      : `Day ${s.day}`;
     btn.onclick = () => { currentDayIdx=i; historyFilterDay=i; localStorage.setItem('ielts_last_day', i); buildDateNav(); renderDay(i); };
     nav.appendChild(btn);
   });
@@ -1029,7 +1056,7 @@ function updateProgress(dayIdx) {
   const pct = total>0 ? Math.round(done/total*100) : 0;
   document.getElementById('progressBar').style.width = pct+'%';
   document.getElementById('progressLabel').textContent = `DAY ${s.day} / 24  —  ${pct}%`;
-  document.getElementById('headerSubtitle').textContent = `Day ${s.day} · ${total} words`;
+  document.getElementById('headerSubtitle').textContent = `DAY ${s.day} • ${total} WORDS`;
 }
 
 function renderDay(dayIdx) {
@@ -1038,6 +1065,7 @@ function renderDay(dayIdx) {
   let html = '';
 
   // Day info
+  const totalWords = s.listening.words.length + s.reading.words.length + s.task1.words.length + s.task2.words.length;
   let mb = s.mock==='리스닝 모의고사'
     ? `<span class="mock-badge listening">[ LISTENING MOCK ]</span>`
     : s.mock==='리딩 모의고사'
@@ -1045,7 +1073,8 @@ function renderDay(dayIdx) {
       : `<span class="mock-badge">[ VOCAB ]</span>`;
   html += `<div class="day-info-card">
     <div class="day-info-left">
-      <h2>Day ${s.day} <span style="font-size:16px;font-weight:400;opacity:0.6;font-style:italic;">/ 24</span></h2>
+      <h2>Day ${s.day} <span style="font-size:16px;font-weight:400;opacity:0.7;font-style:italic;">/ 24</span></h2>
+      <div class="day-label">DAY ${s.day} &bull; ${totalWords} WORDS</div>
     </div>${mb}
   </div>`;
 
