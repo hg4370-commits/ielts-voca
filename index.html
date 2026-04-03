@@ -3,353 +3,993 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230A1B3F'/><text x='6' y='24' font-size='20' fill='%23F4F1EA' font-family='serif' font-style='italic'>V</text></svg>">
 <title>IELTS 오늘의 단어장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Noto+Serif+KR:wght@400;500;600;700;900&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f8fbf3;
-    --header-bg: #d3e9dd;
-    --header-text: #2d3a2e;
-    --header-sub: #4a6a55;
-    --card-bg: #ffffff;
-    --card-border: #d3e9dd;
-    --card-hover: #f0f7e8;
-    --green-dark: #2d6a4f;
-    --green-mid: #52b788;
-    --green-light: #b7e4c7;
-    --tag-bg: #eef7e0;
-    --tag-border: #b7ddb0;
-    --progress-bg: #e8f5e9;
-    --progress-fill: #52b788;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a2e1a; min-height: 100vh; }
+/* ═══════════════════════════════════════════════════════════════
+   IELTS VOCABULARY — CLASSIC EDITORIAL / DICTIONARY LOOK
+   Dashboard: Vintage Paper + Deep Navy + Muted Red accents
+   Modal:     Light cream 3:4 selection + Dark navy study player
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  /* ── PRIMARY PALETTE — Vintage, muted, heavy ── */
+  --bg-cream:          #EAE5D9;   /* warmer vintage paper — whole page bg */
+  --color-main-blue:   #0F2557;   /* heavy deep navy — NOT bright cobalt */
+  --color-vintage-red: #C83218;   /* muted vintage red — accents only */
 
-  /* HEADER */
-  .app-header {
-    background: var(--header-bg);
-    padding: 16px 20px 10px;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 8px rgba(45,106,79,0.12);
-  }
-  .app-header h1 { font-size: 18px; font-weight: 700; color: var(--header-text); }
-  .app-header .subtitle { font-size: 12px; color: var(--header-sub); margin-top: 2px; }
-  .date-nav { display: flex; align-items: center; gap: 8px; margin-top: 10px; overflow-x: auto; scrollbar-width: none; }
-  .date-nav::-webkit-scrollbar { display: none; }
-  .date-btn { flex-shrink: 0; background: rgba(255,255,255,0.7); border: 1.5px solid #b0d4c0; border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--header-text); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-  .date-btn:hover { background: rgba(255,255,255,0.9); }
-  .date-btn.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); box-shadow: 0 2px 6px rgba(45,106,79,0.3); }
-  .date-btn.today-mark { border-color: var(--green-mid); }
-  .date-btn.day-done { background: var(--green-dark); color: #fff; border-color: var(--green-dark); opacity: 0.75; }
-  .date-btn.day-done:not(.active) { background: #52b788; border-color: #52b788; }
+  /* ── DERIVED DASHBOARD TOKENS ── */
+  --color-white:       #FFFFFF;
+  --color-muted:       #5a6070;
+  --color-divider:     rgba(15,37,87,0.15);
+  --color-cream-card:  #F2EDE3;   /* slightly warmer card bg */
+  --color-card-hover:  #E4DDCC;
+  --glass-blue:        rgba(8, 18, 48, 0.90);  /* modal — very dark navy */
 
-  /* PROGRESS */
-  .progress-wrap { padding: 8px 20px 0; background: var(--header-bg); }
-  .progress-bar-outer { height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; }
-  .progress-bar-inner { height: 100%; background: var(--progress-fill); border-radius: 3px; transition: width 0.4s ease; }
-  .progress-label { font-size: 11px; color: var(--header-sub); text-align: right; padding-bottom: 8px; margin-top: 3px; }
+  /* ── LEGACY ALIASES — keep JS/Firebase untouched ── */
+  --bg: var(--bg-cream); --header-bg: var(--bg-cream);
+  --header-text: var(--color-main-blue); --header-sub: var(--color-muted);
+  --card-bg: var(--color-cream-card); --card-border: var(--color-main-blue);
+  --card-hover: var(--color-card-hover);
+  --cobalt: var(--color-main-blue); --cobalt-dark: #07183a;
+  --color-deep-blue: var(--color-main-blue);  /* alias */
+  --red: var(--color-vintage-red);
+  --olive: #2e6b3e; --cream: var(--bg-cream); --charcoal: #1A1A1A;
+  --tag-bg: #D9D2C0; --tag-border: var(--color-main-blue);
+  --progress-fill: var(--color-main-blue);
+  --green-dark: #1a4a2a; --green-mid: #2d7a3a;
+  --green-light: #8ab898;
+}
 
-  /* MAIN */
-  .main { padding: 16px; max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
+/* ── RESET ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* DAY INFO */
-  .day-info-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-  .day-info-left h2 { font-size: 20px; font-weight: 800; color: var(--header-text); }
-  .day-info-left .day-label { font-size: 12px; color: var(--header-sub); margin-top: 3px; }
-  .mock-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: var(--tag-bg); color: var(--green-dark); }
-  .mock-badge.listening { background: #e8f4f8; color: #1a5276; }
-  .mock-badge.reading { background: #fef9e7; color: #7d6608; }
+/* ── CLASSIC EDITORIAL BODY ── */
+body {
+  background-color: var(--bg-cream);
+  background-image: none !important;
+  font-family: 'Noto Serif KR', Georgia, serif;
+  color: var(--color-main-blue);
+  min-height: 100vh;
+}
 
-  /* SUMMARY */
-  .summary-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
-  .summary-tile { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 12px; padding: 10px 6px; text-align: center; }
-  .summary-tile .tile-num { font-size: 20px; font-weight: 800; color: var(--green-dark); }
-  .summary-tile .tile-label { font-size: 10px; color: var(--header-sub); margin-top: 2px; }
+/* ══════════════════════════════════════════════════════════
+   HEADER — Classic Editorial / Dictionary (NO background images)
+══════════════════════════════════════════════════════════ */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg-cream);
+  background-image: none !important;
+  border-bottom: 3px solid var(--color-main-blue);
+}
 
-  /* ── SECTION CARD ── */
-  .section-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+/* Photo strip removed — hidden completely */
+.header-photo-strip { display: none !important; }
 
-  .section-header {
-    display: flex; align-items: center;
-    padding: 13px 16px; cursor: pointer; user-select: none;
-    background: var(--card-bg); transition: background 0.2s; gap: 10px;
-  }
-  .section-header:hover { background: var(--card-hover); }
+/* Title bar */
+.header-title-bar {
+  position: relative;
+  padding: 16px 20px 12px;
+  background: var(--bg-cream);
+  background-image: none !important;
+}
+.header-logo-block { }
 
-  /* 왼쪽: 아이콘 + 텍스트 */
-  .section-header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-  .section-icon { font-size: 18px; flex-shrink: 0; }
-  .section-title-text { font-size: 14px; font-weight: 700; color: var(--header-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .section-count { font-size: 12px; color: var(--header-sub); white-space: nowrap; }
+/* LOGO — Upright serif, heavy deep navy — NO ITALICS */
+.app-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 26px; color: var(--color-main-blue);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  line-height: 1;
+}
+.header-red-rule {
+  display: block; width: 40px; height: 3px;
+  background: var(--color-vintage-red); margin-top: 6px;
+}
+/* Subtitle under logo — VINTAGE RED, prominent */
+.app-header .subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px; font-weight: 700;
+  color: var(--color-vintage-red);
+  margin-top: 5px;
+  letter-spacing: 2px; text-transform: uppercase;
+}
 
-  /* 오른쪽: 섹션 체크버튼 + 펼침 화살표 */
-  .section-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+/* Date nav strip */
+.header-nav-strip {
+  padding: 8px 16px 6px;
+  background: var(--bg-cream);
+  background-image: none !important;
+  border-bottom: 1px solid var(--color-main-blue);
+}
+.date-nav {
+  display: flex; align-items: center; gap: 5px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.date-nav::-webkit-scrollbar { display: none; }
+/* Sharp-cornered date buttons — NO pill/bubbly shapes */
+.date-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px;
+  padding: 4px 10px;
+  font-size: 9px; font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-main-blue);
+  cursor: pointer; transition: all 0.12s; white-space: nowrap;
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.date-btn:hover { background: var(--color-main-blue); color: #fff; }
+/* Active day — solid deep navy, white text */
+.date-btn.active {
+  background: var(--color-main-blue); color: #fff;
+  border-color: var(--color-main-blue);
+}
+/* Completed day — outlined navy, vintage-red ✓ appended by JS */
+.date-btn.day-done {
+  background: transparent;
+  border-color: var(--color-main-blue);
+  color: var(--color-main-blue);
+  opacity: 0.65;
+}
+.date-btn.day-done.active {
+  background: var(--color-main-blue); color: #fff; opacity: 1;
+}
 
-  /* 섹션 체크버튼 (원보카 스타일) */
-  .section-check-btn {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 2px solid var(--green-light);
-    background: transparent; cursor: pointer;
-    font-size: 14px; display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; flex-shrink: 0; color: transparent;
-  }
-  .section-check-btn:hover { border-color: var(--green-mid); }
-  .section-check-btn.done { background: var(--green-mid); border-color: var(--green-mid); color: #fff; }
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  padding: 4px 20px 0;
+  background: var(--bg-cream);
+  background-image: none !important;
+  border-bottom: 1px solid var(--color-divider);
+}
+.progress-bar-outer { height: 3px; background: rgba(15,37,87,0.14); overflow: hidden; }
+.progress-bar-inner { height: 100%; background: var(--color-main-blue); transition: width 0.4s ease; }
+.progress-label {
+  font-size: 9px; color: var(--color-vintage-red);
+  text-align: right; padding-bottom: 4px; margin-top: 2px;
+  font-family: 'Poppins', sans-serif; letter-spacing: 1px;
+  text-transform: uppercase; font-weight: 700;
+}
 
-  .section-chevron { font-size: 12px; color: var(--green-mid); transition: transform 0.3s; }
-  .section-chevron.open { transform: rotate(180deg); }
+/* ── MAIN CONTENT ── */
+.main { padding: 14px 16px; max-width: 600px; margin: 0 auto; padding-bottom: 84px; }
+.page { display: none; }
+.page.active { display: block; }
 
-  /* WORD BODY */
-  .section-body { display: none; padding: 0 16px 14px; }
-  .section-body.open { display: block; }
-  .word-list { list-style: none; }
-  .word-item { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid #f0f4f0; }
-  .word-item:last-child { border-bottom: none; }
-  .word-item.checked { opacity: 0.45; text-decoration: line-through; }
-  .word-num { font-size: 11px; color: #aaa; min-width: 22px; text-align: right; }
-  .word-text { flex: 1; }
-  .word-en { font-size: 14px; font-weight: 600; color: #1a2e1a; }
-  .word-ko { font-size: 12px; color: #5a7a5a; margin-top: 1px; }
-  /* 단어 옆 소리 버튼만 (체크버튼 없음) */
-  .sound-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--green-mid); padding: 2px 4px; transition: transform 0.1s; }
-  .sound-btn:active { transform: scale(0.85); }
+/* ── DAY INFO CARD — Solid deep-navy bg, white text, sharp corners ── */
+.day-info-card {
+  background: var(--color-main-blue);
+  border: none;
+  border-radius: 4px;
+  padding: 18px 20px; margin-bottom: 12px;
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  box-shadow: 0 3px 12px rgba(15,37,87,0.30);
+}
+.day-info-left h2 {
+  font-family: 'Playfair Display', serif;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 28px; color: #fff;
+  letter-spacing: 1px;
+}
+.day-info-left .day-label {
+  font-size: 10px; margin-top: 4px; letter-spacing: 1.5px;
+  font-family: 'Poppins', sans-serif;
+  /* Vintage red on navy */
+  color: var(--color-vintage-red);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.mock-badge {
+  padding: 4px 10px; border-radius: 2px;
+  font-size: 9px; font-weight: 700;
+  background: transparent; color: rgba(255,255,255,0.80);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  letter-spacing: 0.8px; font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+}
+.mock-badge.listening {
+  border-color: var(--color-vintage-red);
+  color: var(--color-vintage-red);
+}
+.mock-badge.reading { border-color: rgba(255,255,255,0.45); }
 
-  /* LEARN BUTTON */
-  .learn-btn-wrap { padding: 14px 0; }
-  .learn-btn { width: 100%; padding: 13px; background: var(--green-dark); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .learn-btn:hover { background: #1f4a37; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(45,106,79,0.3); }
+/* ── SUMMARY GRID — Warm card tiles, sharp corners, vintage-red labels ── */
+.summary-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; margin-bottom: 12px; }
+.summary-tile {
+  background: var(--color-cream-card);
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px; padding: 10px 6px; text-align: center;
+}
+.summary-tile .tile-num {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px; font-weight: 800; color: var(--color-main-blue);
+}
+.summary-tile .tile-label {
+  font-size: 8px; color: var(--color-vintage-red);
+  margin-top: 2px; letter-spacing: 1px;
+  font-family: 'Poppins', sans-serif; text-transform: uppercase;
+  font-weight: 700;
+}
 
-  /* BOTTOM NAV */
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0eee0; display: flex; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.06); }
-  .bottom-nav-btn { flex: 1; padding: 10px 4px 8px; background: none; border: none; cursor: pointer; font-size: 10px; color: #8aaa8a; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color 0.2s; }
-  .bottom-nav-btn .nav-icon { font-size: 20px; }
-  .bottom-nav-btn.active { color: var(--green-dark); }
+/* ── SECTION CARD — Warm card bg, sharp corners ── */
+.section-card {
+  background: var(--color-cream-card);
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px; margin-bottom: 8px; overflow: hidden;
+}
+.section-header {
+  display: flex; align-items: center;
+  padding: 12px 16px; cursor: pointer; user-select: none;
+  background: transparent; transition: background 0.12s; gap: 10px;
+}
+.section-header:hover { background: rgba(15,37,87,0.06); }
+.section-header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+/* Category badge — VINTAGE RED, sharp rectangular tag */
+.section-icon {
+  font-size: 9px; flex-shrink: 0;
+  font-family: 'Poppins', sans-serif; font-weight: 700;
+  color: var(--color-vintage-red);
+  border: 1.5px solid var(--color-vintage-red);
+  padding: 2px 7px; border-radius: 2px;
+  letter-spacing: 1px; white-space: nowrap; text-transform: uppercase;
+}
+.section-title-text {
+  font-family: 'Playfair Display', serif; font-style: normal;
+  font-size: 14px; font-weight: 700; color: var(--color-main-blue);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: 0.3px;
+}
+.section-count {
+  font-size: 10px; color: var(--color-muted);
+  white-space: nowrap; font-family: 'Poppins', sans-serif;
+}
+.section-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.section-check-btn {
+  width: 24px; height: 24px; border-radius: 2px;
+  border: 1.5px solid var(--color-main-blue);
+  background: transparent; cursor: pointer;
+  font-size: 13px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s; flex-shrink: 0; color: transparent;
+}
+.section-check-btn:hover { background: rgba(15,37,87,0.08); }
+/* Completed checkmark — VINTAGE RED, prominent */
+.section-check-btn.done {
+  background: transparent;
+  border-color: var(--color-vintage-red);
+  color: var(--color-vintage-red);
+}
+.section-chevron { font-size: 10px; color: var(--color-main-blue); transition: transform 0.3s; opacity: 0.5; }
+.section-chevron.open { transform: rotate(180deg); }
 
-  /* PAGE */
-  .page { display: none; }
-  .page.active { display: block; }
+/* ── WORD LIST ── */
+.section-body { display: none; padding: 0 16px 14px; border-top: 1px solid var(--color-divider); }
+.section-body.open { display: block; }
+.word-list { list-style: none; }
+.word-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--color-divider);
+}
+.word-item:last-child { border-bottom: none; }
+.word-item.checked { opacity: 0.3; text-decoration: line-through; }
+.word-num {
+  font-size: 9px; color: #9a9fa8; min-width: 20px; text-align: right;
+  font-family: 'Poppins', sans-serif; font-weight: 600;
+}
+.word-text { flex: 1; }
+/* English word — Poppins Bold Upright (NEVER italic for vocabulary) */
+.word-en {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px; font-weight: 700;
+  color: var(--color-main-blue); letter-spacing: -0.2px;
+}
+.word-ko {
+  font-size: 11px; color: var(--color-muted);
+  margin-top: 1px; font-family: 'Noto Serif KR', serif;
+}
+/* Square play button — editorial sharp style */
+.sound-btn {
+  width: 28px; height: 28px;
+  background: transparent;
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px; cursor: pointer; font-size: 10px;
+  color: var(--color-main-blue);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s; flex-shrink: 0;
+}
+.sound-btn:active { background: var(--color-main-blue); color: #fff; transform: scale(0.92); }
 
-  /* ── QUIZ OVERLAY ── */
-  .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
-  .quiz-overlay.open { display: flex; }
-  .quiz-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  .quiz-modal-header { background: var(--header-bg); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
-  .quiz-modal-header h3 { font-size: 16px; font-weight: 700; color: var(--header-text); }
-  .quiz-close-btn { background: rgba(255,255,255,0.5); border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 18px; cursor: pointer; color: var(--header-text); display: flex; align-items: center; justify-content: center; }
-  .quiz-content { padding: 20px; overflow-y: auto; flex: 1; }
+/* ── LEARN BUTTON — Sharp rectangular, heavy navy ── */
+.learn-btn-wrap { padding: 14px 0 4px; }
+.learn-btn {
+  width: 100%; padding: 14px;
+  background: var(--color-main-blue); color: #fff;
+  border: none; border-radius: 2px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px; font-weight: 800;
+  cursor: pointer; transition: all 0.12s;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.learn-btn:hover { background: var(--cobalt-dark); }
 
-  /* MODE SELECT */
-  .section-radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .section-radio { display: none; }
-  .section-radio-label { display: block; padding: 8px 10px; border: 1.5px solid var(--card-border); border-radius: 10px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--header-sub); transition: all 0.2s; background: var(--card-bg); }
-  .section-radio:checked + .section-radio-label { border-color: var(--green-dark); color: var(--green-dark); background: var(--tag-bg); }
-  .mode-select-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  .mode-card { border: 2px solid var(--card-border); border-radius: 14px; padding: 16px; cursor: pointer; transition: all 0.2s; background: var(--card-bg); display: flex; align-items: center; gap: 14px; }
-  .mode-card:hover { border-color: var(--green-mid); background: var(--card-hover); }
-  .mode-card .mode-icon { font-size: 32px; }
-  .mode-card .mode-info .mode-name { font-size: 15px; font-weight: 700; color: var(--header-text); }
-  .mode-card .mode-info .mode-desc { font-size: 12px; color: var(--header-sub); margin-top: 3px; }
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-cream);
+  background-image: none !important;
+  border-top: 2px solid var(--color-main-blue);
+  display: flex; z-index: 200;
+}
+.bottom-nav-btn {
+  flex: 1; padding: 10px 4px 10px;
+  background: none; border: none; cursor: pointer;
+  font-size: 9px; color: rgba(15,37,87,0.35);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-family: 'Poppins', sans-serif; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s;
+}
+.bottom-nav-btn .nav-icon { font-size: 15px; }
+.bottom-nav-btn.active { color: var(--color-main-blue); }
 
-  /* QUIZ PROGRESS */
-  .quiz-progress { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-  .quiz-progress-bar-outer { flex: 1; height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; }
-  .quiz-progress-bar-inner { height: 100%; background: var(--progress-fill); border-radius: 3px; transition: width 0.3s; }
-  .quiz-progress-text { font-size: 12px; color: var(--header-sub); white-space: nowrap; }
+/* ══════════════════════════════════════════════════════════
+   STUDY MODAL — EDITORIAL STUDY PANEL
+   Mode Select: Cream + Navy (light, 3:4)
+   Study player: Dark navy glass (unchanged visual style)
+══════════════════════════════════════════════════════════ */
+.quiz-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.50);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  place-items: center;
+  padding: 16px;
+}
+.quiz-overlay.open { display: grid; }
 
-  /* FLASHCARD */
-  .flashcard-wrap { perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
-  .flashcard { position: relative; width: 100%; padding-top: 60%; transform-style: preserve-3d; transition: transform 0.5s; }
-  .flashcard.flipped { transform: rotateY(180deg); }
-  .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border: 2px solid var(--card-border); }
-  .flashcard-front { background: var(--tag-bg); }
-  .flashcard-back { background: var(--header-bg); transform: rotateY(180deg); }
-  .flashcard-word { font-size: 28px; font-weight: 800; color: var(--green-dark); text-align: center; }
-  .flashcard-hint { font-size: 12px; color: var(--header-sub); margin-top: 8px; }
-  .flashcard-meaning { font-size: 20px; font-weight: 700; color: var(--header-text); text-align: center; }
+/* Main modal container — 3:4 ratio, cream bg, sharp-ish corners */
+.quiz-modal {
+  width: min(420px, 90vw);
+  aspect-ratio: 3 / 4;
+  max-height: calc(100vh - 32px);
+  background: var(--bg-cream);
+  border: 2px solid var(--color-main-blue);
+  border-radius: 8px;
+  padding: 24px 22px 20px;
+  display: flex; flex-direction: column; gap: 0;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  overflow: hidden;
+  position: relative;
+}
 
-  /* MC */
-  .mc-question { font-size: 18px; font-weight: 700; color: var(--header-text); margin-bottom: 16px; text-align: center; }
-  .mc-question-word { font-size: 28px; font-weight: 800; color: var(--green-dark); }
-  .mc-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .mc-option { padding: 14px 10px; border: 2px solid var(--card-border); border-radius: 12px; background: var(--card-bg); cursor: pointer; font-size: 13px; font-weight: 600; text-align: center; color: var(--header-text); transition: all 0.2s; }
-  .mc-option:hover { border-color: var(--green-mid); background: var(--card-hover); }
-  .mc-option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
-  .mc-option.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+/* When in study (quiz) mode — switch to dark navy */
+.quiz-modal.study-mode {
+  background: var(--glass-blue);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
+}
 
-  /* DICTATION */
-  .dictation-area { text-align: center; margin-bottom: 20px; }
-  .dictation-hint { font-size: 13px; color: var(--header-sub); margin-bottom: 12px; }
-  .dictation-meaning { font-size: 20px; font-weight: 700; color: var(--green-dark); margin-bottom: 16px; }
-  .dictation-input { width: 100%; padding: 12px 16px; border: 2px solid var(--card-border); border-radius: 10px; font-size: 16px; color: var(--header-text); background: var(--card-bg); outline: none; transition: border-color 0.2s; text-align: center; }
-  .dictation-input:focus { border-color: var(--green-mid); }
-  .dictation-input.correct { border-color: #28a745; background: #d4edda; }
-  .dictation-input.wrong { border-color: #dc3545; background: #f8d7da; }
+/* Top row: mode label + close button */
+.quiz-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-divider);
+  padding-bottom: 12px;
+}
+.quiz-modal.study-mode .quiz-modal-header {
+  border-bottom-color: rgba(255,255,255,0.10);
+}
+.quiz-modal-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px; font-weight: 800;
+  color: var(--color-main-blue);
+  text-transform: uppercase; letter-spacing: 2px;
+}
+.quiz-modal.study-mode .quiz-modal-header h3 {
+  color: rgba(255,255,255,0.50);
+}
+.quiz-close-btn {
+  background: transparent;
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px; width: 26px; height: 26px;
+  font-size: 11px; cursor: pointer; color: var(--color-main-blue);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s; flex-shrink: 0; font-weight: 700;
+}
+.quiz-close-btn:hover {
+  background: var(--color-main-blue); color: #fff;
+}
+.quiz-modal.study-mode .quiz-close-btn {
+  background: rgba(255,255,255,0.10); border-color: transparent;
+  border-radius: 50%; color: rgba(255,255,255,0.65);
+}
+.quiz-modal.study-mode .quiz-close-btn:hover {
+  background: rgba(255,255,255,0.20);
+}
 
-  /* QUIZ NAV */
-  .quiz-nav { display: flex; gap: 10px; margin-top: 16px; }
-  .quiz-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .quiz-btn.primary { background: var(--green-dark); color: #fff; }
-  .quiz-btn.primary:hover { background: #1f4a37; }
-  .quiz-btn.secondary { background: var(--tag-bg); color: var(--green-dark); border: 1.5px solid var(--tag-border); }
-  .quiz-btn.sound-big { background: var(--header-bg); color: var(--green-dark); border: 1.5px solid var(--card-border); flex: 0; padding: 12px 16px; font-size: 18px; }
+/* Scrollable inner content */
+.quiz-content {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
+  scrollbar-width: none;
+  /* internal gap managed by children */
+}
+.quiz-content::-webkit-scrollbar { display: none; }
 
-  
-  /* ── 오답노트 팝업 ── */
-  .wrong-note-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.55); z-index: 500;
-    align-items: flex-end; justify-content: center;
-    padding: 0;
-  }
-  .wrong-note-overlay.open { display: flex; }
-  .wrong-note-sheet {
-    background: var(--card-bg); border-radius: 24px 24px 0 0;
-    width: 100%; max-width: 480px;
-    padding: 28px 24px 36px;
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
-    animation: slideUp 0.25s ease;
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); opacity:0; }
-    to   { transform: translateY(0);    opacity:1; }
-  }
-  .wrong-note-badge {
-    display: inline-block;
-    background: #f4a261; color: #fff;
-    font-size: 11px; font-weight: 800;
-    padding: 3px 10px; border-radius: 20px;
-    margin-bottom: 10px; letter-spacing: 0.5px;
-  }
-  .wrong-note-word {
-    font-size: 32px; font-weight: 900;
-    color: #2563EB; text-align: center;
-    margin: 6px 0 4px;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.18);
-  }
-  .wrong-note-meaning {
-    font-size: 17px; font-weight: 700;
-    color: var(--header-text); text-align: center;
-    margin-bottom: 6px;
-  }
-  .wrong-note-your {
-    font-size: 13px; color: #e63946; font-weight: 600;
-    text-align: center; margin-bottom: 18px;
-  }
-  .wrong-note-accents {
-    display: flex; gap: 8px; justify-content: center;
-    margin-bottom: 20px;
-  }
-  .wrong-note-accent-btn {
-    padding: 6px 14px; border-radius: 20px;
-    border: 1.5px solid rgba(255,255,255,0.25);
-    background: rgba(255,255,255,0.1); font-size: 12px; font-weight: 700;
-    color: #b0d4bc; cursor: pointer; transition: all 0.2s;
-  }
-  .wrong-note-accent-btn:hover,
-  .wrong-note-accent-btn.active {
-    background: #2d6a4f; color: #fff; border-color: #2d6a4f;
-  }
-  .wrong-note-input-wrap {
-    display: flex; gap: 8px; margin-bottom: 12px;
-  }
-  .wrong-note-input {
-    flex: 1; padding: 13px 16px;
-    border: 2px solid #d3e9dd; border-radius: 12px;
-    font-size: 16px; text-align: center;
-    outline: none; transition: border-color 0.2s;
-    background: #f8fbf3;
-  }
-  .wrong-note-input:focus { border-color: #52b788; }
-  .wrong-note-input.correct { border-color: #28a745; background: #d4edda; }
-  .wrong-note-input.wrong   { border-color: #dc3545; background: #f8d7da; }
-  .wrong-note-submit {
-    width: 48px; height: 48px; border-radius: 12px;
-    background: #2d6a4f; color: #fff;
-    border: none; font-size: 20px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.2s;
-  }
-  .wrong-note-submit:hover { background: #1f4a37; }
-  .wrong-note-skip {
-    width: 100%; padding: 13px;
-    background: #f0f4f0; color: #5a7a5a;
-    border: none; border-radius: 12px;
-    font-size: 14px; font-weight: 700; cursor: pointer;
-    transition: all 0.2s;
-  }
-  .wrong-note-skip:hover { background: #e0eee0; }
-  .wrong-note-feedback {
-    text-align: center; font-size: 13px; font-weight: 700;
-    min-height: 20px; margin-bottom: 10px;
-  }
+/* ── ALBUM COVER (shared for Flashcard + MC word display) ── */
+.player-album {
+  background: var(--bg-cream);
+  border-radius: 20px;
+  padding: 22px 18px 18px;
+  text-align: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+  /* Square aspect ratio */
+  aspect-ratio: 1 / 1;
+  position: relative; overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.25);
+}
+/* Paper grain on album */
+.player-album::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}
+.album-section-tag {
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--color-vintage-red);
+  margin-bottom: 8px; position: relative;
+}
+/* English word inside album — Poppins bold upright, NEVER italic */
+.album-word {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(24px, 7vw, 36px);
+  font-weight: 800; color: var(--color-deep-blue);
+  line-height: 1.1; letter-spacing: -1px;
+  position: relative; word-break: break-word;
+}
+.album-hint {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 11px; color: rgba(10,27,63,0.38);
+  margin-top: 10px; position: relative;
+}
+.album-meaning {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--color-deep-blue); line-height: 1.35;
+  position: relative; word-break: keep-all;
+}
 
-/* RESULT */
-  .result-screen { text-align: center; }
-  .result-emoji { font-size: 48px; margin-bottom: 8px; }
-  .result-title { font-size: 22px; font-weight: 800; color: var(--header-text); margin-bottom: 4px; }
-  .result-subtitle { font-size: 13px; color: var(--header-sub); margin-bottom: 20px; }
-  .result-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-  .result-stat { background: var(--tag-bg); border-radius: 12px; padding: 12px 8px; }
-  .result-stat .stat-num { font-size: 22px; font-weight: 800; color: var(--green-dark); }
-  .result-stat .stat-label { font-size: 11px; color: var(--header-sub); margin-top: 2px; }
-  .result-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
-  .result-tab { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid var(--card-border); background: var(--card-bg); font-size: 12px; font-weight: 600; cursor: pointer; color: var(--header-sub); transition: all 0.2s; }
-  .result-tab.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
-  .result-word-list { text-align: left; margin-bottom: 16px; }
-  .result-word-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; margin-bottom: 4px; background: var(--card-bg); border: 1px solid var(--card-border); }
-  .result-word-item .rw-en { font-size: 13px; font-weight: 600; color: var(--header-text); flex: 1; }
-  .result-word-item .rw-ko { font-size: 11px; color: var(--header-sub); }
-  .retry-choice-wrap { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-  .retry-choice-btn { padding: 14px; border-radius: 12px; border: 2px solid var(--card-border); background: var(--card-bg); font-size: 13px; font-weight: 700; cursor: pointer; color: var(--header-text); transition: all 0.2s; text-align: center; }
-  .retry-choice-btn:hover { border-color: var(--green-mid); background: var(--card-hover); }
-  .retry-choice-btn.primary-choice { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
-  .show-retry-btn { width: 100%; padding: 12px; background: var(--green-dark); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
-  .home-btn { width: 100%; padding: 12px; background: var(--tag-bg); color: var(--green-dark); border: 1.5px solid var(--tag-border); border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
+/* ── SCRUBBER / PROGRESS BAR (Media time bar) ── */
+.player-scrubber {
+  display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0; margin: 12px 0 8px;
+}
+.scrubber-count {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.40); min-width: 26px;
+}
+.scrubber-count.right { text-align: right; }
+.scrubber-track {
+  flex: 1; height: 3px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 2px; position: relative;
+}
+.scrubber-fill {
+  height: 100%; background: #fff;
+  border-radius: 2px; transition: width 0.3s;
+  position: relative;
+}
+/* Knob on the fill end */
+.scrubber-fill::after {
+  content: '';
+  position: absolute; right: -5px; top: 50%;
+  transform: translateY(-50%);
+  width: 11px; height: 11px;
+  background: #fff; border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
 
-  /* HISTORY */
-  .history-empty { text-align: center; padding: 60px 20px; color: var(--header-sub); font-size: 14px; }
-  .history-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
-  .history-header { padding: 12px 16px; background: var(--tag-bg); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-  .history-date { font-size: 13px; font-weight: 700; color: var(--header-text); }
-  .history-meta { font-size: 11px; color: var(--header-sub); margin-top: 2px; }
-  .history-score { font-size: 18px; font-weight: 800; color: var(--green-dark); }
-  .history-body { display: none; padding: 12px 16px; }
-  .history-body.open { display: block; }
-  .history-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-  .retry-wrong-btn {
-    display: block;
-    width: 100%;
-    margin-top: 14px;
-    padding: 12px 0;
-    background: #fff3e0;
-    color: #e65c00;
-    border: 1.5px solid #ffb74d;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.15s;
-  }
-  .retry-wrong-btn:hover {
-    background: #ffe0b2;
-  }
-  .history-tab { flex: 1; padding: 6px; border-radius: 6px; border: 1.5px solid var(--card-border); background: var(--card-bg); font-size: 11px; font-weight: 600; cursor: pointer; color: var(--header-sub); transition: all 0.2s; text-align: center; }
-  .history-tab.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
-  .history-word-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid #f0f4f0; }
-  .history-word-item:last-child { border-bottom: none; }
-  .hw-en { font-size: 13px; font-weight: 600; flex: 1; }
-  .hw-ko { font-size: 11px; color: var(--header-sub); }
+/* ── SONG INFO ROW (word name + section) ── */
+.player-song-info {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-shrink: 0;
+  margin-top: 12px; margin-bottom: 2px;
+}
+.player-song-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px; font-weight: 700; color: #fff;
+  line-height: 1.1; letter-spacing: -0.5px;
+  word-break: break-word; flex: 1;
+}
+.player-song-section {
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px; font-weight: 500;
+  color: var(--color-vintage-red);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  flex-shrink: 0; margin-left: 8px; margin-top: 2px;
+}
 
-  
+/* ── PLAYBACK CONTROLS (Mode 1: Flashcard) ── */
+.player-controls {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0; padding: 0 4px;
+  margin-top: 4px;
+}
+/* Fail button — red outline (✕) */
+.ctrl-fail {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: transparent;
+  border: 2px solid rgba(217,56,30,0.65);
+  color: var(--color-vintage-red);
+  font-size: 20px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; flex-shrink: 0;
+  font-family: 'Poppins', sans-serif;
+}
+.ctrl-fail:hover { background: rgba(217,56,30,0.18); }
+/* Flip/Next button — cream bg, deep-blue icon (center, largest) */
+.ctrl-flip {
+  width: 62px; height: 62px; border-radius: 50%;
+  background: var(--bg-cream); border: none;
+  color: var(--color-deep-blue);
+  font-size: 26px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transition: transform 0.12s; flex-shrink: 0;
+}
+.ctrl-flip:hover { transform: scale(1.06); }
+/* Pass button — green outline (✓) */
+.ctrl-pass {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: transparent;
+  border: 2px solid rgba(93,227,138,0.65);
+  color: #5de38a;
+  font-size: 20px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; flex-shrink: 0;
+  font-family: 'Poppins', sans-serif;
+}
+.ctrl-pass:hover { background: rgba(93,227,138,0.15); }
+
+/* ── MC OPTIONS (Mode 2: Multiple Choice) ── */
+/* Vertical list of pill-shaped track-list buttons */
+.mc-options-list {
+  display: flex; flex-direction: column; gap: 7px;
+  flex-shrink: 0; margin: 8px 0 4px;
+}
+.mc-pill {
+  width: 100%; padding: 12px 18px;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 50px; background: rgba(255,255,255,0.07);
+  cursor: pointer; font-size: 13px; font-weight: 600;
+  text-align: left; color: rgba(255,255,255,0.88);
+  transition: all 0.15s;
+  font-family: 'Noto Serif KR', serif;
+  display: flex; align-items: center; gap: 10px;
+}
+.mc-pill:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.4); }
+.mc-pill.correct { background: rgba(93,227,138,0.22); border-color: #5de38a; color: #a8ffca; }
+.mc-pill.wrong   { background: rgba(217,56,30,0.22); border-color: var(--color-vintage-red); color: #ffb3a3; }
+.mc-pill-letter {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; flex-shrink: 0;
+  font-family: 'Poppins', sans-serif; color: rgba(255,255,255,0.6);
+}
+
+/* ── DICTATION INPUT (Mode 3) ── */
+.dictation-area { flex-shrink: 0; margin: 8px 0 4px; }
+.dictation-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: rgba(255,255,255,0.38);
+  margin-bottom: 10px; text-align: center;
+}
+/* Music search bar input */
+.dictation-search-bar {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 50px;
+  padding: 4px 4px 4px 18px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.dictation-search-bar:focus-within {
+  border-color: rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.14);
+}
+.dictation-search-bar.correct { border-color: #5de38a; background: rgba(93,227,138,0.15); }
+.dictation-search-bar.wrong   { border-color: var(--color-vintage-red); background: rgba(217,56,30,0.15); }
+.dictation-search-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-size: 16px; color: #fff;
+  font-family: 'Poppins', sans-serif; font-weight: 600;
+  caret-color: #fff; padding: 10px 0;
+  letter-spacing: -0.2px;
+}
+.dictation-search-input::placeholder { color: rgba(255,255,255,0.28); font-weight: 400; }
+.dictation-send-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: #fff; border: none;
+  color: var(--color-deep-blue); font-size: 17px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: transform 0.1s;
+}
+.dictation-send-btn:hover { transform: scale(1.07); }
+
+/* ── VOLUME / SPEAKER BAR (bottom of player) ── */
+.player-volume-bar {
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0; margin-top: auto; padding-top: 10px;
+}
+.vol-icon {
+  font-size: 14px; color: rgba(255,255,255,0.45);
+  cursor: pointer; flex-shrink: 0; transition: color 0.15s;
+  background: none; border: none; padding: 0;
+}
+.vol-icon:hover { color: rgba(255,255,255,0.8); }
+.vol-track {
+  flex: 1; height: 3px;
+  background: rgba(255,255,255,0.18); border-radius: 2px; position: relative;
+}
+.vol-fill {
+  width: 70%; height: 100%;
+  background: rgba(255,255,255,0.7); border-radius: 2px; position: relative;
+}
+.vol-fill::after {
+  content: '';
+  position: absolute; right: -5px; top: 50%;
+  transform: translateY(-50%);
+  width: 11px; height: 11px;
+  background: #fff; border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+.vol-icon-right { font-size: 16px; color: rgba(255,255,255,0.45); flex-shrink: 0; }
+
+/* ── MODE SELECT — Light cream/navy editorial style ── */
+.quiz-section-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 800;
+  color: var(--color-main-blue);
+  letter-spacing: 2px; text-transform: uppercase;
+  margin: 10px 0 8px;
+  border-bottom: 1px solid var(--color-divider);
+  padding-bottom: 6px;
+}
+.section-radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 12px; }
+.section-radio { display: none; }
+.section-radio-label {
+  display: block; padding: 8px 6px;
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px; text-align: center;
+  cursor: pointer; font-size: 10px; font-weight: 700;
+  color: var(--color-main-blue); transition: all 0.12s;
+  background: transparent;
+  font-family: 'Poppins', sans-serif; letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.section-radio:checked + .section-radio-label {
+  background: var(--color-main-blue);
+  color: #fff; border-color: var(--color-main-blue);
+}
+.mode-select-grid { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.mode-card {
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px; padding: 12px 16px;
+  cursor: pointer; transition: all 0.12s;
+  background: transparent;
+  display: flex; align-items: center; gap: 14px;
+}
+.mode-card:hover { background: var(--color-main-blue); }
+.mode-card:hover .mode-icon-text,
+.mode-card:hover .mode-card .mode-info .mode-name,
+.mode-card:hover .mode-card .mode-info .mode-desc { color: #fff; }
+.mode-icon-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px; font-weight: 700; color: var(--color-vintage-red);
+  border: 1.5px solid var(--color-vintage-red); padding: 2px 8px;
+  border-radius: 2px; white-space: nowrap; flex-shrink: 0;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.mode-card:hover .mode-icon-text { color: #fff; border-color: rgba(255,255,255,0.5); }
+.mode-card .mode-info .mode-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px; font-weight: 800; color: var(--color-main-blue);
+  letter-spacing: 0.3px;
+}
+.mode-card:hover .mode-info .mode-name { color: #fff; }
+.mode-card .mode-info .mode-desc {
+  font-size: 11px; color: var(--color-muted);
+  margin-top: 2px; font-family: 'Noto Serif KR', serif;
+}
+.mode-card:hover .mode-info .mode-desc { color: rgba(255,255,255,0.65); }
+
+/* ── RESULT SCREEN (inside player) ── */
+.result-screen { text-align: center; padding-top: 6px; }
+.result-emoji { font-size: 36px; margin-bottom: 6px; }
+.result-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 44px; font-weight: 800; color: #fff;
+  margin-bottom: 4px; letter-spacing: -2px; line-height: 1;
+}
+.result-subtitle {
+  font-size: 11px; color: rgba(255,255,255,0.45);
+  margin-bottom: 16px; font-family: 'Noto Serif KR', serif;
+}
+.result-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+.result-stat {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 10px 6px;
+}
+.result-stat .stat-num {
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px; font-weight: 800; color: #fff;
+}
+.result-stat .stat-label {
+  font-size: 8px; color: rgba(255,255,255,0.4); margin-top: 2px;
+  font-family: 'Poppins', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.result-tabs { display: flex; gap: 5px; margin-bottom: 8px; }
+.result-tab {
+  flex: 1; padding: 7px;
+  border-radius: 50px; border: 1px solid rgba(255,255,255,0.18);
+  background: transparent; font-size: 10px; font-weight: 700;
+  cursor: pointer; color: rgba(255,255,255,0.55); transition: all 0.15s;
+  font-family: 'Poppins', sans-serif;
+}
+.result-tab.active { background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.4); }
+.result-word-list { text-align: left; margin-bottom: 12px; }
+.result-word-item {
+  display: flex; align-items: center; gap: 7px; padding: 7px 10px;
+  border-radius: 10px; margin-bottom: 3px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+}
+.result-word-item .rw-en {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px; font-weight: 700; color: #fff; flex: 1;
+}
+.result-word-item .rw-ko {
+  font-size: 10px; color: rgba(255,255,255,0.45);
+  font-family: 'Noto Serif KR', serif;
+}
+.retry-choice-wrap { display: flex; flex-direction: column; gap: 7px; margin-bottom: 8px; }
+.retry-choice-btn {
+  padding: 12px; border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06); font-size: 12px; font-weight: 700;
+  cursor: pointer; color: rgba(255,255,255,0.78); transition: all 0.15s; text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+.retry-choice-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+.retry-choice-btn.primary-choice { background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.4); }
+.show-retry-btn {
+  width: 100%; padding: 13px; background: #fff; color: var(--color-deep-blue);
+  border: none; border-radius: 50px; font-size: 13px; font-weight: 700;
+  cursor: pointer; margin-bottom: 7px;
+  font-family: 'Poppins', sans-serif; letter-spacing: 0.5px;
+}
+.home-btn {
+  width: 100%; padding: 11px;
+  background: transparent; color: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 50px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+.home-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+
+/* ── WRONG-NOTE POPUP (matches player style) ── */
+.wrong-note-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+  z-index: 1000; place-items: center; padding: 16px;
+}
+.wrong-note-overlay.open { display: grid; }
+.wrong-note-sheet {
+  background: var(--glass-blue);
+  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  border-radius: 32px;
+  width: 100%; max-width: 340px;
+  padding: 28px 24px 32px;
+  animation: popIn 0.2s ease;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+}
+@keyframes popIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.wrong-note-handle {
+  width: 32px; height: 3px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 2px; margin: 0 auto 18px;
+}
+.wrong-note-badge {
+  display: inline-block;
+  background: var(--color-vintage-red); color: #fff;
+  font-size: 9px; font-weight: 700;
+  padding: 3px 10px; border-radius: 2px;
+  margin-bottom: 12px; letter-spacing: 1.5px;
+  font-family: 'Poppins', sans-serif; text-transform: uppercase;
+}
+.wrong-note-word {
+  font-family: 'Poppins', sans-serif;
+  font-size: 34px; font-weight: 800;
+  color: #fff; text-align: center;
+  margin: 4px 0; letter-spacing: -1px; line-height: 1.1;
+}
+.wrong-note-meaning {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 14px; font-weight: 600;
+  color: rgba(255,255,255,0.65); text-align: center; margin-bottom: 6px;
+}
+.wrong-note-your {
+  font-size: 11px; color: var(--color-vintage-red); font-weight: 600;
+  text-align: center; margin-bottom: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+.wrong-note-accents {
+  display: flex; gap: 6px; justify-content: center; margin-bottom: 14px;
+}
+.wrong-note-accent-btn {
+  padding: 5px 13px; border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.07); font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.6); cursor: pointer; transition: all 0.15s;
+  font-family: 'Poppins', sans-serif;
+}
+.wrong-note-accent-btn:hover,
+.wrong-note-accent-btn.active {
+  background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.5);
+}
+.wrong-note-feedback {
+  text-align: center; font-size: 12px; font-weight: 700;
+  min-height: 18px; margin-bottom: 10px;
+  font-family: 'Poppins', sans-serif;
+}
+/* Search-bar style input for wrong-note */
+.wrong-note-input-wrap {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.20);
+  border-radius: 50px;
+  padding: 4px 4px 4px 18px; gap: 8px;
+  margin-bottom: 10px; transition: border-color 0.15s;
+}
+.wrong-note-input-wrap:focus-within { border-color: rgba(255,255,255,0.55); }
+.wrong-note-input-wrap.correct { border-color: #5de38a; background: rgba(93,227,138,0.15); }
+.wrong-note-input-wrap.wrong   { border-color: var(--color-vintage-red); background: rgba(217,56,30,0.15); }
+.wrong-note-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-size: 16px; color: #fff;
+  font-family: 'Poppins', sans-serif; font-weight: 600;
+  caret-color: #fff; padding: 9px 0;
+}
+.wrong-note-input::placeholder { color: rgba(255,255,255,0.28); font-weight: 400; }
+.wrong-note-submit {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: #fff; color: var(--color-deep-blue);
+  border: none; font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: transform 0.1s;
+}
+.wrong-note-submit:hover { transform: scale(1.08); }
+.wrong-note-skip {
+  width: 100%; padding: 11px;
+  background: transparent; color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.14); border-radius: 50px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s; font-family: 'Poppins', sans-serif;
+}
+.wrong-note-skip:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); }
+
+/* ══════════════════════════════════════════════════════════
+   HISTORY PAGE
+══════════════════════════════════════════════════════════ */
+.history-empty {
+  text-align: center; padding: 60px 20px;
+  color: var(--color-muted); font-size: 13px;
+  font-family: 'Noto Serif KR', serif;
+}
+.history-card {
+  background: var(--color-cream-card);
+  border: 1.5px solid var(--color-main-blue);
+  border-radius: 2px; margin-bottom: 8px; overflow: hidden;
+}
+.history-header {
+  padding: 12px 14px; background: transparent;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; border-bottom: 1px solid var(--color-divider);
+}
+.history-date {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px; font-weight: 700; color: var(--color-main-blue);
+}
+.history-meta {
+  font-size: 10px; color: var(--color-muted);
+  margin-top: 2px; font-family: 'Poppins', sans-serif;
+}
+.history-score {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px; font-weight: 800; color: var(--color-main-blue);
+}
+.history-body { display: none; padding: 10px 14px; }
+.history-body.open { display: block; }
+.history-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.retry-wrong-btn {
+  display: block; width: 100%;
+  margin-top: 12px; padding: 11px 0;
+  background: transparent; color: var(--color-vintage-red);
+  border: 1px solid var(--color-vintage-red);
+  border-radius: 2px; font-size: 12px; font-weight: 700;
+  cursor: pointer; text-align: center; transition: all 0.12s;
+  font-family: 'Poppins', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.retry-wrong-btn:hover { background: var(--color-vintage-red); color: #fff; }
+.history-tab {
+  flex: 1; padding: 6px; border-radius: 2px;
+  border: 1.5px solid var(--color-main-blue);
+  background: transparent; font-size: 10px; font-weight: 700;
+  cursor: pointer; color: var(--color-main-blue); transition: all 0.12s; text-align: center;
+  font-family: 'Poppins', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.history-tab.active { background: var(--color-main-blue); color: #fff; }
+.history-word-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 0; border-bottom: 1px solid var(--color-divider);
+}
+.history-word-item:last-child { border-bottom: none; }
+.hw-en {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px; font-weight: 700; flex: 1; color: var(--color-main-blue);
+}
+.hw-ko { font-size: 10px; color: var(--color-muted); font-family: 'Noto Serif KR', serif; }
+
 </style>
-<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
+<!-- ResponsiveVoice is optional; fallback is Web Speech API -->
+<script>
+(function(){
+  var s=document.createElement('script');
+  s.src='https://code.responsivevoice.org/responsivevoice.js?key=FREE';
+  s.onerror=function(){/* silent — speak() uses SpeechSynthesis fallback */};
+  document.head.appendChild(s);
+})();
+</script>
 </head>
 <body>
 
 <header class="app-header">
-  <h1>📚 IELTS 단어장</h1>
-  <div class="subtitle" id="headerSubtitle">오늘의 단어를 학습하세요</div>
-  <div class="date-nav" id="dateNav"></div>
+  <!-- Photo strip removed — Light Theme uses cream bg only -->
+
+  <!-- Title block -->
+  <div class="header-title-bar">
+    <div class="header-logo-block">
+      <h1>IELTS VOCABULARY</h1>
+      <span class="header-red-rule"></span>
+      <div class="subtitle" id="headerSubtitle">오늘의 단어를 학습하세요</div>
+    </div>
+  </div>
+
+  <!-- Date navigation -->
+  <div class="header-nav-strip">
+    <div class="date-nav" id="dateNav"></div>
+  </div>
 </header>
 <div class="progress-wrap">
   <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
@@ -363,10 +1003,10 @@
 
 <nav class="bottom-nav">
   <button class="bottom-nav-btn active" id="navHome" onclick="showPage('home')">
-    <span class="nav-icon">📅</span><span>오늘</span>
+    <span class="nav-icon">◈</span><span>TODAY</span>
   </button>
   <button class="bottom-nav-btn" id="navHistory" onclick="showPage('history')">
-    <span class="nav-icon">📊</span><span>학습기록</span>
+    <span class="nav-icon">◇</span><span>HISTORY</span>
   </button>
 </nav>
 
@@ -424,7 +1064,9 @@ function buildDateNav() {
     const btn = document.createElement('button');
     const isDone = isDayComplete(i);
     btn.className = 'date-btn' + (i===currentDayIdx?' active':'') + (isDone?' day-done':'');
-    btn.textContent = isDone ? `✓ Day ${s.day}` : `Day ${s.day}`;
+    btn.innerHTML = isDone
+      ? `<span style="color:var(--color-vintage-red);font-weight:800">✓</span> Day ${s.day}`
+      : `Day ${s.day}`;
     btn.onclick = () => { currentDayIdx=i; historyFilterDay=i; localStorage.setItem('ielts_last_day', i); buildDateNav(); renderDay(i); };
     nav.appendChild(btn);
   });
@@ -446,8 +1088,8 @@ function updateProgress(dayIdx) {
   });
   const pct = total>0 ? Math.round(done/total*100) : 0;
   document.getElementById('progressBar').style.width = pct+'%';
-  document.getElementById('progressLabel').textContent = `Day ${s.day} / 24 (${pct}% 완료)`;
-  document.getElementById('headerSubtitle').textContent = `Day ${s.day} · 총 ${total}단어`;
+  document.getElementById('progressLabel').textContent = `DAY ${s.day} / 24  —  ${pct}%`;
+  document.getElementById('headerSubtitle').textContent = `DAY ${s.day} • ${total} WORDS`;
 }
 
 function renderDay(dayIdx) {
@@ -456,37 +1098,39 @@ function renderDay(dayIdx) {
   let html = '';
 
   // Day info
+  const totalWords = s.listening.words.length + s.reading.words.length + s.task1.words.length + s.task2.words.length;
   let mb = s.mock==='리스닝 모의고사'
-    ? `<span class="mock-badge listening">🎧 리스닝 모의고사</span>`
+    ? `<span class="mock-badge listening">[ LISTENING MOCK ]</span>`
     : s.mock==='리딩 모의고사'
-      ? `<span class="mock-badge reading">📖 리딩 모의고사</span>`
-      : `<span class="mock-badge">✏️ 단어 집중일</span>`;
+      ? `<span class="mock-badge reading">[ READING MOCK ]</span>`
+      : `<span class="mock-badge">[ VOCAB ]</span>`;
   html += `<div class="day-info-card">
     <div class="day-info-left">
-      <h2>Day ${s.day} <span style="font-size:15px;font-weight:500;color:var(--header-sub);">/ 24</span></h2>
+      <h2>Day ${s.day} <span style="font-size:16px;font-weight:400;opacity:0.7;font-style:italic;">/ 24</span></h2>
+      <div class="day-label">DAY ${s.day} &bull; ${totalWords} WORDS</div>
     </div>${mb}
   </div>`;
 
   // Summary (4-column)
   html += `<div class="summary-grid">
-    <div class="summary-tile"><div class="tile-num">${s.listening.words.length}</div><div class="tile-label">🎧 리스닝</div></div>
-    <div class="summary-tile"><div class="tile-num">${s.reading.words.length}</div><div class="tile-label">📖 리딩</div></div>
-    <div class="summary-tile"><div class="tile-num">${s.task1.words.length}</div><div class="tile-label">✍️ Task1</div></div>
-    <div class="summary-tile"><div class="tile-num">${s.task2.words.length}</div><div class="tile-label">💬 Task2</div></div>
+    <div class="summary-tile"><div class="tile-num">${s.listening.words.length}</div><div class="tile-label">LISTENING</div></div>
+    <div class="summary-tile"><div class="tile-num">${s.reading.words.length}</div><div class="tile-label">READING</div></div>
+    <div class="summary-tile"><div class="tile-num">${s.task1.words.length}</div><div class="tile-label">TASK 1</div></div>
+    <div class="summary-tile"><div class="tile-num">${s.task2.words.length}</div><div class="tile-label">TASK 2</div></div>
   </div>`;
 
 
 
   // Section cards
-  html += buildSectionCard(dayIdx,'listening','🎧',`리스닝 — ${s.listening.part||''}`,s.listening.words);
-  html += buildSectionCard(dayIdx,'reading','📖',`리딩 — ${s.reading.source||''}`,s.reading.words);
-  html += buildSectionCard(dayIdx,'task1','✍️','Writing Task 1',s.task1.words);
-  const t2title = s.task2.topicKo ? `Task 2 — ${s.task2.topicKo}` : 'Writing Task 2';
-  html += buildSectionCard(dayIdx,'task2','💬',t2title,s.task2.words);
+  html += buildSectionCard(dayIdx,'listening','LISTENING',`${s.listening.part||'Part'}`,s.listening.words);
+  html += buildSectionCard(dayIdx,'reading','READING',`${s.reading.source||'Cambridge'}`,s.reading.words);
+  html += buildSectionCard(dayIdx,'task1','TASK 1','Writing Task 1',s.task1.words);
+  const t2title = s.task2.topicKo ? `${s.task2.topicKo}` : 'Writing Task 2';
+  html += buildSectionCard(dayIdx,'task2','TASK 2',t2title,s.task2.words);
 
   // Learn button
   const totalW = s.listening.words.length+s.reading.words.length+s.task1.words.length+s.task2.words.length;
-  html += `<div class="learn-btn-wrap"><button class="learn-btn" onclick="openQuiz(${dayIdx})">📝 오늘의 단어 학습하기 (${totalW}개)</button></div>`;
+  html += `<div class="learn-btn-wrap"><button class="learn-btn" onclick="openQuiz(${dayIdx})">STUDY TODAY'S WORDS  ·  ${totalW}</button></div>`;
 
   document.getElementById('homeContent').innerHTML = html;
 }
@@ -508,7 +1152,7 @@ function buildSectionCard(dayIdx, sectionKey, icon, title, words) {
         <div class="word-en">${w.en}</div>
         <div class="word-ko">${w.ko}</div>
       </span>
-      <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" title="발음 듣기">🔊</button>
+      <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" title="발음 듣기">▶</button>
     </li>`
   ).join('');
 
@@ -518,7 +1162,7 @@ function buildSectionCard(dayIdx, sectionKey, icon, title, words) {
         <span class="section-icon">${icon}</span>
         <div>
           <div class="section-title-text">${title}</div>
-          <div class="section-count">${done ? words.length : 0} / ${words.length} 완료</div>
+          <div class="section-count">${done ? words.length : 0} / ${words.length}</div>
         </div>
       </div>
       <div class="section-header-right">
@@ -586,41 +1230,45 @@ function openQuiz(dayIdx) {
   ];
   quizState = {dayIdx, allWords, mode:null, words:[], idx:0, correct:[], wrong:[]};
   document.getElementById('quizTitle').textContent='학습하기';
+  // Mode-select screen: cream/navy light theme
+  document.querySelector('.quiz-modal').classList.remove('study-mode');
   renderQuizModeSelect(allWords);
   document.getElementById('quizOverlay').classList.add('open');
 }
 function closeQuiz() {
   document.getElementById('quizOverlay').classList.remove('open');
+  document.querySelector('.quiz-modal').classList.remove('study-mode');
   quizState = null;
 }
 
 function renderQuizModeSelect(allWords) {
   const html = `
-    <div style="font-size:13px;font-weight:600;color:var(--header-text);margin-bottom:8px;">📚 학습 범위 선택</div>
+    <div class="quiz-section-label">STUDY RANGE</div>
     <div class="section-radio-grid">
       <div><input type="radio" name="qsec" id="sec_all" value="all" class="section-radio" checked>
-        <label for="sec_all" class="section-radio-label">전체 (${allWords.length})</label></div>
+        <label for="sec_all" class="section-radio-label">ALL (${allWords.length})</label></div>
       <div><input type="radio" name="qsec" id="sec_l" value="리스닝" class="section-radio">
-        <label for="sec_l" class="section-radio-label">🎧 리스닝</label></div>
+        <label for="sec_l" class="section-radio-label">LISTENING</label></div>
       <div><input type="radio" name="qsec" id="sec_r" value="리딩" class="section-radio">
-        <label for="sec_r" class="section-radio-label">📖 리딩</label></div>
+        <label for="sec_r" class="section-radio-label">READING</label></div>
       <div><input type="radio" name="qsec" id="sec_t1" value="Task 1" class="section-radio">
-        <label for="sec_t1" class="section-radio-label">✍️ Task 1</label></div>
+        <label for="sec_t1" class="section-radio-label">TASK 1</label></div>
       <div><input type="radio" name="qsec" id="sec_t2" value="Task 2" class="section-radio">
-        <label for="sec_t2" class="section-radio-label">💬 Task 2</label></div>
+        <label for="sec_t2" class="section-radio-label">TASK 2</label></div>
     </div>
+    <div class="quiz-section-label">STUDY MODE</div>
     <div class="mode-select-grid">
       <div class="mode-card" onclick="startQuiz('flashcard')">
-        <span class="mode-icon">🃏</span>
-        <div class="mode-info"><div class="mode-name">플래시카드</div><div class="mode-desc">단어를 보고 뜻을 떠올려 보세요</div></div>
+        <span class="mode-icon-text">FLASH</span>
+        <div class="mode-info"><div class="mode-name">Flashcard</div><div class="mode-desc">단어를 보고 뜻을 떠올려 보세요</div></div>
       </div>
       <div class="mode-card" onclick="startQuiz('mc')">
-        <span class="mode-icon">📝</span>
-        <div class="mode-info"><div class="mode-name">객관식 퀴즈</div><div class="mode-desc">4가지 보기 중 올바른 뜻 선택</div></div>
+        <span class="mode-icon-text">QUIZ</span>
+        <div class="mode-info"><div class="mode-name">Multiple Choice</div><div class="mode-desc">4가지 보기 중 올바른 뜻 선택</div></div>
       </div>
       <div class="mode-card" onclick="startQuiz('dictation')">
-        <span class="mode-icon">🎤</span>
-        <div class="mode-info"><div class="mode-name">받아쓰기</div><div class="mode-desc">한국어 뜻을 보고 영어 단어 입력</div></div>
+        <span class="mode-icon-text">WRITE</span>
+        <div class="mode-info"><div class="mode-name">Dictation</div><div class="mode-desc">한국어 뜻을 보고 영어 단어 입력</div></div>
       </div>
     </div>`;
   document.getElementById('quizContent').innerHTML = html;
@@ -638,102 +1286,200 @@ function startQuiz(mode, wordsOverride) {
   if(!words.length){ alert('선택한 섹션에 단어가 없습니다.'); return; }
   words = [...words].sort(()=>Math.random()-0.5);
   quizState.mode=mode; quizState.words=words; quizState.idx=0; quizState.correct=[]; quizState.wrong=[];
+  // Switch to dark navy study-mode skin
+  document.querySelector('.quiz-modal').classList.add('study-mode');
   renderQuizQuestion();
 }
 
 function renderQuizQuestion() {
   const q = quizState;
-  if(q.idx>=q.words.length){ renderQuizResult(); return; }
+  if(q.idx >= q.words.length){ renderQuizResult(); return; }
   const w = q.words[q.idx];
-  const pct = Math.round(q.idx/q.words.length*100);
-  const prog = `<div class="quiz-progress">
-    <div class="quiz-progress-bar-outer"><div class="quiz-progress-bar-inner" style="width:${pct}%"></div></div>
-    <div class="quiz-progress-text">${q.idx+1} / ${q.words.length}</div>
-  </div>`;
+  const pct = Math.round(q.idx / q.words.length * 100);
+  const esc = s => s.replace(/'/g,"\\'").replace(/"/g,'&quot;');
 
-  if(q.mode==='flashcard'){
-    document.getElementById('quizTitle').textContent='🃏 플래시카드';
-    document.getElementById('quizContent').innerHTML = prog +
-      `<div class="flashcard-wrap" onclick="flipCard()">
-        <div class="flashcard" id="theFlashcard">
-          <div class="flashcard-face flashcard-front">
-            <div class="flashcard-word">${w.en}</div>
-            <div class="flashcard-hint">탭하여 뒤집기 👆</div>
-          </div>
-          <div class="flashcard-face flashcard-back">
-            <div class="flashcard-meaning">${w.ko}</div>
-          </div>
+  /* ── Shared: Apple Music scrubber ── */
+  const scrubber = `
+    <div class="player-scrubber">
+      <span class="scrubber-count">${q.idx + 1}</span>
+      <div class="scrubber-track">
+        <div class="scrubber-fill" style="width:${pct}%"></div>
+      </div>
+      <span class="scrubber-count right">${q.words.length}</span>
+    </div>`;
+
+  /* ── Shared: volume/speaker bar ── */
+  const volBar = `
+    <div class="player-volume-bar">
+      <button class="vol-icon" onclick="speak('${esc(w.en)}',event)" title="발음 듣기">🔊</button>
+      <div class="vol-track"><div class="vol-fill"></div></div>
+      <span class="vol-icon-right">🔊</span>
+    </div>`;
+
+  /* ════════════════════════════════════════════
+     MODE 1 — FLASHCARD  (⏪ ⏸ ⏩ layout)
+  ════════════════════════════════════════════ */
+  if(q.mode === 'flashcard'){
+    document.getElementById('quizTitle').textContent = 'FLASHCARD';
+    document.getElementById('quizContent').innerHTML = `
+
+      <!-- Album Cover (tap to flip) -->
+      <div class="player-album" id="albumFlipZone" onclick="flipAlbum()">
+        <div id="albumFront">
+          <div class="album-section-tag">${w.section || 'VOCABULARY'}</div>
+          <div class="album-word">${w.en}</div>
+          <div class="album-hint">— tap to reveal —</div>
+        </div>
+        <div id="albumBack" style="display:none;">
+          <div class="album-meaning">${w.ko}</div>
+          <div class="album-hint" style="margin-top:10px;">— ${w.en} —</div>
         </div>
       </div>
-      <div class="quiz-nav">
-        <button class="quiz-btn sound-big" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)">🔊</button>
-        <button class="quiz-btn secondary" onclick="markFlashcard(false)">❌ 몰라요</button>
-        <button class="quiz-btn primary" onclick="markFlashcard(true)">✅ 알아요</button>
-      </div>`;
-    speak(w.en);
-  } else if(q.mode==='mc'){
-    document.getElementById('quizTitle').textContent='📝 객관식 퀴즈';
-    let wrongs = quizState.allWords.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3);
-    let opts = [...wrongs.map(x=>x.ko), w.ko].sort(()=>Math.random()-0.5);
-    const optHtml = opts.map(opt=>
-      `<button class="mc-option" onclick="checkMC(this,'${opt.replace(/'/g,"\\'")}','${w.ko.replace(/'/g,"\\'")}')">${opt}</button>`
-    ).join('');
-    document.getElementById('quizContent').innerHTML = prog +
-      `<div class="mc-question"><div style="font-size:13px;color:var(--header-sub);margin-bottom:6px;">다음 단어의 의미는?</div>
-        <div class="mc-question-word">${w.en}</div></div>
-      <div class="mc-options">${optHtml}</div>
-      <div class="quiz-nav"><button class="quiz-btn sound-big" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)">🔊</button></div>`;
-    speak(w.en);
-  } else {
-    document.getElementById('quizTitle').textContent='🎤 받아쓰기';
-    document.getElementById('quizContent').innerHTML = prog +
-      `<div class="dictation-area">
-        <div class="dictation-hint">다음 뜻에 해당하는 영어 단어를 입력하세요</div>
-        <div class="dictation-meaning">${w.ko}</div>
-        <input type="text" class="dictation-input" id="dictInput" placeholder="영어 단어 입력..."
-          autocomplete="off" autocorrect="off" spellcheck="false"
-          onkeydown="if(event.key==='Enter')checkDictation()">
+
+      <!-- Song info row -->
+      <div class="player-song-info">
+        <div class="player-song-title">${w.en}</div>
+        <div class="player-song-section">${w.section || ''}</div>
       </div>
-      <div class="quiz-nav">
-        <button class="quiz-btn sound-big" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)">🔊</button>
-        <button class="quiz-btn primary" onclick="checkDictation()">확인 →</button>
-      </div>`;
-    setTimeout(()=>{ const inp=document.getElementById('dictInput'); if(inp) inp.focus(); speak(w.en); },150);
+
+      ${scrubber}
+
+      <!-- Controls: ✕ FAIL | ↻ FLIP (center, cream) | ✓ PASS -->
+      <div class="player-controls">
+        <button class="ctrl-fail" onclick="markFlashcard(false)" title="몰라요">✕</button>
+        <button class="ctrl-flip" onclick="flipAlbum()" title="뒤집기">↻</button>
+        <button class="ctrl-pass" onclick="markFlashcard(true)" title="알아요">✓</button>
+      </div>
+
+      ${volBar}`;
+    speak(w.en);
+
+  /* ════════════════════════════════════════════
+     MODE 2 — MULTIPLE CHOICE (vertical pill list)
+  ════════════════════════════════════════════ */
+  } else if(q.mode === 'mc'){
+    document.getElementById('quizTitle').textContent = 'MULTIPLE CHOICE';
+    let wrongs = quizState.allWords.filter(x => x.en !== w.en)
+                  .sort(() => Math.random()-0.5).slice(0,3);
+    const letters = ['A','B','C','D'];
+    const opts = [...wrongs.map(x => x.ko), w.ko].sort(() => Math.random()-0.5);
+    const pillHtml = opts.map((opt, i) =>
+      `<button class="mc-pill" onclick="checkMC(this,'${esc(opt)}','${esc(w.ko)}')">
+        <span class="mc-pill-letter">${letters[i]}</span>
+        <span>${opt}</span>
+       </button>`
+    ).join('');
+
+    document.getElementById('quizContent').innerHTML = `
+
+      <!-- Album cover shows word (no tap needed) -->
+      <div class="player-album" style="cursor:default;">
+        <div class="album-section-tag">${w.section || 'VOCABULARY'}</div>
+        <div class="album-word">${w.en}</div>
+        <div class="album-hint">— 올바른 뜻을 고르세요 —</div>
+      </div>
+
+      <!-- Song info -->
+      <div class="player-song-info">
+        <div class="player-song-title">${w.en}</div>
+        <div class="player-song-section">${w.section || ''}</div>
+      </div>
+
+      ${scrubber}
+
+      <!-- Vertical pill list (music tracklist style) — hide play controls -->
+      <div class="mc-options-list">${pillHtml}</div>
+
+      ${volBar}`;
+    speak(w.en);
+
+  /* ════════════════════════════════════════════
+     MODE 3 — DICTATION (music search bar)
+  ════════════════════════════════════════════ */
+  } else {
+    document.getElementById('quizTitle').textContent = 'DICTATION';
+    document.getElementById('quizContent').innerHTML = `
+
+      <!-- Album cover shows Korean meaning -->
+      <div class="player-album" style="cursor:default;">
+        <div class="album-section-tag">${w.section || 'VOCABULARY'}</div>
+        <div class="album-meaning">${w.ko}</div>
+        <div class="album-hint">— 영어 단어를 입력하세요 —</div>
+      </div>
+
+      <!-- Song info (meaning as title) -->
+      <div class="player-song-info">
+        <div class="player-song-title" style="font-size:14px;">${w.ko}</div>
+        <div class="player-song-section">${w.section || ''}</div>
+      </div>
+
+      ${scrubber}
+
+      <!-- Pill-shaped search input with ➔ send -->
+      <div class="dictation-area">
+        <div class="dictation-label">SPELL THE WORD</div>
+        <div class="dictation-search-bar" id="dictRow">
+          <input type="text" class="dictation-search-input" id="dictInput"
+            placeholder="type the English word..."
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+            onkeydown="if(event.key==='Enter') checkDictation()">
+          <button class="dictation-send-btn" onclick="checkDictation()">➔</button>
+        </div>
+      </div>
+
+      ${volBar}`;
+    setTimeout(() => {
+      const inp = document.getElementById('dictInput');
+      if(inp) inp.focus();
+      // don't auto-play in dictation mode — user should type first, then use 🔊 button
+    }, 150);
   }
 }
 
-function flipCard(){
-  const c=document.getElementById('theFlashcard'); if(c) c.classList.toggle('flipped');
+function flipAlbum(){
+  const front = document.getElementById('albumFront');
+  const back  = document.getElementById('albumBack');
+  if(!front || !back) return;
+  const showing = front.style.display !== 'none';
+  front.style.display = showing ? 'none' : '';
+  back.style.display  = showing ? ''     : 'none';
 }
+function flipCard(){ /* legacy compat */ flipAlbum(); }
+
 function markFlashcard(known){
-  const w=quizState.words[quizState.idx];
+  const w = quizState.words[quizState.idx];
   if(known) quizState.correct.push(w); else quizState.wrong.push(w);
   quizState.idx++; renderQuizQuestion();
 }
-function checkMC(btn,selected,correct){
-  document.querySelectorAll('.mc-option').forEach(b=>b.disabled=true);
-  const w=quizState.words[quizState.idx];
-  if(selected===correct){ btn.classList.add('correct'); quizState.correct.push(w); }
-  else { btn.classList.add('wrong'); quizState.wrong.push(w);
-    document.querySelectorAll('.mc-option').forEach(b=>{ if(b.textContent===correct) b.classList.add('correct'); }); }
-  setTimeout(()=>{ quizState.idx++; renderQuizQuestion(); },900);
+function checkMC(btn, selected, correct){
+  document.querySelectorAll('.mc-pill').forEach(b => b.disabled = true);
+  const w = quizState.words[quizState.idx];
+  if(selected === correct){
+    btn.classList.add('correct'); quizState.correct.push(w);
+  } else {
+    btn.classList.add('wrong'); quizState.wrong.push(w);
+    document.querySelectorAll('.mc-pill').forEach(b => {
+      if(b.querySelector('span:last-child') && b.querySelector('span:last-child').textContent === correct)
+        b.classList.add('correct');
+    });
+  }
+  setTimeout(() => { quizState.idx++; renderQuizQuestion(); }, 900);
 }
 function checkDictation(){
-  const inp=document.getElementById('dictInput'); if(!inp) return;
-  const val=inp.value.trim().toLowerCase();
-  const w=quizState.words[quizState.idx];
-  const ok=val===w.en.toLowerCase();
-  inp.disabled=true; inp.classList.add(ok?'correct':'wrong');
+  const inp = document.getElementById('dictInput'); if(!inp) return;
+  const row = document.getElementById('dictRow');
+  const val = inp.value.trim().toLowerCase();
+  const w   = quizState.words[quizState.idx];
+  const ok  = val === w.en.toLowerCase();
+  inp.disabled = true;
+  if(row) row.classList.add(ok ? 'correct' : 'wrong');
   if(ok){
     quizState.correct.push(w);
-    setTimeout(()=>{ quizState.idx++; renderQuizQuestion(); }, 800);
+    setTimeout(() => { quizState.idx++; renderQuizQuestion(); }, 800);
   } else {
     quizState.wrong.push(w);
-    // 오답노트 팝업 열기 → 닫힌 후 다음 문제
-    setTimeout(()=>{
-      openWrongNote(w, val).then(()=>{
-        quizState.idx++; renderQuizQuestion();
-      });
+    setTimeout(() => {
+      openWrongNote(w, val).then(() => { quizState.idx++; renderQuizQuestion(); });
     }, 400);
   }
 }
@@ -752,37 +1498,37 @@ function renderQuizResult(){
   window._studyHistory = studyHistory;
   if (window.fbSaveHistory) window.fbSaveHistory();
 
-  const emoji=acc>=90?'🎉':acc>=70?'👏':acc>=50?'💪':'📖';
+  const emoji=acc>=90?'★':acc>=70?'◆':acc>=50?'▲':'◇';
   const mkList=(arr,icon)=>arr.length?arr.map(w=>
     `<div class="result-word-item">
-      <span>${icon}</span>
-      <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" style="font-size:14px;">🔊</button>
+      <span style="font-size:10px;color:${icon==='✕'?'var(--color-vintage-red)':'#5de38a'};font-weight:700;min-width:14px;">${icon}</span>
+      <button onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">🔊</button>
       <span class="rw-en">${w.en}</span><span class="rw-ko">${w.ko}</span>
     </div>`).join('')
-    :`<div style="color:var(--header-sub);font-size:13px;text-align:center;padding:16px;">${icon==='❌'?'틀린 단어가 없어요! 🎉':'정답 없음'}</div>`;
+    :`<div style="color:rgba(255,255,255,0.38);font-size:12px;text-align:center;padding:14px;font-family:'Poppins',sans-serif;">${icon==='✕'?'오답 없음 — Perfect!':'정답 없음'}</div>`;
 
-  document.getElementById('quizTitle').textContent='📊 학습 결과';
+  document.getElementById('quizTitle').textContent='RESULT';
   document.getElementById('quizContent').innerHTML=`
     <div class="result-screen">
       <div class="result-emoji">${emoji}</div>
-      <div class="result-title">${acc}% 정확도</div>
+      <div class="result-title">${acc}%</div>
       <div class="result-subtitle">${total}개 중 ${q.correct.length}개 정답</div>
       <div class="result-stats">
-        <div class="result-stat"><div class="stat-num">${total}</div><div class="stat-label">전체</div></div>
-        <div class="result-stat"><div class="stat-num" style="color:#2d6a4f;">${q.correct.length}</div><div class="stat-label">정답</div></div>
-        <div class="result-stat"><div class="stat-num" style="color:#c0392b;">${q.wrong.length}</div><div class="stat-label">오답</div></div>
+        <div class="result-stat"><div class="stat-num">${total}</div><div class="stat-label">TOTAL</div></div>
+        <div class="result-stat"><div class="stat-num" style="color:#5de38a;">${q.correct.length}</div><div class="stat-label">CORRECT</div></div>
+        <div class="result-stat"><div class="stat-num" style="color:var(--color-vintage-red);">${q.wrong.length}</div><div class="stat-label">WRONG</div></div>
       </div>
       <div class="result-word-list">
         <div class="result-tabs">
-          <button class="result-tab active" id="tab_wrong" onclick="switchResultTab('wrong')">❌ 오답 (${q.wrong.length})</button>
-          <button class="result-tab" id="tab_correct" onclick="switchResultTab('correct')">✅ 정답 (${q.correct.length})</button>
+          <button class="result-tab active" id="tab_wrong" onclick="switchResultTab('wrong')">✕ 오답 (${q.wrong.length})</button>
+          <button class="result-tab" id="tab_correct" onclick="switchResultTab('correct')">✓ 정답 (${q.correct.length})</button>
         </div>
-        <div id="result_wrong_list">${mkList(q.wrong,'❌')}</div>
-        <div id="result_correct_list" style="display:none;">${mkList(q.correct,'✅')}</div>
+        <div id="result_wrong_list">${mkList(q.wrong,'✕')}</div>
+        <div id="result_correct_list" style="display:none;">${mkList(q.correct,'✓')}</div>
       </div>
-      <button class="show-retry-btn" onclick="showRetryChoice()">🔄 다시 풀기</button>
+      <button class="show-retry-btn" onclick="showRetryChoice()">RETRY</button>
       <div id="retryChoiceArea"></div>
-      <button class="home-btn" onclick="closeQuiz()">🏠 홈으로 돌아가기</button>
+      <button class="home-btn" onclick="closeQuiz()">← 홈으로</button>
     </div>`;
 }
 
@@ -796,10 +1542,10 @@ function showRetryChoice(){
   document.getElementById('retryChoiceArea').innerHTML=`
     <div class="retry-choice-wrap">
       <button class="retry-choice-btn primary-choice" onclick="retryWrong()" ${quizState.wrong.length===0?'disabled style="opacity:0.5"':''}>
-        ❌ 오답만 다시 풀기 (${quizState.wrong.length}개)
+        ✕ 오답만 다시 풀기 (${quizState.wrong.length}개)
       </button>
       <button class="retry-choice-btn" onclick="retryAll()">
-        🔁 전체 다시 풀기 (${quizState.correct.length+quizState.wrong.length}개)
+        ↺ 전체 다시 풀기 (${quizState.correct.length+quizState.wrong.length}개)
       </button>
     </div>`;
 }
@@ -827,18 +1573,18 @@ function renderHistory(){
 
   // 빈 상태
   if(!filtered.length){
-    c.innerHTML=`<div class="history-empty">📭 ${dayLabel ? dayLabel+' 학습 기록이 없어요.<br>퀴즈를 풀면 기록이 저장돼요!' : '아직 학습 기록이 없어요.<br>단어 학습을 시작해 보세요!'}</div>`;
+    c.innerHTML=`<div class="history-empty">${dayLabel ? dayLabel+' 학습 기록이 없어요.<br>퀴즈를 풀면 기록이 저장돼요!' : '아직 학습 기록이 없어요.<br>단어 학습을 시작해 보세요!'}</div>`;
     return;
   }
 
   // 헤더: 필터 표시 + 전체/삭제 버튼
   let html=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 12px;flex-wrap:wrap;gap:6px;">
-    <span style="font-size:14px;font-weight:700;color:var(--header-text);">
-      ${dayLabel ? `📅 ${dayLabel} 기록 (${filtered.length}건)` : `📊 전체 기록 (${filtered.length}건)`}
+    <span style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;color:var(--color-deep-blue);">
+      ${dayLabel ? `${dayLabel} Records (${filtered.length})` : `All Records (${filtered.length})`}
     </span>
     <div style="display:flex;gap:6px;align-items:center;">
-      ${dayLabel ? `<button onclick="historyFilterDay=null;renderHistory()" style="font-size:12px;padding:5px 12px;background:#e8f5e9;color:var(--green-dark);border:none;border-radius:8px;cursor:pointer;font-weight:600;">전체 보기 (${totalAll})</button>` : ''}
-      <button onclick="deleteAllHistory()" style="font-size:12px;padding:5px 12px;background:#fee2e2;color:#e63946;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🗑 ${dayLabel?'이 기록':'전체'} 삭제</button>
+      ${dayLabel ? `<button onclick="historyFilterDay=null;renderHistory()" style="font-size:11px;padding:5px 14px;background:transparent;color:var(--color-deep-blue);border:1px solid var(--color-deep-blue);border-radius:20px;cursor:pointer;font-weight:700;font-family:'Poppins',sans-serif;">전체 (${totalAll})</button>` : ''}
+      <button onclick="deleteAllHistory()" style="font-size:11px;padding:5px 14px;background:transparent;color:var(--color-vintage-red);border:1px solid var(--color-vintage-red);border-radius:20px;cursor:pointer;font-weight:700;font-family:'Poppins',sans-serif;">${dayLabel?'이 기록':'전체'} 삭제</button>
     </div>
   </div>`;
 
@@ -847,26 +1593,26 @@ function renderHistory(){
     const realIdx = studyHistory.indexOf(rec);
     const mkW=(arr,icon)=>arr&&arr.length?arr.map(w=>
       `<div class="history-word-item">
-        <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" style="font-size:13px;">🔊</button>
+        <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}',event)" style="font-size:10px;">▶</button>
         <span class="hw-en">${icon} ${w.en}</span><span class="hw-ko">${w.ko}</span>
       </div>`).join('')
-      :`<div style="font-size:12px;color:var(--header-sub);padding:8px 0;">${icon==='❌'?'오답 없음 🎉':'정답 없음'}</div>`;
+      :`<div style="font-size:11px;color:var(--color-muted);padding:8px 0;font-family:'Poppins',sans-serif;">${icon==='✕'?'오답 없음 — Perfect!':'정답 없음'}</div>`;
     html+=`<div class="history-card">
       <div class="history-header" onclick="toggleHistory(${realIdx})">
         <div><div class="history-date">${rec.dayLabel} · ${rec.mode}</div>
           <div class="history-meta">${rec.total}개 · 정답 ${rec.correct} · 오답 ${rec.wrong}</div></div>
         <div style="display:flex;align-items:center;gap:8px;">
           <div class="history-score">${rec.acc}%</div>
-          <button onclick="event.stopPropagation();deleteHistory(${realIdx})" style="background:none;border:none;font-size:16px;cursor:pointer;color:#ccc;padding:2px;">🗑</button>
+          <button onclick="event.stopPropagation();deleteHistory(${realIdx})" style="background:none;border:1px solid var(--color-divider);border-radius:50%;width:26px;height:26px;font-size:11px;cursor:pointer;color:var(--color-muted);display:flex;align-items:center;justify-content:center;">✕</button>
         </div>
       </div>
       <div class="history-body" id="hbody_${realIdx}">
         <div class="history-tabs">
-          <button class="history-tab active" id="htw_${realIdx}" onclick="switchHistTab(${realIdx},'wrong')">❌ 오답 (${rec.wrong})</button>
-          <button class="history-tab" id="htc_${realIdx}" onclick="switchHistTab(${realIdx},'correct')">✅ 정답 (${rec.correct})</button>
+          <button class="history-tab active" id="htw_${realIdx}" onclick="switchHistTab(${realIdx},'wrong')">✕ 오답 (${rec.wrong})</button>
+          <button class="history-tab" id="htc_${realIdx}" onclick="switchHistTab(${realIdx},'correct')">✓ 정답 (${rec.correct})</button>
         </div>
-        <div id="hwlist_${realIdx}">${mkW(rec.wrongWords,'❌')}</div>
-        <div id="hclist_${realIdx}" style="display:none;">${mkW(rec.correctWords,'✅')}</div>
+        <div id="hwlist_${realIdx}">${mkW(rec.wrongWords,'✕')}</div>
+        <div id="hclist_${realIdx}" style="display:none;">${mkW(rec.correctWords,'✓')}</div>
         ${rec.wrongWords&&rec.wrongWords.length?`<button class="retry-wrong-btn" onclick="retryWrongWords(${realIdx})">틀린 단어 다시 풀기 (${rec.wrong}개)</button>`:''}
       </div>
     </div>`;
@@ -910,17 +1656,17 @@ function showDeleteConfirm(msg, onConfirm) {
   toast.id = 'deleteConfirmToast';
   toast.style.cssText = [
     'position:fixed','bottom:80px','left:50%','transform:translateX(-50%)',
-    'background:#1a1a1a','color:#fff','border-radius:16px',
-    'padding:16px 20px','z-index:99999','box-shadow:0 4px 20px rgba(0,0,0,0.3)',
+    'background:#0A1128','color:#fff','border-radius:2px',
+    'padding:14px 18px','z-index:99999','border:1px solid rgba(255,255,255,0.15)',
     'display:flex','flex-direction:column','align-items:center','gap:12px',
-    'min-width:260px','text-align:center'
+    'min-width:240px','text-align:center'
   ].join(';');
 
   toast.innerHTML = `
-    <div style="font-size:14px;font-weight:600;">${msg}</div>
-    <div style="display:flex;gap:10px;width:100%;">
-      <button id="deleteCancelBtn" style="flex:1;padding:9px;background:#333;color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer;">취소</button>
-      <button id="deleteOkBtn" style="flex:1;padding:9px;background:#e63946;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">삭제</button>
+    <div style="font-size:13px;font-weight:600;font-family:'Noto Serif KR',serif;">${msg}</div>
+    <div style="display:flex;gap:8px;width:100%;">
+      <button id="deleteCancelBtn" style="flex:1;padding:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:2px;font-size:13px;cursor:pointer;font-family:'Noto Serif KR',serif;">취소</button>
+      <button id="deleteOkBtn" style="flex:1;padding:8px;background:#D9381E;color:#fff;border:none;border-radius:2px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Serif KR',serif;">삭제</button>
     </div>`;
 
   document.body.appendChild(toast);
@@ -983,8 +1729,10 @@ function openWrongNote(word, userAns) {
   document.getElementById('wn-feedback').style.color = '';
 
   const inp = document.getElementById('wnInput');
+  const wrap = document.getElementById('wnInputWrap');
   inp.value = '';
   inp.className = 'wrong-note-input';
+  if (wrap) wrap.className = 'wrong-note-input-wrap';
   inp.disabled = false;
 
   // 미국식 버튼 active 초기화
@@ -1030,29 +1778,30 @@ function wnSpeak(accent) {
 // 정답 체크
 function wnCheck() {
   const inp = document.getElementById('wnInput');
+  const wrap = document.getElementById('wnInputWrap');
   const val = inp.value.trim().toLowerCase();
   if (!val || !_wnWord) return;
 
   const ok = val === _wnWord.en.toLowerCase();
-  inp.className = 'wrong-note-input ' + (ok ? 'correct' : 'wrong');
+  // Apply correct/wrong to the wrapper row (not the transparent input)
+  wrap.className = 'wrong-note-input-wrap ' + (ok ? 'correct' : 'wrong');
   inp.disabled = true;
 
   const fb = document.getElementById('wn-feedback');
   if (ok) {
-    fb.textContent = '✅ 정확해요! 잘 외웠어요 💪';
-    fb.style.color = '#28a745';
+    fb.textContent = '✓ Perfect! 잘 외웠어요';
+    fb.style.color = '#5de38a';
     setTimeout(() => wnClose(), 900);
   } else {
-    fb.textContent = `❌ 정답: ${_wnWord.en}`;
-    fb.style.color = '#e63946';
-    // 다시 시도할 수 있게 0.8초 후 재활성화
+    fb.textContent = `✕ 정답: ${_wnWord.en}`;
+    fb.style.color = '#D9381E';
     setTimeout(() => {
       inp.value = '';
-      inp.className = 'wrong-note-input';
+      wrap.className = 'wrong-note-input-wrap';
       inp.disabled = false;
       inp.focus();
-      fb.textContent = '다시 한 번 써보세요 ✏️';
-      fb.style.color = '#f4a261';
+      fb.textContent = '다시 한 번 써보세요';
+      fb.style.color = 'rgba(255,255,255,0.5)';
     }, 900);
   }
 }
@@ -1100,8 +1849,9 @@ function showSyncBadge(msg, color) {
     b = document.createElement('div');
     b.id = 'fb-sync-badge';
     b.style.cssText = 'position:fixed;bottom:70px;right:12px;z-index:9999;' +
-      'padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;' +
-      'color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:opacity .5s;pointer-events:none';
+      'padding:5px 12px;border-radius:2px;font-size:10px;font-weight:700;' +
+      'color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:opacity .5s;pointer-events:none;' +
+      'font-family:\'Noto Serif KR\',serif;letter-spacing:0.5px;border:1px solid rgba(255,255,255,0.2);';
     document.body.appendChild(b);
   }
   b.textContent = msg;
@@ -1125,7 +1875,7 @@ onValue(CHECKED_REF, (snap) => {
   localStorage.setItem('ielts_checked2', JSON.stringify(remote));
   window.checkedState = remote;
   if (typeof init === 'function') init();
-  showSyncBadge('🔄 체크 동기화됨', '#52b788');
+  showSyncBadge('🔄 체크 동기화됨', '#1434A4');
 });
 
 /* ── Firebase → 앱: history 수신 ── */
@@ -1142,7 +1892,7 @@ onValue(HISTORY_REF, (snap) => {
     const hp = document.getElementById('historyPage');
     if (hp && hp.classList.contains('active')) renderHistory();
   }
-  showSyncBadge('🔄 기록 동기화됨', '#52b788');
+  showSyncBadge('🔄 기록 동기화됨', '#1434A4');
 });
 
 /* ── 앱 → Firebase: checked 저장 ── */
@@ -1152,7 +1902,7 @@ window.fbSaveChecked = () => {
   _savingChecked = true;
   set(CHECKED_REF, data)
     .then(() => {
-      showSyncBadge('✅ 저장됨', '#2d6a4f');
+      showSyncBadge('SAVED', '#1434A4');
       setTimeout(() => _savingChecked = false, 2000);
     })
     .catch(e => {
@@ -1169,7 +1919,7 @@ window.fbSaveHistory = () => {
   _savingHistory = true;
   set(HISTORY_REF, data)
     .then(() => {
-      showSyncBadge('✅ 기록 저장됨', '#2d6a4f');
+      showSyncBadge('HISTORY SAVED', '#1434A4');
       setTimeout(() => _savingHistory = false, 2000);
     })
     .catch(e => {
@@ -1179,7 +1929,7 @@ window.fbSaveHistory = () => {
     });
 };
 
-showSyncBadge('🔥 Firebase 연결됨', '#f4a261');
+showSyncBadge('FIREBASE CONNECTED', '#1434A4');
 console.log('🔥 Realtime DB 연결됨 | 단일 경로 모드 (ielts_app/)');
 </script>
 
@@ -1187,8 +1937,9 @@ console.log('🔥 Realtime DB 연결됨 | 단일 경로 모드 (ielts_app/)');
 <!-- 오답노트 팝업 -->
 <div class="wrong-note-overlay" id="wrongNoteOverlay">
   <div class="wrong-note-sheet">
+    <div class="wrong-note-handle"></div>
     <div style="text-align:center">
-      <span class="wrong-note-badge">❌ 오답</span>
+      <span class="wrong-note-badge">WRONG ANSWER</span>
     </div>
     <div class="wrong-note-word" id="wn-word"></div>
     <div class="wrong-note-meaning" id="wn-meaning"></div>
@@ -1199,11 +1950,11 @@ console.log('🔥 Realtime DB 연결됨 | 단일 경로 모드 (ielts_app/)');
       <button class="wrong-note-accent-btn" onclick="wnSpeak('호주식')">호주식</button>
     </div>
     <div class="wrong-note-feedback" id="wn-feedback"></div>
-    <div class="wrong-note-input-wrap">
+    <div class="wrong-note-input-wrap" id="wnInputWrap">
       <input type="text" class="wrong-note-input" id="wnInput"
         placeholder="정답을 따라 적어보세요."
         onkeydown="if(event.key==='Enter') wnCheck()">
-      <button class="wrong-note-submit" onclick="wnCheck()">↵</button>
+      <button class="wrong-note-submit" onclick="wnCheck()">➔</button>
     </div>
     <button class="wrong-note-skip" onclick="wnClose()">그냥 넘어가기</button>
   </div>
